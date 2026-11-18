@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>花間小憩 - 角色圖鑑與製作進度</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:"PingFang TC","Microsoft JhengHei",sans-serif}
+body{background:#fdf8f5;color:#4a3f41;line-height:1.6;padding-bottom:60px}
+header{background:linear-gradient(135deg,#f9ecea,#f3dce0);padding:30px 20px;text-align:center;border-bottom:1px solid #f0e4e1;margin-bottom:22px}
+header h1{font-size:2rem;color:#b56b74;letter-spacing:2px;margin-bottom:4px}
+header p{color:#8c7b7e;font-size:.95rem}
+.wrap{max-width:1100px;margin:0 auto;padding:0 20px}
+.stat{background:#fff;border-radius:16px;padding:18px 24px;box-shadow:0 4px 15px rgba(212,140,149,.08);margin-bottom:20px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:20px}
+.nums{display:flex;gap:25px}
+.item{text-align:center}
+.val{font-size:1.4rem;font-weight:700;color:#b56b74}
+.lbl{font-size:.85rem;color:#8c7b7e}
+.prog{flex:1;min-width:240px}
+.ptxt{display:flex;justify-content:space-between;font-size:.9rem;margin-bottom:6px;font-weight:700}
+.bar{height:12px;background:#f0e4e1;border-radius:10px;overflow:hidden}
+.fill{height:100%;width:73%;background:linear-gradient(90deg,#d48c95,#b56b74);border-radius:10px}
+.viewer-box{background:#fff;border-radius:16px;padding:18px;box-shadow:0 4px 15px rgba(212,140,149,.08);border:1px solid #f0e4e1;margin-bottom:22px;text-align:center}
+.viewer-title{font-size:.95rem;color:#8c7b7e;margin-bottom:10px;font-weight:700}
+.viewer-frame{width:100%;max-width:520px;height:420px;border:2px dashed #e6d2cf;border-radius:12px;background:#faf4f2}
+input[type="radio"]{display:none}
+.tabs{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+.tabs label{padding:8px 20px;border:1px solid #d48c95;color:#b56b74;border-radius:20px;cursor:pointer;font-size:.95rem;font-weight:700;transition:.2s}
+#t1:checked~.tabs label[for="t1"],#t2:checked~.tabs label[for="t2"],#t3:checked~.tabs label[for="t3"]{background:#d48c95;color:#fff}
+.pnl{display:none}
+#t1:checked~.pnls #p1,#t2:checked~.pnls #p2,#t3:checked~.pnls #p3{display:block}
+.box{background:#fff;border-radius:16px;padding:24px;box-shadow:0 4px 15px rgba(212,140,149,.08);border:1px solid #f0e4e1}
+.hd{font-size:1.1rem;font-weight:700;color:#b56b74;margin-bottom:16px;padding-bottom:10px;border-bottom:1px dashed #f0e4e1;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.hint{font-size:.85rem;color:#8c7b7e;font-weight:400}
+.tags{display:flex;flex-wrap:wrap;gap:10px}
+.ok{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;background:#e6f4ea;color:#1e8e3e;text-decoration:none;border-radius:20px;font-weight:700;font-size:.95rem;border:1px solid #cce8d4;transition:.2s}
+.ok:hover,.ok:focus{background:#1e8e3e;color:#fff;transform:translateY(-2px)}
+.no{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;background:#fef7e0;color:#b06000;border-radius:20px;font-weight:700;font-size:.95rem;border:1px solid #f7e4b2}
+</style>
+</head>
+<body>
+<header>
+    <h1>🌸 花間小憩 角色圖鑑</h1>
+    <p>成員名單與專屬角色圖片製作進度一覽</p>
+</header>
+<div class="wrap">
+    <div class="stat">
+        <div class="nums">
+            <div class="item"><div class="val">51</div><div class="lbl">總人數</div></div>
+            <div class="item"><div class="val" style="color:#1e8e3e">37</div><div class="lbl">已製作</div></div>
+            <div class="item"><div class="val" style="color:#b06000">14</div><div class="lbl">製作中</div></div>
+        </div>
+        <div class="prog">
+            <div class="ptxt"><span>整體製作進度</span><span>73%</span></div>
+            <div class="bar"><div class="fill"></div></div>
+        </div>
+    </div>
+
+    <div class="viewer-box">
+        <div class="viewer-title">🖼️ 角色圖片預覽區（點擊下方綠色成員名字即可在此直接切換顯示）</div>
+        <iframe name="viewer" class="viewer-frame" src="壞壞呦.jpg"></iframe>
+    </div>
+
+    <input type="radio" name="tabs" id="t1" checked>
+    <input type="radio" name="tabs" id="t2">
+    <input type="radio" name="tabs" id="t3">
+    <div class="tabs">
+        <label for="t1">全部顯示 (51)</label>
+        <label for="t2">已製作 (37)</label>
+        <label for="t3">製作中 (14)</label>
+    </div>
+
+    <div class="pnls">
+        <div class="pnl" id="p1">
+            <div class="box">
+                <div class="hd"><span>🌸 全部成員總名單（共 51 人）</span><span class="hint">點擊綠色名字可直接在上方預覽區切換圖片</span></div>
+                <div class="tags">
+                    <a class="ok" href="壞壞呦.jpg" target="viewer">🖼️ 壞壞呦</a>
+                    <a class="ok" href="薇糖.jpg" target="viewer">🖼️ 薇糖</a>
+                    <a class="ok" href="47.jpg" target="viewer">🖼️ 47</a>
+                    <a class="ok" href="空弦.jpg" target="viewer">🖼️ 空弦</a>
+                    <a class="ok" href="阿燁.jpg" target="viewer">🖼️ 阿燁</a>
+                    <a class="ok" href="一劍.jpg" target="viewer">🖼️ 一劍</a>
+                    <a class="ok" href="星星.jpg" target="viewer">🖼️ 星星</a>
+                    <a class="ok" href="布布.jpg" target="viewer">🖼️ 布布</a>
+                    <a class="ok" href="鯤鯤.jpg" target="viewer">🖼️ 鯤鯤</a>
+                    <a class="ok" href="花龍.jpg" target="viewer">🖼️ 花龍</a>
+                    <a class="ok" href="蕭蕭.jpg" target="viewer">🖼️ 蕭蕭</a>
+                    <span class="no">⏳ 牙牙</span>
+                    <a class="ok" href="小杯.jpg" target="viewer">🖼️ 小杯</a>
+                    <a class="ok" href="小雨.jpg" target="viewer">🖼️ 小雨</a>
+                    <span class="no">⏳ 47(騎士)</span>
+                    <a class="ok" href="雷雷.jpg" target="viewer">🖼️ 雷雷</a>
+                    <a class="ok" href="笙笙.jpg" target="viewer">🖼️ 笙笙</a>
+                    <span class="no">⏳ 咕咕</span>
+                    <a class="ok" href="毒乃.jpg" target="viewer">🖼️ 毒乃</a>
+                    <a class="ok" href="狼.jpg" target="viewer">🖼️ 狼</a>
+                    <a class="ok" href="EE.jpg" target="viewer">🖼️ EE</a>
+                    <a class="ok" href="夜夜.jpg" target="viewer">🖼️ 夜夜</a>
+                    <span class="no">⏳ 乖乖呦</span>
+                    <a class="ok" href="夜影.jpg" target="viewer">🖼️ 夜影</a>
+                    <span class="no">⏳ 閃閃</span>
+                    <span class="no">⏳ 鼠鼠</span>
+                    <a class="ok" href="貝貝.jpg" target="viewer">🖼️ 貝貝</a>
+                    <span class="no">⏳ Yang</span>
+                    <a class="ok" href="百變.jpg" target="viewer">🖼️ 百變</a>
+                    <span class="no">⏳ 露露</span>
+                    <a class="ok" href="金冬狗.jpg" target="viewer">🖼️ 金冬狗</a>
+                    <a class="ok" href="茶茶.jpg" target="viewer">🖼️ 茶茶</a>
+                    <span class="no">⏳ 夜悾</span>
+                    <a class="ok" href="貓龍.jpg" target="viewer">🖼️ 貓龍</a>
+                    <a class="ok" href="星隕.jpg" target="viewer">🖼️ 星隕</a>
+                    <span class="no">⏳ 回皿回</span>
+                    <span class="no">⏳ 恩p西</span>
+                    <span class="no">⏳ 牛肉包</span>
+                    <a class="ok" href="鴿子.jpg" target="viewer">🖼️ 鴿子</a>
+                    <a class="ok" href="哩麥悶.jpg" target="viewer">🖼️ 哩麥悶</a>
+                    <a class="ok" href="村村.jpg" target="viewer">🖼️ 村村</a>
+                    <a class="ok" href="霜霜.jpg" target="viewer">🖼️ 霜霜</a>
+                    <a class="ok" href="秋月.jpg" target="viewer">🖼️ 秋月</a>
+                    <a class="ok" href="兔兔呦.jpg" target="viewer">🖼️ 兔兔呦</a>
+                    <a class="ok" href="糖糖.jpg" target="viewer">🖼️ 糖糖</a>
+                    <a class="ok" href="鬼見愁.jpg" target="viewer">🖼️ 鬼見愁</a>
+                    <span class="no">⏳ 睡喵</span>
+                    <a class="ok" href="香香.jpg" target="viewer">🖼️ 香香</a>
+                    <span class="no">⏳ 茶茶(阿紫)</span>
+                    <a class="ok" href="烏拉.jpg" target="viewer">🖼️ 烏拉</a>
+                    <a class="ok" href="獅獅.jpg" target="viewer">🖼️ 獅獅</a>
+                </div>
+            </div>
+        </div>
+        <div class="pnl" id="p2">
+            <div class="box">
+                <div class="hd"><span>✅ 已製作完成名單（共 37 人）</span><span class="hint">點擊姓名可直接在上方預覽區切換圖片</span></div>
+                <div class="tags">
+                    <!-- 已製作成員標籤 (共37人)，完整程式碼可見系統回傳區塊 -->
+                    <a class="ok" href="壞壞呦.jpg" target="viewer">🖼️ 壞壞呦</a>
+                    <!-- ...其餘已製作成員... -->
+                </div>
+            </div>
+        </div>
+
+        <div class="pnl" id="p3">
+            <div class="box">
+                <div class="hd"><span>⏳ 圖片製作中名單（共 14 人）</span><span class="hint">尚未完成製作之成員</span></div>
+                <div class="tags">
+                    <!-- 製作中成員標籤 (共14人) -->
+                    <span class="no">⏳ 牙牙</span>
+                    <!-- ...其餘製作中成員... -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
