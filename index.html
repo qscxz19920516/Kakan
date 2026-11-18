@@ -24,8 +24,9 @@ header p{color:#8c7b7e;font-size:.9rem}
 
 .viewer-box{background:#fff;border-radius:16px;padding:15px;box-shadow:0 4px 15px rgba(212,140,149,.08);border:1px solid #f0e4e1;margin-bottom:20px;text-align:center}
 .viewer-title{font-size:.9rem;color:#8c7b7e;margin-bottom:10px;font-weight:700}
-.viewer-container{position:relative;width:100%;height:600px;max-height:75vh;border:2px dashed #e6d2cf;border-radius:12px;background:#faf4f2;overflow:hidden}
-.viewer-frame{width:100%;height:100%;border:none;background:transparent}
+.viewer-container{position:relative;width:100%;height:650px;max-height:78vh;border:2px dashed #e6d2cf;border-radius:12px;background:#faf4f2;display:flex;align-items:center;justify-content:center;padding:12px;overflow:hidden}
+.viewer-img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,.08)}
+
 
 input[type="radio"]{display:none}
 .tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
@@ -67,9 +68,9 @@ input[type="radio"]{display:none}
     </div>
 
     <div class="viewer-box">
-        <div class="viewer-title">🖼️ 角色圖片預覽區（點擊下方綠色成員名字即可在此直接切換顯示）</div>
+        <div class="viewer-title" id="viewerTitle">🖼️ 角色圖片預覽區（點擊下方綠色成員名字即可在此直接切換顯示）</div>
         <div class="viewer-container">
-            <iframe name="viewer" id="viewerFrame" class="viewer-frame"></iframe>
+            <img id="viewerImg" class="viewer-img" src="" alt="角色圖片預覽">
         </div>
     </div>
 
@@ -77,9 +78,9 @@ input[type="radio"]{display:none}
     <input type="radio" name="tabs" id="t2">
     <input type="radio" name="tabs" id="t3">
     <div class="tabs">
-        <label for="t1">全部顯示 (<span id="tab-t1-cnt">0</span>)</label>
-        <label for="t2">已製作 (<span id="tab-t2-cnt">0</span>)</label>
-        <label for="t3">製作中 (<span id="tab-t3-cnt">0</span>)</label>
+        <label for="t1" onclick="resetPreview()">全部顯示 (<span id="tab-t1-cnt">0</span>)</label>
+        <label for="t2" onclick="resetPreview()">已製作 (<span id="tab-t2-cnt">0</span>)</label>
+        <label for="t3" onclick="resetPreview()">製作中 (<span id="tab-t3-cnt">0</span>)</label>
     </div>
 
     <div class="pnls">
@@ -122,23 +123,32 @@ const allMembers = [
     "秋月", "兔兔呦", "糖糖", "鬼見愁", "睡喵", "香香", "茶茶(阿紫)", "烏拉", "獅獅"
 ];
 
+function showImg(name) {
+    document.getElementById('viewerTitle').innerText = '🖼️ 目前預覽：' + name + '（點擊下方綠色名字切換圖片）';
+    const img = document.getElementById('viewerImg');
+    // 自動嘗試最外層或「花間/」資料夾內的圖片
+    img.onerror = function() {
+        this.onerror = null;
+        this.src = '花間/' + name + '.jpg';
+    };
+    img.src = name + '.jpg';
+}
+
 function init() {
     let htmlAll = '';
     let htmlDone = '';
     let htmlPending = '';
     
     let doneCount = 0;
-    let firstImage = '';
+    let firstName = '';
 
     allMembers.forEach(name => {
         let isDone = doneMembers.includes(name);
-        // 直接使用原檔名（GitHub 支援中文檔名網址）
-        let fileName = name + '.jpg'; 
 
         if (isDone) {
             doneCount++;
-            if (!firstImage) firstImage = fileName;
-            let tag = `<a class="ok" href="${fileName}" target="viewer">🖼️ ${name}</a>`;
+            if (!firstName) firstName = name;
+            let tag = `<a class="ok" href="javascript:void(0)" onclick="showImg('${name}')">🖼️ ${name}</a>`;
             htmlAll += tag;
             htmlDone += tag;
         } else {
@@ -152,7 +162,6 @@ function init() {
     const pending = total - doneCount;
     const percent = Math.round((doneCount / total) * 100);
 
-    // 更新介面數據
     document.getElementById('total-count').innerText = total;
     document.getElementById('done-count').innerText = doneCount;
     document.getElementById('pending-count').innerText = pending;
@@ -167,12 +176,15 @@ function init() {
     document.getElementById('list-done').innerHTML = htmlDone;
     document.getElementById('list-pending').innerHTML = htmlPending;
 
-    if (firstImage) {
-        document.getElementById('viewerFrame').src = firstImage;
-    }
+    resetPreview();
+}
+
+function resetPreview() {
+    showImg('茶茶');
 }
 
 init();
 </script>
 </body>
 </html>
+
