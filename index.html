@@ -7,37 +7,45 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:"PingFang TC","Microsoft JhengHei",sans-serif}
 body{background:#fdf8f5;color:#4a3f41;line-height:1.6;padding-bottom:60px}
-header{background:linear-gradient(135deg,#f9ecea,#f3dce0);padding:30px 20px;text-align:center;border-bottom:1px solid #f0e4e1;margin-bottom:22px}
-header h1{font-size:2rem;color:#b56b74;letter-spacing:2px;margin-bottom:4px}
-header p{color:#8c7b7e;font-size:.95rem}
-.wrap{max-width:1100px;margin:0 auto;padding:0 20px}
-.stat{background:#fff;border-radius:16px;padding:18px 24px;box-shadow:0 4px 15px rgba(212,140,149,.08);margin-bottom:20px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:20px}
-.nums{display:flex;gap:25px}
+header{background:linear-gradient(135deg,#f9ecea,#f3dce0);padding:25px 20px;text-align:center;border-bottom:1px solid #f0e4e1;margin-bottom:20px}
+header h1{font-size:1.8rem;color:#b56b74;letter-spacing:2px;margin-bottom:4px}
+header p{color:#8c7b7e;font-size:.9rem}
+.wrap{max-width:1100px;margin:0 auto;padding:0 15px}
+
+.stat{background:#fff;border-radius:16px;padding:16px 20px;box-shadow:0 4px 15px rgba(212,140,149,.08);margin-bottom:20px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:15px}
+.nums{display:flex;gap:20px}
 .item{text-align:center}
-.val{font-size:1.4rem;font-weight:700;color:#b56b74}
-.lbl{font-size:.85rem;color:#8c7b7e}
-.prog{flex:1;min-width:240px}
-.ptxt{display:flex;justify-content:space-between;font-size:.9rem;margin-bottom:6px;font-weight:700}
-.bar{height:12px;background:#f0e4e1;border-radius:10px;overflow:hidden}
-.fill{height:100%;width:73%;background:linear-gradient(90deg,#d48c95,#b56b74);border-radius:10px}
-/* 自動縮放圖片預覽區 */
-.viewer-box{background:#fff;border-radius:16px;padding:20px;box-shadow:0 4px 15px rgba(212,140,149,.08);border:1px solid #f0e4e1;margin-bottom:22px;text-align:center}
-.viewer-title{font-size:1.05rem;color:#b56b74;margin-bottom:12px;font-weight:700}
-.img-stage{width:100%;min-height:300px;max-height:75vh;background:#faf4f2;border:2px dashed #e6d2cf;border-radius:12px;padding:12px;display:flex;align-items:center;justify-content:center}
-.img-stage img{max-width:100%;max-height:70vh;width:auto;height:auto;object-fit:contain;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,.08)}
+.val{font-size:1.3rem;font-weight:700;color:#b56b74}
+.lbl{font-size:.8rem;color:#8c7b7e}
+.prog{flex:1;min-width:220px}
+.ptxt{display:flex;justify-content:space-between;font-size:.85rem;margin-bottom:6px;font-weight:700}
+.bar{height:10px;background:#f0e4e1;border-radius:10px;overflow:hidden}
+.fill{height:100%;background:linear-gradient(90deg,#d48c95,#b56b74);border-radius:10px;transition:width .5s ease}
+
+.viewer-box{background:#fff;border-radius:16px;padding:15px;box-shadow:0 4px 15px rgba(212,140,149,.08);border:1px solid #f0e4e1;margin-bottom:20px;text-align:center}
+.viewer-title{font-size:.9rem;color:#8c7b7e;margin-bottom:10px;font-weight:700}
+.viewer-container{position:relative;width:100%;height:600px;max-height:75vh;border:2px dashed #e6d2cf;border-radius:12px;background:#faf4f2;overflow:hidden}
+.viewer-frame{width:100%;height:100%;border:none;background:transparent}
+
 input[type="radio"]{display:none}
-.tabs{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
-.tabs label{padding:8px 20px;border:1px solid #d48c95;color:#b56b74;border-radius:20px;cursor:pointer;font-size:.95rem;font-weight:700;transition:.2s}
+.tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.tabs label{padding:8px 16px;border:1px solid #d48c95;color:#b56b74;border-radius:20px;cursor:pointer;font-size:.9rem;font-weight:700;transition:.2s}
 #t1:checked~.tabs label[for="t1"],#t2:checked~.tabs label[for="t2"],#t3:checked~.tabs label[for="t3"]{background:#d48c95;color:#fff}
 .pnl{display:none}
 #t1:checked~.pnls #p1,#t2:checked~.pnls #p2,#t3:checked~.pnls #p3{display:block}
-.box{background:#fff;border-radius:16px;padding:24px;box-shadow:0 4px 15px rgba(212,140,149,.08);border:1px solid #f0e4e1}
-.hd{font-size:1.1rem;font-weight:700;color:#b56b74;margin-bottom:16px;padding-bottom:10px;border-bottom:1px dashed #f0e4e1;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
-.hint{font-size:.85rem;color:#8c7b7e;font-weight:400}
-.tags{display:flex;flex-wrap:wrap;gap:10px}
-.ok{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;background:#e6f4ea;color:#1e8e3e;text-decoration:none;border-radius:20px;font-weight:700;font-size:.95rem;border:1px solid #cce8d4;transition:.2s;cursor:pointer}
-.ok:hover{background:#1e8e3e;color:#fff;transform:translateY(-2px)}
-.no{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;background:#fef7e0;color:#b06000;border-radius:20px;font-weight:700;font-size:.95rem;border:1px solid #f7e4b2}
+.box{background:#fff;border-radius:16px;padding:20px;box-shadow:0 4px 15px rgba(212,140,149,.08);border:1px solid #f0e4e1}
+.hd{font-size:1rem;font-weight:700;color:#b56b74;margin-bottom:14px;padding-bottom:8px;border-bottom:1px dashed #f0e4e1;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px}
+.hint{font-size:.8rem;color:#8c7b7e;font-weight:400}
+.tags{display:flex;flex-wrap:wrap;gap:8px}
+.ok{display:inline-flex;align-items:center;gap:4px;padding:6px 12px;background:#e6f4ea;color:#1e8e3e;text-decoration:none;border-radius:20px;font-weight:700;font-size:.9rem;border:1px solid #cce8d4;transition:.2s}
+.ok:hover,.ok:focus{background:#1e8e3e;color:#fff;transform:translateY(-2px)}
+.no{display:inline-flex;align-items:center;gap:4px;padding:6px 12px;background:#fef7e0;color:#b06000;border-radius:20px;font-weight:700;font-size:.9rem;border:1px solid #f7e4b2}
+
+@media(max-width: 600px) {
+    header h1{font-size:1.5rem}
+    .viewer-container{height:400px}
+    .tabs label{flex:1;text-align:center;padding:8px 10px;font-size:.85rem}
+}
 </style>
 </head>
 <body>
@@ -48,20 +56,20 @@ input[type="radio"]{display:none}
 <div class="wrap">
     <div class="stat">
         <div class="nums">
-            <div class="item"><div class="val">51</div><div class="lbl">總人數</div></div>
-            <div class="item"><div class="val" style="color:#1e8e3e">37</div><div class="lbl">已製作</div></div>
-            <div class="item"><div class="val" style="color:#b06000">14</div><div class="lbl">製作中</div></div>
+            <div class="item"><div class="val" id="total-count">0</div><div class="lbl">總人數</div></div>
+            <div class="item"><div class="val" id="done-count" style="color:#1e8e3e">0</div><div class="lbl">已製作</div></div>
+            <div class="item"><div class="val" id="pending-count" style="color:#b06000">0</div><div class="lbl">製作中</div></div>
         </div>
         <div class="prog">
-            <div class="ptxt"><span>整體製作進度</span><span>73%</span></div>
-            <div class="bar"><div class="fill"></div></div>
+            <div class="ptxt"><span>整體製作進度</span><span id="prog-text">0%</span></div>
+            <div class="bar"><div class="fill" id="prog-bar" style="width: 0%;"></div></div>
         </div>
     </div>
 
     <div class="viewer-box">
-        <div class="viewer-title" id="vTitle">🖼️ 目前預覽：壞壞呦（點擊下方綠色名字切換圖片）</div>
-        <div class="img-stage">
-            <img id="vImg" src="https://github.io" alt="角色預覽">
+        <div class="viewer-title">🖼️ 角色圖片預覽區（點擊下方綠色成員名字即可在此直接切換顯示）</div>
+        <div class="viewer-container">
+            <iframe name="viewer" id="viewerFrame" class="viewer-frame"></iframe>
         </div>
     </div>
 
@@ -69,143 +77,102 @@ input[type="radio"]{display:none}
     <input type="radio" name="tabs" id="t2">
     <input type="radio" name="tabs" id="t3">
     <div class="tabs">
-        <label for="t1">全部顯示 (51)</label>
-        <label for="t2">已製作 (37)</label>
-        <label for="t3">製作中 (14)</label>
+        <label for="t1">全部顯示 (<span id="tab-t1-cnt">0</span>)</label>
+        <label for="t2">已製作 (<span id="tab-t2-cnt">0</span>)</label>
+        <label for="t3">製作中 (<span id="tab-t3-cnt">0</span>)</label>
     </div>
 
     <div class="pnls">
         <div class="pnl" id="p1">
             <div class="box">
-                <div class="hd"><span>🌸 全部成員總名單（共 51 人）</span><span class="hint">點擊綠色名字可直接在上方預覽區縮放顯示</span></div>
-                <div class="tags">
-                    <button class="ok" onclick="showImg('壞壞呦')">🖼️ 壞壞呦</button>
-                    <button class="ok" onclick="showImg('薇糖')">🖼️ 薇糖</button>
-                    <button class="ok" onclick="showImg('47')">🖼️ 47</button>
-                    <button class="ok" onclick="showImg('空弦')">🖼️ 空弦</button>
-                    <button class="ok" onclick="showImg('阿燁')">🖼️ 阿燁</button>
-                    <button class="ok" onclick="showImg('一劍')">🖼️ 一劍</button>
-                    <button class="ok" onclick="showImg('星星')">🖼️ 星星</button>
-                    <button class="ok" onclick="showImg('布布')">🖼️ 布布</button>
-                    <button class="ok" onclick="showImg('鯤鯤')">🖼️ 鯤鯤</button>
-                    <button class="ok" onclick="showImg('花龍')">🖼️ 花龍</button>
-                    <button class="ok" onclick="showImg('蕭蕭')">🖼️ 蕭蕭</button>
-                    <span class="no">⏳ 牙牙</span>
-                    <button class="ok" onclick="showImg('小杯')">🖼️ 小杯</button>
-                    <button class="ok" onclick="showImg('小雨')">🖼️ 小雨</button>
-                    <span class="no">⏳ 47(騎士)</span>
-                    <button class="ok" onclick="showImg('雷雷')">🖼️ 雷雷</button>
-                    <button class="ok" onclick="showImg('笙笙')">🖼️ 笙笙</button>
-                    <span class="no">⏳ 咕咕</span>
-                    <button class="ok" onclick="showImg('毒乃')">🖼️ 毒乃</button>
-                    <button class="ok" onclick="showImg('狼')">🖼️ 狼</button>
-                    <button class="ok" onclick="showImg('EE')">🖼️ EE</button>
-                    <button class="ok" onclick="showImg('夜夜')">🖼️ 夜夜</button>
-                    <span class="no">⏳ 乖乖呦</span>
-                    <button class="ok" onclick="showImg('夜影')">🖼️ 夜影</button>
-                    <span class="no">⏳ 閃閃</span>
-                    <span class="no">⏳ 鼠鼠</span>
-                    <button class="ok" onclick="showImg('貝貝')">🖼️ 貝貝</button>
-                    <span class="no">⏳ Yang</span>
-                    <button class="ok" onclick="showImg('百變')">🖼️ 百變</button>
-                    <span class="no">⏳ 露露</span>
-                    <button class="ok" onclick="showImg('金冬狗')">🖼️ 金冬狗</button>
-                    <button class="ok" onclick="showImg('茶茶')">🖼️ 茶茶</button>
-                    <span class="no">⏳ 夜悾</span>
-                    <button class="ok" onclick="showImg('貓龍')">🖼️ 貓龍</button>
-                    <button class="ok" onclick="showImg('星隕')">🖼️ 星隕</button>
-                    <span class="no">⏳ 回皿回</span>
-                    <span class="no">⏳ 恩p西</span>
-                    <span class="no">⏳ 牛肉包</span>
-                    <button class="ok" onclick="showImg('鴿子')">🖼️ 鴿子</button>
-                    <button class="ok" onclick="showImg('哩麥悶')">🖼️ 哩麥悶</button>
-                    <button class="ok" onclick="showImg('村村')">🖼️ 村村</button>
-                    <button class="ok" onclick="showImg('霜霜')">🖼️ 霜霜</button>
-                    <button class="ok" onclick="showImg('秋月')">🖼️ 秋月</button>
-                    <button class="ok" onclick="showImg('兔兔呦')">🖼️ 兔兔呦</button>
-                    <button class="ok" onclick="showImg('糖糖')">🖼️ 糖糖</button>
-                    <button class="ok" onclick="showImg('鬼見愁')">🖼️ 鬼見愁</button>
-                    <span class="no">⏳ 睡喵</span>
-                    <button class="ok" onclick="showImg('香香')">🖼️ 香香</button>
-                    <span class="no">⏳ 茶茶(阿紫)</span>
-                    <button class="ok" onclick="showImg('烏拉')">🖼️ 烏拉</button>
-                    <button class="ok" onclick="showImg('獅獅')">🖼️ 獅獅</button>
-                </div>
+                <div class="hd"><span>🌸 全部成員總名單</span><span class="hint">點擊綠色名字可直接在上方預覽切換圖片</span></div>
+                <div class="tags" id="list-all"></div>
             </div>
         </div>
         <div class="pnl" id="p2">
             <div class="box">
-                <div class="hd"><span>✅ 已製作完成名單（共 37 人）</span><span class="hint">點擊姓名可直接在上方預覽區縮放顯示</span></div>
-                <div class="tags">
-                    <button class="ok" onclick="showImg('壞壞呦')">🖼️ 壞壞呦</button>
-                    <button class="ok" onclick="showImg('薇糖')">🖼️ 薇糖</button>
-                    <button class="ok" onclick="showImg('47')">🖼️ 47</button>
-                    <button class="ok" onclick="showImg('空弦')">🖼️ 空弦</button>
-                    <button class="ok" onclick="showImg('阿燁')">🖼️ 阿燁</button>
-                    <button class="ok" onclick="showImg('一劍')">🖼️ 一劍</button>
-                    <button class="ok" onclick="showImg('星星')">🖼️ 星星</button>
-                    <button class="ok" onclick="showImg('布布')">🖼️ 布布</button>
-                    <button class="ok" onclick="showImg('鯤鯤')">🖼️ 鯤鯤</button>
-                    <button class="ok" onclick="showImg('花龍')">🖼️ 花龍</button>
-                    <button class="ok" onclick="showImg('蕭蕭')">🖼️ 蕭蕭</button>
-                    <button class="ok" onclick="showImg('小杯')">🖼️ 小杯</button>
-                    <button class="ok" onclick="showImg('小雨')">🖼️ 小雨</button>
-                    <button class="ok" onclick="showImg('雷雷')">🖼️ 雷雷</button>
-                    <button class="ok" onclick="showImg('笙笙')">🖼️ 笙笙</button>
-                    <button class="ok" onclick="showImg('毒乃')">🖼️ 毒乃</button>
-                    <button class="ok" onclick="showImg('狼')">🖼️ 狼</button>
-                    <button class="ok" onclick="showImg('EE')">🖼️ EE</button>
-                    <button class="ok" onclick="showImg('夜夜')">🖼️ 夜夜</button>
-                    <button class="ok" onclick="showImg('夜影')">🖼️ 夜影</button>
-                    <button class="ok" onclick="showImg('貝貝')">🖼️ 貝貝</button>
-                    <button class="ok" onclick="showImg('百變')">🖼️ 百變</button>
-                    <button class="ok" onclick="showImg('金冬狗')">🖼️ 金冬狗</button>
-                    <button class="ok" onclick="showImg('茶茶')">🖼️ 茶茶</button>
-                    <button class="ok" onclick="showImg('貓龍')">🖼️ 貓龍</button>
-                    <button class="ok" onclick="showImg('星隕')">🖼️ 星隕</button>
-                    <button class="ok" onclick="showImg('鴿子')">🖼️ 鴿子</button>
-                    <button class="ok" onclick="showImg('哩麥悶')">🖼️ 哩麥悶</button>
-                    <button class="ok" onclick="showImg('村村')">🖼️ 村村</button>
-                    <button class="ok" onclick="showImg('霜霜')">🖼️ 霜霜</button>
-                    <button class="ok" onclick="showImg('秋月')">🖼️ 秋月</button>
-                    <button class="ok" onclick="showImg('兔兔呦')">🖼️ 兔兔呦</button>
-                    <button class="ok" onclick="showImg('糖糖')">🖼️ 糖糖</button>
-                    <button class="ok" onclick="showImg('鬼見愁')">🖼️ 鬼見愁</button>
-                    <button class="ok" onclick="showImg('香香')">🖼️ 香香</button>
-                    <button class="ok" onclick="showImg('烏拉')">🖼️ 烏拉</button>
-                    <button class="ok" onclick="showImg('獅獅')">🖼️ 獅獅</button>
-                </div>
+                <div class="hd"><span>✅ 已製作完成名單</span><span class="hint">點擊姓名可直接在上方預覽切換圖片</span></div>
+                <div class="tags" id="list-done"></div>
             </div>
         </div>
-
         <div class="pnl" id="p3">
             <div class="box">
-                <div class="hd"><span>⏳ 圖片製作中名單（共 14 人）</span><span class="hint">尚未完成製作之成員</span></div>
-                <div class="tags">
-                    <span class="no">⏳ 牙牙</span>
-                    <span class="no">⏳ 47(騎士)</span>
-                    <span class="no">⏳ 咕咕</span>
-                    <span class="no">⏳ 乖乖呦</span>
-                    <span class="no">⏳ 閃閃</span>
-                    <span class="no">⏳ 鼠鼠</span>
-                    <span class="no">⏳ Yang</span>
-                    <span class="no">⏳ 露露</span>
-                    <span class="no">⏳ 夜悾</span>
-                    <span class="no">⏳ 回皿回</span>
-                    <span class="no">⏳ 恩p西</span>
-                    <span class="no">⏳ 牛肉包</span>
-                    <span class="no">⏳ 睡喵</span>
-                    <span class="no">⏳ 茶茶(阿紫)</span>
-                </div>
+                <div class="hd"><span>⏳ 圖片製作中名單</span><span class="hint">尚未完成製作之成員</span></div>
+                <div class="tags" id="list-pending"></div>
             </div>
         </div>
     </div>
 </div>
+
 <script>
-function showImg(name) {
-    document.getElementById('vTitle').textContent = '🖼️ 目前預覽：' + name + '（點擊下方綠色名字切換圖片）';
-    document.getElementById('vImg').src = 'https://github.io' + name + '.jpg';
+// 在這裡設定「已經製作完成」的成員名單（只要把檔名有上傳到 GitHub 的寫進這裡即可！）
+const doneMembers = [
+    "壞壞呦", "薇糖", "47", "空弦", "阿燁", "一劍", "星星", "布布", "鯤鯤", "花龍", "蕭蕭", 
+    "小杯", "小雨", "雷雷", "笙笙", "毒乃", "狼", "EE", "夜夜", "夜影", "貝貝", "百變", 
+    "金冬狗", "茶茶", "貓龍", "星隕", "鴿子", "哩麥悶", "村村", "霜霜", "秋月", "兔兔呦", 
+    "糖糖", "鬼見愁", "香香", "烏拉", "獅獅"
+];
+
+// 全部 51 人的總名單
+const allMembers = [
+    "壞壞呦", "薇糖", "47", "空弦", "阿燁", "一劍", "星星", "布布", "鯤鯤", "花龍", "蕭蕭", 
+    "牙牙", "小杯", "小雨", "47(騎士)", "雷雷", "笙笙", "咕咕", "毒乃", "狼", "EE", "夜夜", 
+    "乖乖呦", "夜影", "閃閃", "鼠鼠", "貝貝", "Yang", "百變", "露露", "金冬狗", "茶茶", 
+    "夜悾", "貓龍", "星隕", "回皿回", "恩p西", "牛肉包", "鴿子", "哩麥悶", "村村", "霜霜", 
+    "秋月", "兔兔呦", "糖糖", "鬼見愁", "睡喵", "香香", "茶茶(阿紫)", "烏拉", "獅獅"
+];
+
+function init() {
+    let htmlAll = '';
+    let htmlDone = '';
+    let htmlPending = '';
+    
+    let doneCount = 0;
+    let firstImage = '';
+
+    allMembers.forEach(name => {
+        let isDone = doneMembers.includes(name);
+        // 直接使用原檔名（GitHub 支援中文檔名網址）
+        let fileName = name + '.jpg'; 
+
+        if (isDone) {
+            doneCount++;
+            if (!firstImage) firstImage = fileName;
+            let tag = `<a class="ok" href="${fileName}" target="viewer">🖼️ ${name}</a>`;
+            htmlAll += tag;
+            htmlDone += tag;
+        } else {
+            let tag = `<span class="no">⏳ ${name}</span>`;
+            htmlAll += tag;
+            htmlPending += tag;
+        }
+    });
+
+    const total = allMembers.length;
+    const pending = total - doneCount;
+    const percent = Math.round((doneCount / total) * 100);
+
+    // 更新介面數據
+    document.getElementById('total-count').innerText = total;
+    document.getElementById('done-count').innerText = doneCount;
+    document.getElementById('pending-count').innerText = pending;
+    document.getElementById('prog-text').innerText = percent + '%';
+    document.getElementById('prog-bar').style.width = percent + '%';
+
+    document.getElementById('tab-t1-cnt').innerText = total;
+    document.getElementById('tab-t2-cnt').innerText = doneCount;
+    document.getElementById('tab-t3-cnt').innerText = pending;
+
+    document.getElementById('list-all').innerHTML = htmlAll;
+    document.getElementById('list-done').innerHTML = htmlDone;
+    document.getElementById('list-pending').innerHTML = htmlPending;
+
+    if (firstImage) {
+        document.getElementById('viewerFrame').src = firstImage;
+    }
 }
+
+init();
 </script>
 </body>
 </html>
