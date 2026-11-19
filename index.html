@@ -1,3 +1,8 @@
+
+
+
+「HTML」圖示
+index-v11
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -10,7 +15,6 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:"PingFang TC","Microsoft JhengHei","Rounded Mplus 1c",sans-serif}
 body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);color:#5a4649;line-height:1.6;min-height:100vh;overflow-x:hidden;position:relative}
-.bg-watermark{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:url('index背景.jpg?v=20261119');background-size:cover;background-position:center;background-repeat:no-repeat;opacity:.18}
 .fx-bg{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
 .petal{position:absolute;top:-30px;background:linear-gradient(135deg,#ffe4ea 0%,#ffb3c6 50%,#ff8fa3 100%);border-radius:18px 0 18px 0;box-shadow:0 2px 6px rgba(255,158,181,.3);opacity:.85;animation:fall ease-in-out infinite}
 .bubble{position:absolute;bottom:-60px;border-radius:50%;background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.95),rgba(135,206,250,.32));border:1.5px solid rgba(173,216,230,.65);box-shadow:0 2px 8px rgba(135,206,250,.2);animation:rise ease-in-out infinite}
@@ -67,7 +71,7 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 </style>
 <script>
 // ★ 每次修改網頁只要把這裡的版本號改掉，所有手機用戶開啟都會自動強制重新載入最新畫面
-const SITE_VERSION = "20261119_v1";
+const SITE_VERSION = "20261119_v2";
 (function(){
     const url = new URL(window.location.href);
     if (url.searchParams.get("v") !== SITE_VERSION) {
@@ -78,7 +82,6 @@ const SITE_VERSION = "20261119_v1";
 </script>
 </head>
 <body>
-<div class="bg-watermark"></div>
 <div class="fx-bg" id="fxBg"></div>
 
 <div class="topbar">
@@ -94,15 +97,15 @@ const SITE_VERSION = "20261119_v1";
         <button class="close-btn" onclick="toggleMenu()">✕</button>
     </div>
     <ul class="drawer-list">
-        <li><a href="index.html?v=20261119_v1" class="current"><span>🏠 首頁</span><span class="arrow">&gt;</span></a></li>
-        <li><a href="card.html?v=20261119_v1"><span>🎴 小卡圖鑑</span><span class="arrow">&gt;</span></a></li>
+        <li><a href="index.html?v=20261119_v2" class="current"><span>🏠 首頁</span><span class="arrow">&gt;</span></a></li>
+        <li><a href="card.html?v=20261119_v2"><span>🎴 小卡圖鑑</span><span class="arrow">&gt;</span></a></li>
         <li>
             <div class="sub-toggle" onclick="toggleSubMenu()"><span>🎁 驚喜盲盒</span><span class="arrow" id="subArrow">&gt;</span></div>
             <ul class="submenu" id="subMenu">
-                <li><a href="box.html?job=花間 × 袋裝零食&v=20261119_v1"><span>花間 × 袋裝零食</span><span class="arrow">&gt;</span></a></li>
-                <li><a href="box.html?job=花間 × 飲品&v=20261119_v1"><span>花間 × 飲品盒</span><span class="arrow">&gt;</span></a></li>
-                <li><a href="box.html?job=花間 × 童話反派&v=20261119_v1"><span>花間 × 童話反派</span><span class="arrow">&gt;</span></a></li>
-                <li><a href="box.html?job=花間 × 多巴胺女團&v=20261119_v1"><span>花間 × 多巴胺女團</span><span class="arrow">&gt;</span></a></li>
+                <li><a href="box.html?job=花間 × 袋裝零食&v=20261119_v2"><span>花間 × 袋裝零食</span><span class="arrow">&gt;</span></a></li>
+                <li><a href="box.html?job=花間 × 飲品&v=20261119_v2"><span>花間 × 飲品盒</span><span class="arrow">&gt;</span></a></li>
+                <li><a href="box.html?job=花間 × 童話反派&v=20261119_v2"><span>花間 × 童話反派</span><span class="arrow">&gt;</span></a></li>
+                <li><a href="box.html?job=花間 × 多巴胺女團&v=20261119_v2"><span>花間 × 多巴胺女團</span><span class="arrow">&gt;</span></a></li>
             </ul>
         </li>
     </ul>
@@ -113,12 +116,12 @@ const SITE_VERSION = "20261119_v1";
         <h1>✨ 歡迎來到花間小憩 ✨</h1>
         <p>點擊左上角選單或下方卡片，探索成員專屬小卡與驚喜盲盒！</p>
         <div class="cards">
-            <a href="card.html?v=20261119_v1" class="portal">
+            <a href="card.html?v=20261119_v2" class="portal">
                 <span class="portal-icon">🎴</span>
                 <div class="portal-title">成員小卡圖鑑</div>
                 <div class="portal-desc">查看全體 56 位成員專屬小卡與四大職業進度</div>
             </a>
-            <a href="box.html?v=20261119_v1" class="portal">
+            <a href="box.html?v=20261119_v2" class="portal">
                 <span class="portal-icon">🎁</span>
                 <div class="portal-title">驚喜盲盒區</div>
                 <div class="portal-desc">花間小憩專屬盲盒活動專區</div>
@@ -130,7 +133,7 @@ const SITE_VERSION = "20261119_v1";
     <div class="story-card">
         <div class="story-hd">🌸 關於 KaKan・名字背後的故事 🌸</div>
         <div class="story-img-wrap">
-            <img class="story-img" src="index背景.jpg?v=20261119" alt="KaKan 名字背後的意義" onclick="openZoom()" onerror="this.onerror=null;this.src='花間/index背景.jpg?v=20261119'">
+            <img class="story-img" src="index背景.jpg?v=20261119_v2" alt="KaKan 名字背後的意義" onclick="openZoom()" onerror="this.onerror=null;this.src='花間/index背景.jpg?v=20261119_v2'">
         </div>
         <div class="story-hint">🔍 點擊圖片可全螢幕放大閱讀文字細節</div>
     </div>
@@ -139,7 +142,7 @@ const SITE_VERSION = "20261119_v1";
 <div class="zoom-modal" id="zoomModal" onclick="if(event.target===this) closeZoom()">
     <div class="zoom-card">
         <button class="close-btn" onclick="closeZoom()" style="position:absolute;top:-14px;right:-14px;box-shadow:0 3px 10px rgba(0,0,0,.2)">✕</button>
-        <img src="index背景.jpg?v=20261119" alt="KaKan 名字背後的意義" onerror="this.onerror=null;this.src='花間/index背景.jpg?v=20261119'">
+        <img src="index背景.jpg?v=20261119_v2" alt="KaKan 名字背後的意義" onerror="this.onerror=null;this.src='花間/index背景.jpg?v=20261119_v2'">
     </div>
 </div>
 
@@ -177,3 +180,4 @@ function closeZoom(){
 </script>
 </body>
 </html>
+已透過程式碼處理及分析
