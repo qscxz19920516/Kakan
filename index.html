@@ -7,6 +7,7 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:"PingFang TC","Microsoft JhengHei","Rounded Mplus 1c",sans-serif}
 body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);color:#5a4649;line-height:1.6;min-height:100vh;overflow-x:hidden;position:relative}
+.bg-watermark{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:url('小卡預設卡.jpg'),url('小卡預設卡.JPG'),url('花間/小卡預設卡.jpg'),url('花間/小卡預設卡.JPG');background-size:cover;background-position:center;background-repeat:no-repeat;opacity:.3}
 .fx-bg{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
 .petal{position:absolute;top:-30px;background:linear-gradient(135deg,#ffe4ea 0%,#ffb3c6 50%,#ff8fa3 100%);border-radius:18px 0 18px 0;box-shadow:0 2px 6px rgba(255,158,181,.3);opacity:.85;animation:fall ease-in-out infinite}
 .bubble{position:absolute;bottom:-60px;border-radius:50%;background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.95),rgba(135,206,250,.32));border:1.5px solid rgba(173,216,230,.65);box-shadow:0 2px 8px rgba(135,206,250,.2);animation:rise ease-in-out infinite}
@@ -37,13 +38,12 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 .submenu.open{display:block}
 .submenu li a{padding:14px 24px 14px 42px;font-size:.96rem;border-bottom:1px dashed #f7e8ea;color:#7a5c61}
 
-
 .wrap{position:relative;z-index:1;max-width:960px;margin:30px auto;padding:0 16px}
-.hero{background:rgba(255,255,255,.94);backdrop-filter:blur(6px);border-radius:28px;padding:42px 24px;text-align:center;box-shadow:0 8px 25px rgba(226,158,168,.15);border:2px solid #f9dfe3}
+.hero{background:rgba(255,255,255,.86);backdrop-filter:blur(6px);border-radius:28px;padding:42px 24px;text-align:center;box-shadow:0 8px 25px rgba(226,158,168,.15);border:2px solid #f9dfe3}
 .hero h1{font-size:2rem;color:#c76272;margin-bottom:10px;text-shadow:1px 1px 0 #fff}
 .hero p{color:#8c7075;font-size:1rem;margin-bottom:30px}
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;max-width:680px;margin:0 auto}
-.portal{display:block;text-decoration:none;background:#fff8f9;border:2px dashed #f2bec7;border-radius:24px;padding:30px 20px;transition:.25s}
+.portal{display:block;text-decoration:none;background:rgba(255,248,249,.92);border:2px dashed #f2bec7;border-radius:24px;padding:30px 20px;transition:.25s}
 .portal:hover{transform:translateY(-4px);background:#fff;border-style:solid;box-shadow:0 8px 20px rgba(235,168,178,.22)}
 .portal-icon{font-size:3rem;display:block;margin-bottom:10px}
 .portal-title{font-size:1.25rem;font-weight:800;color:#c76272;margin-bottom:6px}
@@ -51,6 +51,7 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 </style>
 </head>
 <body>
+<div class="bg-watermark"></div>
 <div class="fx-bg" id="fxBg"></div>
 
 <div class="topbar">
@@ -75,6 +76,8 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
                 <li><a href="box.html?job=花間 × 飲品" onclick="goBox(event, '花間 × 飲品盒')"><span>花間 × 飲品盒</span><span class="arrow">&gt;</span></a></li>
                 <li><a href="box.html?job=花間 × 童話反派" onclick="goBox(event, '花間 × 童話反派')"><span>花間 × 童話反派</span><span class="arrow">&gt;</span></a></li>
                 <li><a href="box.html?job=花間 × 多巴胺女團" onclick="goBox(event, '花間 × 多巴胺女團')"><span>花間 × 多巴胺女團</span><span class="arrow">&gt;</span></a></li>
+            </ul>
+        </li>
     </ul>
 </nav>
 
@@ -109,7 +112,6 @@ function toggleSubMenu(){
 function goBox(e, job){
     // 點擊後會直接透過網址跳轉至 box.html 對應職業
 }
-
 
 (function(){
     const bg=document.getElementById('fxBg');
