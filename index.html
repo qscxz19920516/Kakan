@@ -5,101 +5,129 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>花間小憩 - 角色圖鑑與製作進度</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:"PingFang TC","Microsoft JhengHei",sans-serif}
-body{background:#fdf8f5;color:#4a3f41;line-height:1.6;padding-bottom:60px}
-header{background:linear-gradient(135deg,#f9ecea,#f3dce0);padding:25px 20px;text-align:center;border-bottom:1px solid #f0e4e1;margin-bottom:20px}
-header h1{font-size:1.8rem;color:#b56b74;letter-spacing:2px;margin-bottom:4px}
-header p{color:#8c7b7e;font-size:.9rem}
-.wrap{max-width:1100px;margin:0 auto;padding:0 15px}
+*{box-sizing:border-box;margin:0;padding:0;font-family:"PingFang TC","Microsoft JhengHei","Rounded Mplus 1c",sans-serif}
+body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);color:#5a4649;line-height:1.6;padding-bottom:60px;overflow-x:hidden;position:relative}
 
-.stat{background:#fff;border-radius:16px;padding:16px 20px;box-shadow:0 4px 15px rgba(212,140,149,.08);margin-bottom:20px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:15px}
-.nums{display:flex;gap:20px}
-.item{text-align:center}
-.val{font-size:1.3rem;font-weight:700;color:#b56b74}
-.lbl{font-size:.8rem;color:#8c7b7e}
+/* 背景櫻花與泡泡飄動動畫區 */
+.fx-bg{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.petal{position:absolute;top:-30px;background:linear-gradient(135deg,#ffe4ea 0%,#ffb3c6 50%,#ff8fa3 100%);border-radius:18px 0 18px 0;box-shadow:0 2px 6px rgba(255,158,181,.3);opacity:.85;animation:fall ease-in-out infinite}
+.bubble{position:absolute;bottom:-60px;border-radius:50%;background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.95),rgba(135,206,250,.32));border:1.5px solid rgba(173,216,230,.65);box-shadow:0 2px 8px rgba(135,206,250,.2);animation:rise ease-in-out infinite}
+@keyframes fall{
+    0%{transform:translateY(-30px) rotate(0deg) translateX(0);opacity:0}
+    10%{opacity:.9}
+    35%{transform:translateY(35vh) rotate(120deg) translateX(35px)}
+    65%{transform:translateY(70vh) rotate(240deg) translateX(-25px)}
+    90%{opacity:.85}
+    100%{transform:translateY(108vh) rotate(380deg) translateX(30px);opacity:0}
+}
+@keyframes rise{
+    0%{transform:translateY(0) scale(.8);opacity:0}
+    20%{opacity:.6}
+    80%{opacity:.5}
+    100%{transform:translateY(-110vh) scale(1.15);opacity:0}
+}
+
+header{position:relative;z-index:1;background:linear-gradient(135deg,#ffe5e2 0%,#fbdce6 100%);padding:34px 20px;text-align:center;border-bottom:3px dashed #f2bec7;margin-bottom:24px;border-radius:0 0 32px 32px;box-shadow:0 6px 20px rgba(235,168,178,.18)}
+header h1{font-size:2rem;color:#c76272;letter-spacing:2px;margin-bottom:6px;text-shadow:2px 2px 0 #fff}
+header p{color:#947479;font-size:.95rem;font-weight:600}
+.wrap{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:0 16px}
+
+.stat{background:rgba(255,255,255,.92);backdrop-filter:blur(6px);border-radius:26px;padding:18px 24px;box-shadow:0 6px 20px rgba(226,158,168,.12);border:2px solid #f9dfe3;margin-bottom:22px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:18px}
+.nums{display:flex;gap:16px}
+.item{text-align:center;background:#fff7f8;padding:8px 18px;border-radius:20px;border:1.5px solid #f7d7dc}
+.val{font-size:1.45rem;font-weight:800;color:#c76272}
+.lbl{font-size:.82rem;color:#947479;font-weight:700}
 .prog{flex:1;min-width:220px}
-.ptxt{display:flex;justify-content:space-between;font-size:.85rem;margin-bottom:6px;font-weight:700}
-.bar{height:10px;background:#f0e4e1;border-radius:10px;overflow:hidden}
-.fill{height:100%;background:linear-gradient(90deg,#d48c95,#b56b74);border-radius:10px;transition:width .5s ease}
+.ptxt{display:flex;justify-content:space-between;font-size:.9rem;margin-bottom:8px;font-weight:800;color:#7a5c61}
+.bar{height:15px;background:#f7e6e9;border-radius:20px;overflow:hidden;padding:2px}
+.fill{height:100%;background:linear-gradient(90deg,#f8a5b3,#e27384);border-radius:20px;transition:width .5s ease}
 
-.viewer-box{background:#fff;border-radius:16px;padding:15px;box-shadow:0 4px 15px rgba(212,140,149,.08);border:1px solid #f0e4e1;margin-bottom:20px;text-align:center}
-.viewer-title{font-size:.95rem;color:#b56b74;margin-bottom:10px;font-weight:700}
-.viewer-container{position:relative;width:100%;height:650px;max-height:78vh;border:2px dashed #e6d2cf;border-radius:12px;background:#faf4f2;display:flex;align-items:center;justify-content:center;padding:12px;overflow:hidden}
-.viewer-img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,.08)}
+.viewer-box{background:rgba(255,255,255,.94);backdrop-filter:blur(6px);border-radius:26px;padding:18px;box-shadow:0 6px 20px rgba(226,158,168,.12);border:2px solid #f9dfe3;margin-bottom:22px;text-align:center}
+.viewer-title{font-size:1rem;color:#c76272;margin-bottom:12px;font-weight:800}
+.viewer-container{position:relative;width:100%;height:620px;max-height:76vh;border:2.5px dashed #efc4cb;border-radius:22px;background:#fff9fa;display:flex;align-items:center;justify-content:center;padding:14px;overflow:hidden}
+.viewer-img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;border-radius:16px;box-shadow:0 6px 18px rgba(0,0,0,.08)}
 
-/* 狀態分類按鈕 */
-.tabs{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
-.tab-btn{padding:8px 18px;border:1px solid #d48c95;background:#fff;color:#b56b74;border-radius:20px;cursor:pointer;font-size:.9rem;font-weight:700;transition:.2s}
-.tab-btn.active{background:#d48c95;color:#fff}
+.tabs{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.tab-btn{padding:9px 20px;border:2px solid #efb0ba;background:#fff;color:#c76272;border-radius:24px;cursor:pointer;font-size:.92rem;font-weight:800;transition:.2s;box-shadow:0 3px 8px rgba(240,182,191,.18)}
+.tab-btn:hover{transform:translateY(-2px)}
+.tab-btn.active{background:#e57e8e;border-color:#e57e8e;color:#fff}
 
-/* 職業分類按鈕（騎士橘、術士藍、鬥士紅、賢者青綠） */
-.job-tabs{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
-.job-btn{padding:7px 16px;border-radius:20px;cursor:pointer;font-size:.88rem;font-weight:700;transition:.2s;background:#fff}
-.job-all{border:1px solid #8c7b7e;color:#8c7b7e}
-.job-all.active{background:#8c7b7e;color:#fff}
-.job-knight{border:1px solid #e67e22;color:#e67e22}
-.job-knight.active{background:#e67e22;color:#fff}
-.job-mage{border:1px solid #2980b9;color:#2980b9}
-.job-mage.active{background:#2980b9;color:#fff}
-.job-fighter{border:1px solid #e74c3c;color:#e74c3c}
-.job-fighter.active{background:#e74c3c;color:#fff}
-.job-sage{border:1px solid #16a085;color:#16a085}
-.job-sage.active{background:#16a085;color:#fff}
+/* 四大職業專屬配色（騎士暖橘、術士天空藍、鬥士深紅、賢者薄荷青綠） */
+.job-tabs{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+.job-btn{padding:8px 18px;border-radius:24px;cursor:pointer;font-size:.9rem;font-weight:800;transition:.2s;background:#fff;box-shadow:0 3px 8px rgba(0,0,0,.04)}
+.job-btn:hover{transform:translateY(-2px)}
+.job-all{border:2px solid #a89396;color:#7d686b}
+.job-all.active{background:#947e81;border-color:#947e81;color:#fff}
+.job-knight{border:2px solid #f39c12;color:#d68910}
+.job-knight.active{background:#f39c12;color:#fff}
+.job-mage{border:2px solid #38bdf8;color:#0284c7}
+.job-mage.active{background:#38bdf8;color:#fff}
+.job-fighter{border:2px solid #b91c1c;color:#991b1b}
+.job-fighter.active{background:#b91c1c;color:#fff}
+.job-sage{border:2px solid #10b981;color:#047857}
+.job-sage.active{background:#10b981;color:#fff}
 
-.box{background:#fff;border-radius:16px;padding:20px;box-shadow:0 4px 15px rgba(212,140,149,.08);border:1px solid #f0e4e1}
-.hd{font-size:1rem;font-weight:700;color:#b56b74;margin-bottom:14px;padding-bottom:8px;border-bottom:1px dashed #f0e4e1;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px}
-.hint{font-size:.8rem;color:#8c7b7e;font-weight:400}
-.tags{display:flex;flex-wrap:wrap;gap:8px}
-.ok{display:inline-flex;align-items:center;gap:4px;padding:6px 12px;background:#e6f4ea;color:#1e8e3e;text-decoration:none;border-radius:20px;font-weight:700;font-size:.9rem;border:1px solid #cce8d4;transition:.2s;cursor:pointer}
-.ok:hover{background:#1e8e3e;color:#fff;transform:translateY(-2px)}
-.no{display:inline-flex;align-items:center;gap:4px;padding:6px 12px;background:#fef7e0;color:#b06000;border-radius:20px;font-weight:700;font-size:.9rem;border:1px solid #f7e4b2}
-.j-tag{font-size:.75rem;opacity:.85;margin-left:2px}
+.box{background:rgba(255,255,255,.94);backdrop-filter:blur(6px);border-radius:26px;padding:22px;box-shadow:0 6px 20px rgba(226,158,168,.12);border:2px solid #f9dfe3}
+.hd{font-size:1.05rem;font-weight:800;color:#c76272;margin-bottom:16px;padding-bottom:10px;border-bottom:2px dashed #f9dfe3;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.hint{font-size:.84rem;color:#947479;font-weight:600}
+.tags{display:flex;flex-wrap:wrap;gap:10px}
 
-@media(max-width: 600px) {
+.ok{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:#edf9f0;color:#1e8e3e;border-radius:24px;font-weight:800;font-size:.92rem;border:1.5px solid #bfe6c9;transition:.2s;cursor:pointer;box-shadow:0 2px 5px rgba(30,142,62,.08)}
+.ok:hover{background:#27ae60;border-color:#27ae60;color:#fff;transform:translateY(-2px)}
+.no{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:#fff9e6;color:#b9770e;border-radius:24px;font-weight:800;font-size:.92rem;border:1.5px solid #f9e19c}
+
+.j-badge{font-size:.75rem;padding:2px 8px;border-radius:12px;color:#fff;font-weight:700;letter-spacing:.5px}
+.bg-騎士{background:#f39c12}
+.bg-術士{background:#38bdf8}
+.bg-鬥士{background:#b91c1c}
+.bg-賢者{background:#10b981}
+
+@media(max-width:600px){
     header h1{font-size:1.5rem}
-    .viewer-container{height:400px}
+    .viewer-container{height:380px}
 }
 </style>
 </head>
 <body>
+<div class="fx-bg" id="fxBg"></div>
+
 <header>
-    <h1>🌸 花間小憩 角色圖鑑</h1>
+    <h1>🌸 花間小憩 角色圖鑑 🌸</h1>
     <p>成員名單與專屬角色圖片製作進度一覽</p>
 </header>
+
 <div class="wrap">
     <div class="stat">
         <div class="nums">
             <div class="item"><div class="val" id="total-count">0</div><div class="lbl">總人數</div></div>
-            <div class="item"><div class="val" id="done-count" style="color:#1e8e3e">0</div><div class="lbl">已製作</div></div>
-            <div class="item"><div class="val" id="pending-count" style="color:#b06000">0</div><div class="lbl">製作中</div></div>
+            <div class="item"><div class="val" id="done-count" style="color:#27ae60">0</div><div class="lbl">已製作</div></div>
+            <div class="item"><div class="val" id="pending-count" style="color:#d68910">0</div><div class="lbl">製作中</div></div>
         </div>
         <div class="prog">
-            <div class="ptxt"><span>整體製作進度</span><span id="prog-text">0%</span></div>
-            <div class="bar"><div class="fill" id="prog-bar" style="width: 0%;"></div></div>
+            <div class="ptxt"><span>✨ 整體製作進度</span><span id="prog-text">0%</span></div>
+            <div class="bar"><div class="fill" id="prog-bar" style="width:0%"></div></div>
         </div>
     </div>
 
     <div class="viewer-box">
-        <div class="viewer-title" id="viewerTitle">🖼️ 角色圖片預覽區（點擊下方綠色成員名字即可在此直接切換顯示）</div>
+        <div class="viewer-title" id="viewerTitle">🖼️ 角色圖片預覽區（點擊下方綠色成員名字即可在此切換顯示）</div>
         <div class="viewer-container">
             <img id="viewerImg" class="viewer-img" src="" alt="角色圖片預覽">
         </div>
     </div>
 
-    <!-- 第一排：狀態篩選 -->
     <div class="tabs">
-        <button class="tab-btn active" id="st-all" onclick="setStatus('all')">全部顯示 (<span id="cnt-all">0</span>)</button>
-        <button class="tab-btn" id="st-done" onclick="setStatus('done')">已製作 (<span id="cnt-done">0</span>)</button>
-        <button class="tab-btn" id="st-pending" onclick="setStatus('pending')">製作中 (<span id="cnt-pending">0</span>)</button>
+        <button class="tab-btn active" id="st-all" onclick="setStatus('all')">🌈 全部顯示 (<span id="cnt-all">0</span>)</button>
+        <button class="tab-btn" id="st-done" onclick="setStatus('done')">✅ 已製作 (<span id="cnt-done">0</span>)</button>
+        <button class="tab-btn" id="st-pending" onclick="setStatus('pending')">⏳ 製作中 (<span id="cnt-pending">0</span>)</button>
     </div>
 
-    <!-- 第二排：職業篩選 -->
     <div class="job-tabs">
-        <button class="job-btn job-all active" id="jb-all" onclick="setJob('all')">全部職業</button>
-        <button class="job-btn job-knight" id="jb-騎士" onclick="setJob('騎士')">🛡️ 騎士</button>
-        <button class="job-btn job-mage" id="jb-術士" onclick="setJob('術士')">🔮 術士</button>
-        <button class="job-btn job-fighter" id="jb-鬥士" onclick="setJob('鬥士')">⚔️ 鬥士</button>
-        <button class="job-btn job-sage" id="jb-賢者" onclick="setJob('賢者')">🌿 賢者</button>
+        <button class="job-btn job-all active" id="jb-all" onclick="setJob('all')">✨ 全部職業 (<span id="jcnt-all">0</span>)</button>
+        <button class="job-btn job-knight" id="jb-騎士" onclick="setJob('騎士')">🛡️ 騎士 (<span id="jcnt-騎士">0</span>)</button>
+        <button class="job-btn job-mage" id="jb-術士" onclick="setJob('術士')">📖 術士 (<span id="jcnt-術士">0</span>)</button>
+        <button class="job-btn job-fighter" id="jb-鬥士" onclick="setJob('鬥士')">⚔️ 鬥士 (<span id="jcnt-鬥士">0</span>)</button>
+        <button class="job-btn job-sage" id="jb-賢者" onclick="setJob('賢者')">🔮 賢者 (<span id="jcnt-賢者">0</span>)</button>
     </div>
 
     <div class="box">
@@ -111,7 +139,6 @@ header p{color:#8c7b7e;font-size:.9rem}
     </div>
 </div>
 <script>
-// 依據最新試算表整理之 54 位成員名單與職業（done: true 代表已製作，false 代表製作中）
 const membersData = [
     { name: "壞壞呦", job: "術士", done: true },
     { name: "薇糖", job: "騎士", done: true },
@@ -217,13 +244,43 @@ function renderList() {
 
     let html = '';
     filtered.forEach(m => {
+        const badge = `<span class="j-badge bg-${m.job}">${m.job}</span>`;
         if (m.done) {
-            html += `<button class="ok" onclick="showImg('${m.name}')">🖼️ ${m.name}<span class="j-tag">[${m.job}]</span></button>`;
+            html += `<button class="ok" onclick="showImg('${m.name}')">🖼️ ${m.name} ${badge}</button>`;
         } else {
-            html += `<span class="no">⏳ ${m.name}<span class="j-tag">[${m.job}]</span></span>`;
+            html += `<span class="no">⏳ ${m.name} ${badge}</span>`;
         }
     });
-    document.getElementById('member-list').innerHTML = html || '<span style="color:#8c7b7e">目前此分類沒有成員</span>';
+    document.getElementById('member-list').innerHTML = html || '<span style="color:#947479">目前此分類沒有成員喔～</span>';
+}
+
+function createEffects() {
+    const bg = document.getElementById('fxBg');
+    // 增加至 45 片櫻花瓣，營造滿滿櫻花雨效果
+    for (let i = 0; i < 45; i++) {
+        const p = document.createElement('div');
+        p.className = 'petal';
+        const size = 9 + Math.random() * 13;
+        p.style.width = size + 'px';
+        p.style.height = (size * 0.75) + 'px';
+        p.style.left = (Math.random() * 100) + 'vw';
+        p.style.animationDuration = (6 + Math.random() * 8) + 's';
+        p.style.animationDelay = (-Math.random() * 10) + 's';
+        bg.appendChild(p);
+    }
+ // 25 顆夢幻淺藍色泡泡
+    for (let i = 0; i < 25; i++) {
+        const b = document.createElement('div');
+        b.className = 'bubble';
+        const size = 20 + Math.random() * 45;
+        b.style.width = size + 'px';
+        b.style.height = size + 'px';
+        b.style.left = (Math.random() * 100) + 'vw';
+        b.style.animationDuration = (10 + Math.random() * 10) + 's';
+        b.style.animationDelay = (-Math.random() * 8) + 's';
+        bg.appendChild(b);
+    }
+
 }
 
 function init() {
@@ -242,6 +299,12 @@ function init() {
     document.getElementById('cnt-done').innerText = done;
     document.getElementById('cnt-pending').innerText = pending;
 
+    document.getElementById('jcnt-all').innerText = total;
+    ['騎士', '術士', '鬥士', '賢者'].forEach(jb => {
+        document.getElementById('jcnt-' + jb).innerText = membersData.filter(m => m.job === jb).length;
+    });
+
+    createEffects();
     resetPreview();
     renderList();
 }
