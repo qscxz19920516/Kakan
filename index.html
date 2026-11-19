@@ -7,9 +7,7 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:"PingFang TC","Microsoft JhengHei","Rounded Mplus 1c",sans-serif}
 body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);color:#5a4649;line-height:1.6;min-height:100vh;overflow-x:hidden;position:relative}
-.bg-side-wrap{position:fixed;top:64px;left:0;right:0;bottom:0;z-index:0;pointer-events:none;display:flex;justify-content:space-between;align-items:center;padding:12px 2.5vw}
-.bg-side-img{max-height:86vh;max-width:30vw;width:auto;height:auto;object-fit:contain;opacity:.32;border-radius:20px}
-@media(max-width:960px){.bg-side-wrap{padding:12px 1vw}.bg-side-img{max-width:46vw;max-height:78vh;opacity:.25}}
+.bg-watermark{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:url('index背景.jpg'),url('index背景.JPG'),url('花間/index背景.jpg'),url('花間/index背景.JPG');background-size:cover;background-position:center;background-repeat:no-repeat;opacity:.5}
 .fx-bg{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
 .petal{position:absolute;top:-30px;background:linear-gradient(135deg,#ffe4ea 0%,#ffb3c6 50%,#ff8fa3 100%);border-radius:18px 0 18px 0;box-shadow:0 2px 6px rgba(255,158,181,.3);opacity:.85;animation:fall ease-in-out infinite}
 .bubble{position:absolute;bottom:-60px;border-radius:50%;background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.95),rgba(135,206,250,.32));border:1.5px solid rgba(173,216,230,.65);box-shadow:0 2px 8px rgba(135,206,250,.2);animation:rise ease-in-out infinite}
@@ -31,36 +29,28 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 .drawer-list{list-style:none;padding:8px 0}
 .drawer-list li a{display:flex;justify-content:space-between;align-items:center;padding:18px 24px;text-decoration:none;color:#5a4649;font-weight:800;font-size:1.05rem;border-bottom:1px solid #f7e8ea;transition:.2s}
 .drawer-list li a:hover,.drawer-list li a.current{background:#fff6f7;color:#c76272}
-.arrow{color:#c76272;font-weight:800}
+.arrow{color:#c76272;font-weight:800;transition:transform .25s ease}
 .sub-toggle{display:flex;justify-content:space-between;align-items:center;padding:18px 24px;color:#5a4649;font-weight:800;font-size:1.05rem;border-bottom:1px solid #f7e8ea;cursor:pointer;transition:.2s}
 .sub-toggle:hover{background:#fff6f7;color:#c76272}
-.arrow{transition:transform .25s ease}
 .arrow.rot{transform:rotate(90deg)}
 .submenu{display:none;list-style:none;background:#fffafa}
 .submenu.open{display:block}
 .submenu li a{padding:14px 24px 14px 42px;font-size:.96rem;border-bottom:1px dashed #f7e8ea;color:#7a5c61}
 
-.wrap{position:relative;z-index:1;max-width:720px;margin:26px auto;padding:0 16px}
-.hero{background:rgba(255,255,255,.92);backdrop-filter:blur(6px);border-radius:28px;padding:38px 24px;text-align:center;box-shadow:0 8px 25px rgba(226,158,168,.15);border:2px solid #f9dfe3}
+.wrap{position:relative;z-index:1;max-width:720px;margin:30px auto;padding:0 16px}
+.hero{background:rgba(255,255,255,.88);backdrop-filter:blur(6px);border-radius:28px;padding:42px 24px;text-align:center;box-shadow:0 8px 25px rgba(226,158,168,.15);border:2px solid #f9dfe3}
 .hero h1{font-size:2rem;color:#c76272;margin-bottom:10px;text-shadow:1px 1px 0 #fff}
-.hero p{color:#8c7075;font-size:1rem;margin-bottom:26px}
+.hero p{color:#8c7075;font-size:1rem;margin-bottom:30px}
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;max-width:640px;margin:0 auto}
-.portal{display:block;text-decoration:none;background:#fff8f9;border:2px dashed #f2bec7;border-radius:24px;padding:28px 20px;transition:.25s}
+.portal{display:block;text-decoration:none;background:rgba(255,248,249,.92);border:2px dashed #f2bec7;border-radius:24px;padding:30px 20px;transition:.25s}
 .portal:hover{transform:translateY(-4px);background:#fff;border-style:solid;box-shadow:0 8px 20px rgba(235,168,178,.22)}
 .portal-icon{font-size:3rem;display:block;margin-bottom:10px}
 .portal-title{font-size:1.25rem;font-weight:800;color:#c76272;margin-bottom:6px}
 .portal-desc{font-size:.9rem;color:#947479}
-
-/* 卡片下方封面小圖區 */
-.emblem-area{margin-top:26px;text-align:center;pointer-events:none;user-select:none}
-.emblem-img{max-width:280px;max-height:360px;width:auto;height:auto;object-fit:contain;border-radius:22px;border:2px solid #f9dfe3;box-shadow:0 8px 22px rgba(226,158,168,.2);background:rgba(255,255,255,.85)}
 </style>
 </head>
 <body>
-<div class="bg-side-wrap">
-    <img class="bg-side-img" src="百變.jpg" alt="百變" onerror="this.onerror=null;this.src='花間/百變.jpg'">
-    <img class="bg-side-img" src="百百.jpg" alt="百百" onerror="this.onerror=null;this.src='花間/百百.jpg'">
-</div>
+<div class="bg-watermark"></div>
 <div class="fx-bg" id="fxBg"></div>
 
 <div class="topbar">
@@ -106,11 +96,6 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
                 <div class="portal-desc">花間小憩專屬盲盒活動專區</div>
             </a>
         </div>
-    </div>
-
-    <!-- 正下方空白處：封面小圖 -->
-    <div class="emblem-area">
-        <img class="emblem-img" src="封面小圖.JPG" alt="花間小憩封面小圖" onerror="if(!this.dataset.step){this.dataset.step=1;this.src='封面小圖.jpg';}else if(this.dataset.step==1){this.dataset.step=2;this.src='花間/封面小圖.JPG';}else{this.onerror=null;this.src='花間/封面小圖.jpg';}">
     </div>
 </div>
 
