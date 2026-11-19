@@ -28,36 +28,26 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 .drawer-list{list-style:none;padding:8px 0}
 .drawer-list li a{display:flex;justify-content:space-between;align-items:center;padding:18px 24px;text-decoration:none;color:#5a4649;font-weight:800;font-size:1.05rem;border-bottom:1px solid #f7e8ea;transition:.2s}
 .drawer-list li a:hover,.drawer-list li a.current{background:#fff6f7;color:#c76272}
-.arrow{color:#c76272;font-weight:800}
+.arrow{color:#c76272;font-weight:800;transition:transform .25s ease}
 .sub-toggle{display:flex;justify-content:space-between;align-items:center;padding:18px 24px;color:#5a4649;font-weight:800;font-size:1.05rem;border-bottom:1px solid #f7e8ea;cursor:pointer;transition:.2s}
 .sub-toggle:hover{background:#fff6f7;color:#c76272}
-.arrow{transition:transform .25s ease}
 .arrow.rot{transform:rotate(90deg)}
 .submenu{display:none;list-style:none;background:#fffafa}
 .submenu.open{display:block}
 .submenu li a{padding:14px 24px 14px 42px;font-size:.96rem;border-bottom:1px dashed #f7e8ea;color:#7a5c61}
 
-
 .wrap{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:0 16px}
-.stat{background:rgba(255,255,255,.92);backdrop-filter:blur(6px);border-radius:26px;padding:18px 24px;box-shadow:0 6px 20px rgba(226,158,168,.12);border:2px solid #f9dfe3;margin-bottom:22px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:18px}
-.nums{display:flex;gap:16px}
-.item{text-align:center;background:#fff7f8;padding:8px 18px;border-radius:20px;border:1.5px solid #f7d7dc}
+.stat{background:rgba(255,255,255,.92);backdrop-filter:blur(6px);border-radius:26px;padding:16px 24px;box-shadow:0 6px 20px rgba(226,158,168,.12);border:2px solid #f9dfe3;margin-bottom:22px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:14px}
+.stat-badge{display:flex;align-items:center;gap:12px}
+.item{text-align:center;background:#fff7f8;padding:8px 20px;border-radius:20px;border:1.5px solid #f7d7dc;display:flex;align-items:baseline;gap:8px}
 .val{font-size:1.45rem;font-weight:800;color:#c76272}
-.lbl{font-size:.82rem;color:#947479;font-weight:700}
-.prog{flex:1;min-width:220px}
-.ptxt{display:flex;justify-content:space-between;font-size:.9rem;margin-bottom:8px;font-weight:800;color:#7a5c61}
-.bar{height:15px;background:#f7e6e9;border-radius:20px;overflow:hidden;padding:2px}
-.fill{height:100%;background:linear-gradient(90deg,#f8a5b3,#e27384);border-radius:20px;transition:width .5s ease}
+.lbl{font-size:.92rem;color:#947479;font-weight:800}
+.complete-banner{font-size:.95rem;font-weight:800;color:#1e8e3e;background:#edf9f0;border:1.5px solid #bfe6c9;padding:8px 18px;border-radius:20px}
 
 .viewer-box{background:rgba(255,255,255,.94);backdrop-filter:blur(6px);border-radius:26px;padding:18px;box-shadow:0 6px 20px rgba(226,158,168,.12);border:2px solid #f9dfe3;margin-bottom:22px;text-align:center}
 .viewer-title{font-size:1rem;color:#c76272;margin-bottom:12px;font-weight:800}
 .viewer-container{position:relative;width:100%;height:620px;max-height:76vh;border:2.5px dashed #efc4cb;border-radius:22px;background:#fff9fa;display:flex;align-items:center;justify-content:center;padding:14px;overflow:hidden}
 .viewer-img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;border-radius:16px;box-shadow:0 6px 18px rgba(0,0,0,.08)}
-
-.tabs{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap}
-.tab-btn{padding:9px 20px;border:2px solid #efb0ba;background:#fff;color:#c76272;border-radius:24px;cursor:pointer;font-size:.92rem;font-weight:800;transition:.2s;box-shadow:0 3px 8px rgba(240,182,191,.18)}
-.tab-btn:hover{transform:translateY(-2px)}
-.tab-btn.active{background:#e57e8e;border-color:#e57e8e;color:#fff}
 
 .job-tabs{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}
 .job-btn{padding:8px 18px;border-radius:24px;cursor:pointer;font-size:.9rem;font-weight:800;transition:.2s;background:#fff;box-shadow:0 3px 8px rgba(0,0,0,.04)}
@@ -80,7 +70,6 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 
 .ok{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:#edf9f0;color:#1e8e3e;border-radius:24px;font-weight:800;font-size:.92rem;border:1.5px solid #bfe6c9;transition:.2s;cursor:pointer;box-shadow:0 2px 5px rgba(30,142,62,.08)}
 .ok:hover{background:#27ae60;border-color:#27ae60;color:#fff;transform:translateY(-2px)}
-.no{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:#fff9e6;color:#b9770e;border-radius:24px;font-weight:800;font-size:.92rem;border:1.5px solid #f9e19c}
 
 .j-badge{font-size:.75rem;padding:2px 8px;border-radius:12px;color:#fff;font-weight:700;letter-spacing:.5px}
 .bg-騎士{background:#f39c12}
@@ -108,44 +97,32 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
     </div>
     <ul class="drawer-list">
         <li><a href="index.html"><span>🏠 首頁</span><span class="arrow">&gt;</span></a></li>
-        <li><a href="card.html"><span>🎴 小卡圖鑑</span><span class="arrow">&gt;</span></a></li>
+        <li><a href="card.html" class="current"><span>🎴 小卡圖鑑</span><span class="arrow">&gt;</span></a></li>
         <li>
             <div class="sub-toggle" onclick="toggleSubMenu()"><span>🎁 驚喜盲盒</span><span class="arrow" id="subArrow">&gt;</span></div>
             <ul class="submenu" id="subMenu">
-                <li><a href="box.html?job=花間 × 袋裝零食" onclick="goBox(event, '花間 × 袋裝零食')"><span>花間 × 袋裝零食</span><span class="arrow">&gt;</span></a></li>
-                <li><a href="box.html?job=花間 × 飲品" onclick="goBox(event, '花間 × 飲品盒')"><span>花間 × 飲品盒</span><span class="arrow">&gt;</span></a></li>
-                <li><a href="box.html?job=花間 × 童話反派" onclick="goBox(event, '花間 × 童話反派')"><span>花間 × 童話反派</span><span class="arrow">&gt;</span></a></li>
-                <li><a href="box.html?job=花間 × 多巴胺女團" onclick="goBox(event, '花間 × 多巴胺女團')"><span>花間 × 多巴胺女團</span><span class="arrow">&gt;</span></a></li>
+                <li><a href="box.html?job=花間 × 袋裝零食"><span>花間 × 袋裝零食</span><span class="arrow">&gt;</span></a></li>
+                <li><a href="box.html?job=花間 × 飲品"><span>花間 × 飲品盒</span><span class="arrow">&gt;</span></a></li>
+                <li><a href="box.html?job=花間 × 童話反派"><span>花間 × 童話反派</span><span class="arrow">&gt;</span></a></li>
+                <li><a href="box.html?job=花間 × 多巴胺女團"><span>花間 × 多巴胺女團</span><span class="arrow">&gt;</span></a></li>
             </ul>
         </li>
     </ul>
-
 </nav>
 
 <div class="wrap">
     <div class="stat">
-        <div class="nums">
-            <div class="item"><div class="val" id="total-count">0</div><div class="lbl">總人數</div></div>
-            <div class="item"><div class="val" id="done-count" style="color:#27ae60">0</div><div class="lbl">已製作</div></div>
-            <div class="item"><div class="val" id="pending-count" style="color:#d68910">0</div><div class="lbl">製作中</div></div>
+        <div class="stat-badge">
+            <div class="item"><span class="lbl">🌸 公會收錄成員</span><span class="val" id="total-count">0</span><span class="lbl">位</span></div>
         </div>
-        <div class="prog">
-            <div class="ptxt"><span>✨ 整體製作進度</span><span id="prog-text">0%</span></div>
-            <div class="bar"><div class="fill" id="prog-bar" style="width:0%"></div></div>
-        </div>
+        <div class="complete-banner">✨ 全體成員專屬小卡已全數收錄完成！</div>
     </div>
 
     <div class="viewer-box">
-        <div class="viewer-title" id="viewerTitle">🖼️ 角色圖片預覽區（點擊下方綠色成員名字即可在此切換顯示）</div>
+        <div class="viewer-title" id="viewerTitle">🖼️ 角色圖片預覽區（點擊下方成員名字即可在此切換顯示）</div>
         <div class="viewer-container">
             <img id="viewerImg" class="viewer-img" src="" alt="角色圖片預覽">
         </div>
-    </div>
-
-    <div class="tabs">
-        <button class="tab-btn active" id="st-all" onclick="setStatus('all')">🌈 全部顯示 (<span id="cnt-all">0</span>)</button>
-        <button class="tab-btn" id="st-done" onclick="setStatus('done')">✅ 已製作 (<span id="cnt-done">0</span>)</button>
-        <button class="tab-btn" id="st-pending" onclick="setStatus('pending')">⏳ 製作中 (<span id="cnt-pending">0</span>)</button>
     </div>
 
     <div class="job-tabs">
@@ -153,77 +130,76 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
         <button class="job-btn job-knight" id="jb-騎士" onclick="setJob('騎士')">🛡️ 騎士 (<span id="jcnt-騎士">0</span>)</button>
         <button class="job-btn job-mage" id="jb-術士" onclick="setJob('術士')">📖 術士 (<span id="jcnt-術士">0</span>)</button>
         <button class="job-btn job-fighter" id="jb-鬥士" onclick="setJob('鬥士')">⚔️ 鬥士 (<span id="jcnt-鬥士">0</span>)</button>
-    <button class="job-btn job-sage" id="jb-賢者" onclick="setJob('賢者')">🔮 賢者 (<span id="jcnt-賢者">0</span>)</button>
+        <button class="job-btn job-sage" id="jb-賢者" onclick="setJob('賢者')">🔮 賢者 (<span id="jcnt-賢者">0</span>)</button>
     </div>
 
     <div class="box">
         <div class="hd">
             <span id="list-title">🌸 全部成員總名單</span>
-            <span class="hint">綠色為已製作（點擊可看圖），黃色為製作中</span>
+            <span class="hint">點擊成員名字即可切換上方專屬小卡</span>
         </div>
         <div class="tags" id="member-list"></div>
     </div>
 </div>
 <script>
 const membersData = [
-    { name: "壞壞呦", job: "術士", done: true },
-    { name: "薇糖", job: "騎士", done: true },
-    { name: "47", job: "賢者", done: true },
-    { name: "空弦", job: "賢者", done: true },
-    { name: "阿燁", job: "鬥士", done: true },
-    { name: "一劍", job: "術士", done: true },
-    { name: "星星", job: "鬥士", done: true },
-    { name: "布布", job: "術士", done: true },
-    { name: "鯤鯤", job: "騎士", done: true },
-    { name: "花龍", job: "鬥士", done: true },
-    { name: "蕭蕭", job: "鬥士", done: true },
-    { name: "牙牙", job: "鬥士", done: true },
-    { name: "小杯", job: "鬥士", done: true },
-    { name: "小雨", job: "術士", done: true },
-    { name: "阿瀾", job: "術士", done: true },
-    { name: "MO", job: "騎士", done: true },
-    { name: "雷雷", job: "術士", done: true },
-    { name: "笙笙", job: "鬥士", done: true },
-    { name: "咕咕", job: "術士", done: true },
-    { name: "毒乃", job: "賢者", done: true },
-    { name: "狼", job: "鬥士", done: true },
-    { name: "EE", job: "鬥士", done: true },
-    { name: "夜夜", job: "騎士", done: true },
-    { name: "乖乖呦", job: "騎士", done: true },
-    { name: "夜影", job: "騎士", done: true },
-    { name: "閃閃", job: "術士", done: true },
-    { name: "鼠鼠", job: "術士", done: true },
-    { name: "貝貝", job: "賢者", done: true },
-    { name: "Yang", job: "鬥士", done: true },
-    { name: "露璐", job: "賢者", done: true },
-    { name: "金冬狗", job: "鬥士", done: true },
-    { name: "茶茶", job: "賢者", done: true },
-    { name: "百百", job: "鬥士", done: true },
-    { name: "米米", job: "術士", done: true },
-    { name: "百變", job: "騎士", done: true },
-    { name: "夜悾", job: "鬥士", done: true },
-    { name: "貓龍", job: "鬥士", done: true },
-    { name: "星隕", job: "騎士", done: true },
-    { name: "回皿回", job: "賢者", done: true },
-    { name: "恩匹西", job: "鬥士", done: true },
-    { name: "牛肉包", job: "騎士", done: true },
-    { name: "鴿子", job: "騎士", done: true },
-    { name: "哩麥悶", job: "賢者", done: true },
-    { name: "村村", job: "騎士", done: true },
-    { name: "霜霜", job: "術士", done: true },
-    { name: "秋月", job: "賢者", done: true },
-    { name: "兔兔呦", job: "術士", done: true },
-    { name: "糖糖", job: "賢者", done: true },
-    { name: "鬼見愁", job: "術士", done: true },
-    { name: "睡喵", job: "賢者", done: true },
-    { name: "香香", job: "術士", done: true },
-    { name: "阿然", job: "賢者", done: true },
-    { name: "烏拉", job: "騎士", done: true },
-    { name: "獅獅", job: "賢者", done: true },
-    { name: "克咪", job: "賢者", done: true },
-    { name: "寶哥", job: "賢者", done: true }
+    { name: "壞壞呦", job: "術士" },
+    { name: "薇糖", job: "騎士" },
+    { name: "47", job: "賢者" },
+    { name: "空弦", job: "賢者" },
+    { name: "阿燁", job: "鬥士" },
+    { name: "一劍", job: "術士" },
+    { name: "星星", job: "鬥士" },
+    { name: "布布", job: "術士" },
+    { name: "鯤鯤", job: "騎士" },
+    { name: "花龍", job: "鬥士" },
+    { name: "蕭蕭", job: "鬥士" },
+    { name: "牙牙", job: "鬥士" },
+    { name: "小杯", job: "鬥士" },
+    { name: "小雨", job: "術士" },
+    { name: "阿瀾", job: "術士" },
+    { name: "MO", job: "騎士" },
+    { name: "雷雷", job: "術士" },
+    { name: "笙笙", job: "鬥士" },
+    { name: "咕咕", job: "術士" },
+    { name: "毒乃", job: "賢者" },
+    { name: "狼", job: "鬥士" },
+    { name: "EE", job: "鬥士" },
+    { name: "夜夜", job: "騎士" },
+    { name: "乖乖呦", job: "騎士" },
+    { name: "夜影", job: "騎士" },
+    { name: "閃閃", job: "術士" },
+    { name: "鼠鼠", job: "術士" },
+    { name: "貝貝", job: "賢者" },
+    { name: "Yang", job: "鬥士" },
+    { name: "露璐", job: "賢者" },
+    { name: "金冬狗", job: "鬥士" },
+    { name: "茶茶", job: "賢者" },
+    { name: "百百", job: "鬥士" },
+    { name: "米米", job: "術士" },
+    { name: "百變", job: "騎士" },
+    { name: "夜悾", job: "鬥士" },
+    { name: "貓龍", job: "鬥士" },
+    { name: "星隕", job: "騎士" },
+    { name: "回皿回", job: "賢者" },
+    { name: "恩匹西", job: "鬥士" },
+    { name: "牛肉包", job: "騎士" },
+    { name: "鴿子", job: "騎士" },
+    { name: "哩麥悶", job: "賢者" },
+    { name: "村村", job: "騎士" },
+    { name: "霜霜", job: "術士" },
+    { name: "秋月", job: "賢者" },
+    { name: "兔兔呦", job: "術士" },
+    { name: "糖糖", job: "賢者" },
+    { name: "鬼見愁", job: "術士" },
+    { name: "睡喵", job: "賢者" },
+    { name: "香香", job: "術士" },
+    { name: "阿然", job: "賢者" },
+    { name: "烏拉", job: "騎士" },
+    { name: "獅獅", job: "賢者" },
+    { name: "克咪", job: "賢者" },
+    { name: "寶哥", job: "賢者" }
 ];
-let curStatus = 'all';
 let curJob = 'all';
 
 function toggleMenu(){
@@ -234,13 +210,9 @@ function toggleSubMenu(){
     document.getElementById('subMenu').classList.toggle('open');
     document.getElementById('subArrow').classList.toggle('rot');
 }
-function goBox(e, job){
-    // 在首頁或圖鑑頁會直接透過網址參數跳轉至 box.html 對應職業
-}
-
 
 function showImg(name) {
-    document.getElementById('viewerTitle').innerText = '🖼️ 目前預覽：' + name + '（點擊下方綠色名字切換圖片）';
+    document.getElementById('viewerTitle').innerText = '🖼️ 目前預覽：' + name + '（點擊下方名字切換圖片）';
     const img = document.getElementById('viewerImg');
     img.onerror = function() {
         this.onerror = null;
@@ -253,14 +225,6 @@ function resetPreview() {
     showImg('小卡預設卡');
 }
 
-function setStatus(st) {
-    curStatus = st;
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('st-' + st).classList.add('active');
-    resetPreview();
-    renderList();
-}
-
 function setJob(jb) {
     curJob = jb;
     document.querySelectorAll('.job-btn').forEach(b => b.classList.remove('active'));
@@ -270,24 +234,14 @@ function setJob(jb) {
 }
 
 function renderList() {
-    const filtered = membersData.filter(m => {
-        const matchSt = curStatus === 'all' || (curStatus === 'done' && m.done) || (curStatus === 'pending' && !m.done);
-        const matchJb = curJob === 'all' || m.job === curJob;
-        return matchSt && matchJb;
-    });
-
-    const stText = curStatus === 'all' ? '全部' : (curStatus === 'done' ? '已製作' : '製作中');
-    const jbText = curJob === 'all' ? '所有職業' : curJob;
-    document.getElementById('list-title').innerText = `🌸 ${stText} - ${jbText}（共 ${filtered.length} 人）`;
+    const filtered = membersData.filter(m => curJob === 'all' || m.job === curJob);
+    const jbText = curJob === 'all' ? '全部職業' : curJob;
+    document.getElementById('list-title').innerText = `🌸 ${jbText}（共 ${filtered.length} 人）`;
 
     let html = '';
     filtered.forEach(m => {
         const badge = `<span class="j-badge bg-${m.job}">${m.job}</span>`;
-        if (m.done) {
-            html += `<button class="ok" onclick="showImg('${m.name}')">🖼️ ${m.name} ${badge}</button>`;
-        } else {
-            html += `<span class="no">⏳ ${m.name} ${badge}</span>`;
-        }
+        html += `<button class="ok" onclick="showImg('${m.name}')">🖼️ ${m.name} ${badge}</button>`;
     });
     document.getElementById('member-list').innerHTML = html || '<span style="color:#947479">目前此分類沒有成員喔～</span>';
 }
@@ -320,20 +274,7 @@ function createEffects() {
 
 function init() {
     const total = membersData.length;
-    const done = membersData.filter(m => m.done).length;
-    const pending = total - done;
-    const percent = Math.round((done / total) * 100);
-
     document.getElementById('total-count').innerText = total;
-    document.getElementById('done-count').innerText = done;
-    document.getElementById('pending-count').innerText = pending;
-    document.getElementById('prog-text').innerText = percent + '%';
-    document.getElementById('prog-bar').style.width = percent + '%';
-
-    document.getElementById('cnt-all').innerText = total;
-    document.getElementById('cnt-done').innerText = done;
-    document.getElementById('cnt-pending').innerText = pending;
-
     document.getElementById('jcnt-all').innerText = total;
     ['騎士', '術士', '鬥士', '賢者'].forEach(jb => {
         document.getElementById('jcnt-' + jb).innerText = membersData.filter(m => m.job === jb).length;
@@ -348,4 +289,3 @@ init();
 </script>
 </body>
 </html>
-
