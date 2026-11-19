@@ -65,7 +65,7 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 .zoom-card img{max-width:90vw;max-height:84vh;object-fit:contain;border-radius:14px;display:block}
 </style>
 <script>
-// ★ 每次修改網頁只要把這裡的版本號改掉，所有手機用戶開啟都會自動強制重新載入最新畫面
+// ★ 每次修改 index.html 只要把這裡的版本號改掉，所有手機用戶開啟首頁都會自動強制重新載入最新畫面
 const SITE_VERSION = "20261119_v2";
 (function(){
     const url = new URL(window.location.href);
@@ -92,15 +92,15 @@ const SITE_VERSION = "20261119_v2";
         <button class="close-btn" onclick="toggleMenu()">✕</button>
     </div>
     <ul class="drawer-list">
-        <li><a href="index.html?v=20261119_v2" class="current"><span>🏠 首頁</span><span class="arrow">&gt;</span></a></li>
-        <li><a href="card.html?v=20261119_v2"><span>🎴 小卡圖鑑</span><span class="arrow">&gt;</span></a></li>
+        <li><a href="index.html" class="current"><span>🏠 首頁</span><span class="arrow">&gt;</span></a></li>
+        <li><a href="card.html"><span>🎴 小卡圖鑑</span><span class="arrow">&gt;</span></a></li>
         <li>
             <div class="sub-toggle" onclick="toggleSubMenu()"><span>🎁 驚喜盲盒</span><span class="arrow" id="subArrow">&gt;</span></div>
             <ul class="submenu" id="subMenu">
-                <li><a href="box.html?job=花間 × 袋裝零食&v=20261119_v2"><span>花間 × 袋裝零食</span><span class="arrow">&gt;</span></a></li>
-                <li><a href="box.html?job=花間 × 飲品&v=20261119_v2"><span>花間 × 飲品盒</span><span class="arrow">&gt;</span></a></li>
-                <li><a href="box.html?job=花間 × 童話反派&v=20261119_v2"><span>花間 × 童話反派</span><span class="arrow">&gt;</span></a></li>
-                <li><a href="box.html?job=花間 × 多巴胺女團&v=20261119_v2"><span>花間 × 多巴胺女團</span><span class="arrow">&gt;</span></a></li>
+                <li><a href="box.html?job=花間 × 袋裝零食"><span>花間 × 袋裝零食</span><span class="arrow">&gt;</span></a></li>
+                <li><a href="box.html?job=花間 × 飲品"><span>花間 × 飲品盒</span><span class="arrow">&gt;</span></a></li>
+                <li><a href="box.html?job=花間 × 童話反派"><span>花間 × 童話反派</span><span class="arrow">&gt;</span></a></li>
+                <li><a href="box.html?job=花間 × 多巴胺女團"><span>花間 × 多巴胺女團</span><span class="arrow">&gt;</span></a></li>
             </ul>
         </li>
     </ul>
@@ -111,12 +111,12 @@ const SITE_VERSION = "20261119_v2";
         <h1>✨ 歡迎來到花間小憩 ✨</h1>
         <p>點擊左上角選單或下方卡片，探索成員專屬小卡與驚喜盲盒！</p>
         <div class="cards">
-            <a href="card.html?v=20261119_v2" class="portal">
+            <a href="card.html" class="portal">
                 <span class="portal-icon">🎴</span>
                 <div class="portal-title">成員小卡圖鑑</div>
                 <div class="portal-desc">查看全體 56 位成員專屬小卡與四大職業進度</div>
             </a>
-            <a href="box.html?v=20261119_v2" class="portal">
+            <a href="box.html" class="portal">
                 <span class="portal-icon">🎁</span>
                 <div class="portal-title">驚喜盲盒區</div>
                 <div class="portal-desc">花間小憩專屬盲盒活動專區</div>
