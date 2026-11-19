@@ -1,0 +1,1715 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POP WONDERLAND | 潮玩盲盒體驗館</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+        }
+
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            overflow-x: hidden;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .font-display {
+            font-family: 'Fredoka', 'Noto Sans TC', sans-serif;
+        }
+
+        /* 玻璃擬態卡片 */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.78);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 12px 40px -10px rgba(31, 38, 135, 0.12);
+        }
+
+        /* 3D 盲盒視覺與動畫 */
+        .box-stage {
+            perspective: 1200px;
+        }
+
+        .blind-box-wrapper {
+            transform-style: preserve-3d;
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .blind-box-card:hover {
+            transform: translateY(-10px) scale(1.03);
+        }
+
+        /* 搖晃動畫 */
+        @keyframes vigorous-shake {
+            0%, 100% { transform: rotate(0deg) scale(1.05); }
+            15% { transform: rotate(-14deg) translateX(-8px) scale(1.07); }
+            30% { transform: rotate(12deg) translateX(8px) scale(1.07); }
+            45% { transform: rotate(-10deg) translateX(-6px) scale(1.06); }
+            60% { transform: rotate(9deg) translateX(6px) scale(1.06); }
+            75% { transform: rotate(-5deg) translateX(-3px) scale(1.05); }
+            90% { transform: rotate(4deg) translateX(3px) scale(1.05); }
+        }
+
+        .animate-shake {
+            animation: vigorous-shake 0.55s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+        }
+
+        /* 懸浮呼吸動畫 */
+        @keyframes float-idle {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(1deg); }
+        }
+
+        .animate-float {
+            animation: float-idle 3s ease-in-out infinite;
+        }
+
+        /* 封條撕開動畫 */
+        @keyframes rip-strip {
+            0% { transform: translateX(0) rotate(0deg); opacity: 1; }
+            40% { transform: translateX(30px) rotate(6deg); opacity: 1; }
+            100% { transform: translateX(280px) translateY(40px) rotate(28deg); opacity: 0; }
+        }
+
+        .animate-rip {
+            animation: rip-strip 0.6s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards;
+        }
+
+        /* 盒蓋彈飛動畫 */
+        @keyframes lid-pop {
+            0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
+            40% { transform: translateY(-70px) rotate(-12deg) scale(1.05); opacity: 1; }
+            100% { transform: translateY(-220px) translateX(-40px) rotate(-35deg) scale(0.8); opacity: 0; }
+        }
+
+        .animate-lid-pop {
+            animation: lid-pop 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        /* 盒身下沉震動 */
+        @keyframes box-squash {
+            0% { transform: scaleY(1) scaleX(1); }
+            30% { transform: scaleY(0.82) scaleX(1.12); }
+            65% { transform: scaleY(1.06) scaleX(0.96); }
+            100% { transform: scaleY(1) scaleX(1); opacity: 0.25; }
+        }
+
+        .animate-box-open {
+            animation: box-squash 0.7s ease-out forwards;
+        }
+
+        /* 公仔彈跳登場 */
+        @keyframes figure-reveal {
+            0% { transform: translateY(90px) scale(0.2); opacity: 0; }
+            55% { transform: translateY(-22px) scale(1.12); opacity: 1; }
+            75% { transform: translateY(6px) scale(0.96); opacity: 1; }
+            90% { transform: translateY(-4px) scale(1.02); opacity: 1; }
+            100% { transform: translateY(0px) scale(1); opacity: 1; }
+        }
+
+        .animate-figure-pop {
+            animation: figure-reveal 0.85s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        /* 放射光芒旋轉 */
+        @keyframes spin-rays {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .rayburst {
+            background: repeating-conic-gradient(
+                from 0deg,
+                rgba(255, 255, 255, 0.65) 0deg 12deg,
+                rgba(255, 255, 255, 0) 12deg 24deg
+            );
+            animation: spin-rays 14s linear infinite;
+        }
+
+        .rayburst-gold {
+            background: repeating-conic-gradient(
+                from 0deg,
+                rgba(253, 224, 71, 0.75) 0deg 10deg,
+                rgba(251, 146, 60, 0.1) 10deg 20deg
+            );
+            animation: spin-rays 10s linear infinite;
+        }
+
+        .rayburst-rainbow {
+            background: repeating-conic-gradient(
+                from 0deg,
+                rgba(244, 114, 182, 0.65) 0deg 10deg,
+                rgba(96, 165, 250, 0.65) 10deg 20deg,
+                rgba(250, 204, 21, 0.65) 20deg 30deg,
+                transparent 30deg 40deg
+            );
+            animation: spin-rays 8s linear infinite;
+        }
+
+        /* 擬聲詞泡泡 */
+        @keyframes pop-onomatopoeia {
+            0% { transform: scale(0.4) translateY(10px); opacity: 0; }
+            40% { transform: scale(1.15) translateY(-5px); opacity: 1; }
+            80% { transform: scale(1) translateY(-12px); opacity: 1; }
+            100% { transform: scale(0.9) translateY(-20px); opacity: 0; }
+        }
+
+        .sound-bubble {
+            animation: pop-onomatopoeia 0.75s ease-out forwards;
+        }
+
+        /* 稀有度光澤流光 */
+        @keyframes shimmer {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+
+        .badge-secret {
+            background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3, #ff6b6b);
+            background-size: 200% auto;
+            animation: shimmer 2.5s linear infinite;
+        }
+
+        /* 自訂捲軸 */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.04);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.18);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="min-h-screen transition-colors duration-700 bg-gradient-to-br from-rose-100 via-purple-100 to-indigo-100 text-slate-800 relative">
+
+    <!-- 全螢幕特效層（閃光與碎紙） -->
+    <div id="flash-overlay" class="fixed inset-0 pointer-events-none z-50 opacity-0 transition-opacity duration-300 bg-white"></div>
+    <canvas id="confetti-canvas" class="fixed inset-0 pointer-events-none z-40"></canvas>
+
+    <!-- 頂部導覽列 -->
+    <header class="sticky top-0 z-30 glass-panel border-b border-white/60 px-4 py-3 sm:px-8">
+        <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3">
+            <!-- 品牌 Logo -->
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-pink-500 via-purple-500 to-indigo-500 flex items-center justify-center text-white shadow-lg shadow-pink-500/30 font-display text-xl font-bold">
+                    ?
+                </div>
+                <div>
+                    <h1 class="font-display font-black text-lg sm:text-xl tracking-tight bg-gradient-to-r from-pink-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
+                        POP WONDERLAND
+                    </h1>
+                    <p class="text-[11px] sm:text-xs text-slate-500 font-medium">潮流盲盒線上體驗館</p>
+                </div>
+            </div>
+
+            <!-- 系列切換器 -->
+            <div class="flex items-center bg-slate-200/70 p-1 rounded-2xl gap-1 order-3 sm:order-2 w-full sm:w-auto justify-center">
+                <button onclick="switchSeries('space')" id="tab-space" class="series-tab flex-1 sm:flex-initial px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition-all bg-white text-indigo-600 shadow-sm">
+                    🚀 星際萌寵
+                </button>
+                <button onclick="switchSeries('sweet')" id="tab-sweet" class="series-tab flex-1 sm:flex-initial px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition-all text-slate-600 hover:text-slate-900">
+                    🍰 夢幻甜點
+                </button>
+            </div>
+
+            <!-- 右側控制按鈕（音效與概率說明） -->
+            <div class="flex items-center gap-2 order-2 sm:order-3">
+                <button onclick="toggleModal('rates-modal', true)" class="px-3 py-2 rounded-xl bg-white/80 hover:bg-white text-slate-700 text-xs font-bold shadow-sm border border-slate-200/60 transition active:scale-95">
+                    機率公示
+                </button>
+                <button onclick="toggleSound()" id="sound-btn" class="p-2 rounded-xl bg-white/80 hover:bg-white text-slate-700 shadow-sm border border-slate-200/60 transition active:scale-95" title="開關音效">
+                    <span id="sound-icon" class="text-base">🔊</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主內容區 -->
+    <main class="max-w-6xl mx-auto px-4 py-6 sm:py-8 grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start">
+
+        <!-- 左側/上方：開箱主舞台 (佔 7 欄) -->
+        <section class="lg:col-span-7 glass-panel rounded-3xl p-5 sm:p-8 relative overflow-hidden min-h-[520px] sm:min-h-[580px] flex flex-col justify-between">
+            
+            <!-- 舞台頂部狀態列 -->
+            <div class="flex items-center justify-between z-10">
+                <div>
+                    <span id="series-badge" class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-indigo-100 text-indigo-700 mb-1">
+                        SERIES 01 · 宇宙奇幻系列
+                    </span>
+                    <h2 id="stage-title" class="text-xl sm:text-2xl font-black text-slate-800">
+                        請選擇一個心儀的盲盒
+                    </h2>
+                </div>
+                <button id="back-to-shelf-btn" onclick="resetToShelf()" class="hidden px-3.5 py-2 rounded-xl bg-slate-800/10 hover:bg-slate-800/15 text-slate-700 text-xs font-bold transition">
+                    ← 重選盒子
+                </button>
+            </div>
+
+            <!-- 階段一：展示整組盲盒機台 (選盒畫面) -->
+            <div id="stage-shelf" class="my-auto py-6">
+                <div class="grid grid-cols-3 gap-3 sm:gap-6 max-w-md mx-auto">
+                    <!-- 6個盲盒將由 JS 動態生成 -->
+                </div>
+                <div class="mt-6 text-center">
+                    <p class="text-xs sm:text-sm text-slate-500 bg-white/60 inline-block px-4 py-2 rounded-full">
+                        ✨ 點擊任意盲盒拿起它，搖一搖聽聽看裡面的秘密！
+                    </p>
+                </div>
+            </div>
+
+            <!-- 階段二 & 三：單盒特寫搖晃與開箱舞台 -->
+            <div id="stage-unbox" class="hidden my-auto flex-1 flex flex-col items-center justify-center relative py-4">
+                
+                <!-- 放射光芒背景 (開箱瞬間顯示) -->
+                <div id="rayburst-bg" class="hidden absolute w-[480px] h-[480px] sm:w-[600px] sm:h-[600px] rounded-full pointer-events-none opacity-80"></div>
+
+                <!-- 擬聲詞特效容器 -->
+                <div id="onomatopoeia-container" class="absolute inset-0 pointer-events-none flex items-center justify-center z-30"></div>
+
+                <!-- 盲盒 3D SVG 容器 -->
+                <div id="active-box-container" class="box-stage relative w-56 h-64 sm:w-64 sm:h-72 flex items-center justify-center z-20">
+                    <!-- 盲盒 SVG 動態渲染於此 -->
+                </div>
+
+                <!-- 公仔登場容器 (開箱後顯示) -->
+                <div id="revealed-figure-container" class="hidden flex-col items-center justify-center z-20 text-center w-full">
+                    <div id="figure-rarity-tag" class="px-4 py-1 rounded-full text-xs font-black tracking-wider uppercase text-white shadow-md mb-2">
+                        COMMON · 普通款
+                    </div>
+                    <div id="figure-svg-display" class="w-48 h-48 sm:w-56 sm:h-56 drop-shadow-2xl my-1 flex items-center justify-center">
+                        <!-- 公仔 SVG -->
+                    </div>
+                    <h3 id="figure-name" class="text-2xl sm:text-3xl font-black text-slate-800 mt-1">
+                        角色名稱
+                    </h3>
+                    <p id="figure-quote" class="text-xs sm:text-sm text-slate-600 max-w-xs mt-1 font-medium">
+                        角色台詞描述
+                    </p>
+                </div>
+
+                <!-- 搖晃線索提示卡 -->
+                <div id="hint-box" class="mt-4 min-h-[44px] flex items-center justify-center z-20">
+                    <div id="hint-text" class="px-4 py-2 rounded-2xl bg-white/90 border border-slate-200/80 shadow-sm text-xs sm:text-sm font-bold text-slate-700 text-center transition-all">
+                        💡 提示：點擊「搖一搖」可以感知盒子裡的重量與聲音喔！
+                    </div>
+                </div>
+            </div>
+
+            <!-- 舞台底部互動按鈕列 -->
+            <div id="stage-controls" class="z-20 pt-2">
+                <!-- 選盒時的提示條 -->
+                <div id="controls-shelf" class="flex items-center justify-between text-xs text-slate-500 border-t border-slate-200/60 pt-4">
+                    <span>內含 6 款常規 + 1 款超稀有 + 1 款隱藏款</span>
+                    <span class="font-bold text-indigo-600">100% 必出正版公仔</span>
+                </div>
+
+                <!-- 搖晃與開盒按鈕 -->
+                <div id="controls-shake" class="hidden grid grid-cols-2 gap-3 sm:gap-4 max-w-md mx-auto">
+                    <button onclick="shakeActiveBox()" id="btn-shake" class="py-3.5 px-4 rounded-2xl bg-white hover:bg-amber-50 text-slate-800 font-black text-sm sm:text-base border-2 border-amber-300 shadow-lg shadow-amber-500/10 transition transform active:scale-95 flex items-center justify-center gap-2">
+                        <span class="text-xl">👋</span>
+                        <span>搖一搖 (<span id="shake-count">0</span>/3)</span>
+                    </button>
+                    <button onclick="openActiveBox()" id="btn-open" class="py-3.5 px-4 rounded-2xl bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:brightness-110 text-white font-black text-sm sm:text-base shadow-lg shadow-purple-500/30 transition transform active:scale-95 flex items-center justify-center gap-2">
+                        <span class="text-xl">✨</span>
+                        <span>立即撕開封條</span>
+                    </button>
+                </div>
+
+                <!-- 開箱完成後的按鈕 -->
+                <div id="controls-result" class="hidden flex flex-wrap items-center justify-center gap-3 max-w-md mx-auto">
+                    <button onclick="viewCurrentFigureDetail()" class="flex-1 py-3 px-4 rounded-2xl bg-white hover:bg-slate-50 text-slate-700 font-bold text-sm border border-slate-200 shadow-sm transition active:scale-95">
+                        📖 查看檔案
+                    </button>
+                    <button onclick="playAgain()" class="flex-[2] py-3.5 px-6 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:brightness-110 text-white font-black text-sm sm:text-base shadow-lg shadow-indigo-500/30 transition transform active:scale-95 flex items-center justify-center gap-2">
+                        <span>🎁 再抽一盒</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 右側/下方：我的收藏櫃與圖鑑 (佔 5 欄) -->
+        <aside class="lg:col-span-5 glass-panel rounded-3xl p-5 sm:p-6 flex flex-col">
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <h2 class="text-lg sm:text-xl font-black text-slate-800 flex items-center gap-2">
+                        <span>🏆 我的盲盒收藏櫃</span>
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-0.5">點擊已解鎖公仔可查看專屬角色故事</p>
+                </div>
+                <button onclick="confirmResetCollection()" class="text-xs font-bold text-slate-400 hover:text-rose-500 px-2.5 py-1.5 rounded-lg hover:bg-rose-50 transition">
+                    清空紀錄
+                </button>
+            </div>
+
+            <!-- 收集進度條 -->
+            <div class="bg-white/70 rounded-2xl p-3.5 mb-5 border border-white">
+                <div class="flex justify-between items-center text-xs font-bold mb-1.5">
+                    <span class="text-slate-600">本系列圖鑑進度</span>
+                    <span id="collection-progress-text" class="text-indigo-600 font-display text-sm">0 / 8</span>
+                </div>
+                <div class="w-full h-3 bg-slate-200/80 rounded-full overflow-hidden p-0.5">
+                    <div id="collection-progress-bar" class="h-full bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 rounded-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+                <div class="flex justify-between items-center mt-2 text-[11px] text-slate-500">
+                    <span>累計開盒次數：<strong id="total-pulls" class="text-slate-700">0</strong> 盒</span>
+                    <span id="complete-badge" class="hidden text-amber-600 font-bold">👑 全圖鑑制霸！</span>
+                </div>
+            </div>
+
+            <!-- 公仔圖鑑網格 -->
+            <div id="collection-grid" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-2 gap-3 max-h-[420px] overflow-y-auto pr-1">
+                <!-- 圖鑑卡片由 JS 動態渲染 -->
+            </div>
+        </aside>
+
+    </main>
+
+    <!-- 角色詳情彈窗 (Modal) -->
+    <div id="detail-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm transition-opacity">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl relative transform transition-all scale-100">
+            <button onclick="toggleModal('detail-modal', false)" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 font-bold">
+                ✕
+            </button>
+            <div class="text-center">
+                <span id="modal-rarity" class="inline-block px-3 py-1 rounded-full text-xs font-black text-white mb-3">
+                    RARE
+                </span>
+                <div id="modal-svg" class="w-40 h-40 mx-auto my-2 flex items-center justify-center bg-slate-50 rounded-3xl p-3">
+                    <!-- SVG -->
+                </div>
+                <h3 id="modal-name" class="text-2xl font-black text-slate-800 mt-3">角色名稱</h3>
+                <p id="modal-owned" class="text-xs font-bold text-indigo-600 mt-1">已擁有：1 隻</p>
+                
+                <div class="mt-4 bg-slate-50 rounded-2xl p-4 text-left space-y-2 border border-slate-100">
+                    <div class="flex justify-between text-xs">
+                        <span class="text-slate-400">手感特徵</span>
+                        <span id="modal-weight" class="font-bold text-slate-700">沉甸甸的</span>
+                    </div>
+                    <div class="flex justify-between text-xs">
+                        <span class="text-slate-400">搖晃聲響</span>
+                        <span id="modal-sound" class="font-bold text-slate-700">清脆鈴鐺聲</span>
+                    </div>
+                    <div class="pt-2 border-t border-slate-200/70">
+                        <span class="text-xs text-slate-400 block mb-1">角色故事</span>
+                        <p id="modal-story" class="text-xs text-slate-600 leading-relaxed">
+                            故事內容...
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 機率公示彈窗 -->
+    <div id="rates-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl relative">
+            <button onclick="toggleModal('rates-modal', false)" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 font-bold">
+                ✕
+            </button>
+            <h3 class="text-xl font-black text-slate-800 mb-2">🎲 盲盒掉落機率公示</h3>
+            <p class="text-xs text-slate-500 mb-4">每盒盲盒均為獨立隨機抽取，包含以下四種稀有度等級：</p>
+            <div class="space-y-2.5 text-sm">
+                <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-50">
+                    <div class="flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-sky-400"></span>
+                        <span class="font-bold text-slate-700">普通款 (Common)</span>
+                    </div>
+                    <span class="font-display font-bold text-slate-600">60% (4款)</span>
+                </div>
+                <div class="flex items-center justify-between p-3 rounded-2xl bg-purple-50">
+                    <div class="flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-purple-500"></span>
+                        <span class="font-bold text-purple-900">稀有款 (Rare)</span>
+                    </div>
+                    <span class="font-display font-bold text-purple-700">25% (2款)</span>
+                </div>
+                <div class="flex items-center justify-between p-3 rounded-2xl bg-amber-50">
+                    <div class="flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-amber-500"></span>
+                        <span class="font-bold text-amber-900">超稀有 (Super Rare)</span>
+                    </div>
+                    <span class="font-display font-bold text-amber-700">11% (1款)</span>
+                </div>
+                <div class="flex items-center justify-between p-3 rounded-2xl bg-gradient-to-r from-pink-50 to-amber-50 border border-pink-200">
+                    <div class="flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full badge-secret"></span>
+                        <span class="font-bold text-pink-700">隱藏款 (Secret)</span>
+                    </div>
+                    <span class="font-display font-bold text-pink-600">4% (1款)</span>
+                </div>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-4 text-center">小技巧：搖晃盲盒時的提示線索會反映該公仔的真實體積與配件特徵！</p>
+        </div>
+    </div>
+
+    <!-- 自訂確認清空彈窗 (取代 window.confirm) -->
+    <div id="confirm-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl max-w-xs w-full p-6 shadow-2xl text-center">
+            <div class="w-12 h-12 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center text-2xl mx-auto mb-3">
+                🗑️
+            </div>
+            <h3 class="text-lg font-black text-slate-800">確定要清空收藏嗎？</h3>
+            <p class="text-xs text-slate-500 mt-1 mb-5">這將會重置所有已解鎖的公仔與抽盒次數紀錄。</p>
+            <div class="grid grid-cols-2 gap-2.5">
+                <button onclick="toggleModal('confirm-modal', false)" class="py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs">
+                    取消
+                </button>
+                <button onclick="executeResetCollection()" class="py-2.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs">
+                    確定清空
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // 1. Web Audio API 純程式碼合成音效引擎
+        // ==========================================
+        class SoundEngine {
+            constructor() {
+                this.ctx = null;
+                this.muted = false;
+            }
+
+            init() {
+                if (!this.ctx) {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    this.ctx = new AudioContext();
+                }
+                if (this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+            }
+
+            // 搖晃盲盒的沙沙碰撞聲
+            playShake() {
+                if (this.muted) return;
+                this.init();
+                const now = this.ctx.currentTime;
+                
+                // 產生兩段短促的紙盒碰撞低音 + 塑膠零件清脆聲
+                [0, 0.14].forEach((offset, idx) => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(idx === 0 ? 160 : 210, now + offset);
+                    osc.frequency.exponentialRampToValueAtTime(65, now + offset + 0.09);
+
+                    gain.gain.setValueAtTime(0.25, now + offset);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + offset + 0.09);
+
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start(now + offset);
+                    osc.stop(now + offset + 0.1);
+                });
+            }
+
+            // 撕開紙盒封條的白噪音撕裂聲
+            playRip() {
+                if (this.muted) return;
+                this.init();
+                const now = this.ctx.currentTime;
+                const bufferSize = this.ctx.sampleRate * 0.35;
+                const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+                const data = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = (Math.random() * 2 - 1) * Math.sin((i / bufferSize) * Math.PI);
+                }
+
+                const noise = this.ctx.createBufferSource();
+                noise.buffer = buffer;
+
+                const filter = this.ctx.createBiquadFilter();
+                filter.type = 'bandpass';
+                filter.frequency.setValueAtTime(1400, now);
+                filter.frequency.linearRampToValueAtTime(3200, now + 0.35);
+                filter.Q.value = 1.8;
+
+                const gain = this.ctx.createGain();
+                gain.gain.setValueAtTime(0.35, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+
+                noise.connect(filter);
+                filter.connect(gain);
+                gain.connect(this.ctx.destination);
+                noise.start(now);
+            }
+
+            // 開獎歡呼和弦 (依據稀有度變換華麗程度)
+            playReveal(rarity) {
+                if (this.muted) return;
+                this.init();
+                const now = this.ctx.currentTime;
+
+                let notes = [523.25, 659.25, 783.99, 1046.50]; // C5 E5 G5 C6
+                if (rarity === 'rare') {
+                    notes = [587.33, 739.99, 880.00, 1174.66]; // D大調
+                } else if (rarity === 'super' || rarity === 'secret') {
+                    notes = [523.25, 659.25, 783.99, 987.77, 1174.66, 1567.98]; // 華麗大九和弦琶音
+                }
+
+                notes.forEach((freq, i) => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = (rarity === 'secret' || rarity === 'super') ? 'sine' : 'triangle';
+                    
+                    const startTime = now + i * 0.065;
+                    osc.frequency.setValueAtTime(freq, startTime);
+                    
+                    gain.gain.setValueAtTime(0.001, startTime);
+                    gain.gain.linearRampToValueAtTime(0.22, startTime + 0.03);
+                    gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.65);
+
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start(startTime);
+                    osc.stop(startTime + 0.7);
+                });
+            }
+
+            playClick() {
+                if (this.muted) return;
+                this.init();
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(620, now);
+                osc.frequency.exponentialRampToValueAtTime(880, now + 0.06);
+                gain.gain.setValueAtTime(0.12, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.07);
+            }
+        }
+
+        const sfx = new SoundEngine();
+
+        // ==========================================
+        // 2. 盲盒系列資料庫與多層次 SVG 公仔插畫
+        // ==========================================
+        const RARITY_META = {
+            common: { label: 'COMMON · 普通款', color: 'bg-sky-500', border: 'border-sky-300', text: 'text-sky-600', weight: 15 },
+            rare: { label: 'RARE · 稀有款', color: 'bg-purple-500', border: 'border-purple-300', text: 'text-purple-600', weight: 12.5 },
+            super: { label: 'SUPER RARE · 超稀有', color: 'bg-gradient-to-r from-amber-500 to-orange-500', border: 'border-amber-400', text: 'text-amber-600', weight: 11 },
+            secret: { label: 'SECRET · 隱藏款', color: 'badge-secret', border: 'border-pink-400', text: 'text-pink-600', weight: 4 }
+        };
+
+        const SERIES_DATA = {
+            space: {
+                id: 'space',
+                name: '星際萌寵宇宙系列',
+                badge: 'SERIES 01 · 星際奇幻',
+                bgClass: 'from-rose-100 via-purple-100 to-indigo-100',
+                boxTheme: { primary: '#6366f1', secondary: '#a855f7', accent: '#f43f5e', strip: '#fbbf24' },
+                characters: [
+                    {
+                        id: 'sp_1',
+                        name: '太空波波貓',
+                        rarity: 'common',
+                        quote: '「喵嗚～正在前往起司星球的軌道上！」',
+                        weightHint: '手感適中，上下晃動空間剛剛好',
+                        soundHint: '頭盔內部發出輕微的「咔噠」聲',
+                        story: '穿著透明太空頭盔的橘白小貓，最喜歡在無重力狀態下追逐漂浮的毛線球。',
+                        svg: `<svg viewBox="0 0 200 200" class="w-full h-full">
+                            <defs>
+                                <radialGradient id="helmetGrad" cx="35%" cy="30%" r="65%">
+                                    <stop offset="0%" stop-color="#ffffff" stop-opacity="0.85"/>
+                                    <stop offset="70%" stop-color="#bae6fd" stop-opacity="0.35"/>
+                                    <stop offset="100%" stop-color="#38bdf8" stop-opacity="0.6"/>
+                                </radialGradient>
+                            </defs>
+                            <!-- 身體太空衣 -->
+                            <rect x="65" y="122" width="70" height="54" rx="26" fill="#f8fafc" stroke="#cbd5e1" stroke-width="3"/>
+                            <rect x="82" y="136" width="36" height="22" rx="6" fill="#6366f1"/>
+                            <circle cx="92" cy="147" r="4" fill="#fbbf24"/>
+                            <circle cx="108" cy="147" r="4" fill="#34d399"/>
+                            <!-- 貓耳朵 -->
+                            <path d="M58 68 L48 34 L82 52 Z" fill="#fb923c" stroke="#ea580c" stroke-width="3" stroke-linejoin="round"/>
+                            <path d="M142 68 L152 34 L118 52 Z" fill="#fb923c" stroke="#ea580c" stroke-width="3" stroke-linejoin="round"/>
+                            <!-- 貓臉 -->
+                            <circle cx="100" cy="84" r="44" fill="#fff7ed" stroke="#fdba74" stroke-width="3"/>
+                            <path d="M58 74 Q80 50 100 68 Q120 50 142 74 Q135 42 100 42 Q65 42 58 74 Z" fill="#fb923c"/>
+                            <!-- 眼睛與腮紅 -->
+                            <circle cx="83" cy="86" r="6" fill="#1e293b"/>
+                            <circle cx="81" cy="84" r="2" fill="#ffffff"/>
+                            <circle cx="117" cy="86" r="6" fill="#1e293b"/>
+                            <circle cx="115" cy="84" r="2" fill="#ffffff"/>
+                            <ellipse cx="72" cy="95" rx="6" ry="3.5" fill="#fda4af"/>
+                            <ellipse cx="128" cy="95" rx="6" ry="3.5" fill="#fda4af"/>
+                            <path d="M95 93 Q100 98 105 93" fill="none" stroke="#1e293b" stroke-width="2.5" stroke-linecap="round"/>
+                            <!-- 玻璃頭盔 -->
+                            <circle cx="100" cy="84" r="54" fill="url(#helmetGrad)" stroke="#7dd3fc" stroke-width="3"/>
+                            <path d="M66 56 A42 42 0 0 1 96 42" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" opacity="0.8"/>
+                        </svg>`
+                    },
+                    {
+                        id: 'sp_2',
+                        name: '星雲兔耳機',
+                        rarity: 'common',
+                        quote: '「正在接收來自仙女座的電音訊號！」',
+                        weightHint: '盒子頂部感覺滿載，幾乎沒有上下晃動空間',
+                        soundHint: '長耳朵輕輕敲擊盒壁的「叩叩」聲',
+                        story: '頭戴銀河降噪耳機的垂耳兔，能聽見宇宙深處每一顆流星劃過的旋律。',
+                        svg: `<svg viewBox="0 0 200 200" class="w-full h-full">
+                            <!-- 長耳朵 -->
+                            <rect x="64" y="18" width="22" height="58" rx="11" transform="rotate(-12 75 45)" fill="#f3e8ff" stroke="#c084fc" stroke-width="3"/>
+                            <rect x="114" y="18" width="22" height="58" rx="11" transform="rotate(12 125 45)" fill="#f3e8ff" stroke="#c084fc" stroke-width="3"/>
+                            <!-- 身體 -->
+                            <rect x="68" y="125" width="64" height="52" rx="25" fill="#a855f7"/>
+                            <circle cx="100" cy="148" r="14" fill="#f3e8ff"/>
+                            <!-- 頭部 -->
+                            <circle cx="100" cy="88" r="44" fill="#ffffff" stroke="#e9d5ff" stroke-width="3"/>
+                            <!-- 耳機罩 -->
+                            <rect x="44" y="70" width="16" height="34" rx="8" fill="#ec4899"/>
+                            <rect x="140" y="70" width="16" height="34" rx="8" fill="#ec4899"/>
+                            <path d="M52 72 A48 48 0 0 1 148 72" fill="none" stroke="#ec4899" stroke-width="6"/>
+                            <!-- 表情 -->
+                            <circle cx="84" cy="90" r="5.5" fill="#1e293b"/>
+                            <circle cx="116" cy="90" r="5.5" fill="#1e293b"/>
+                            <circle cx="82" cy="88" r="2" fill="#fff"/>
+                            <circle cx="114" cy="88" r="2" fill="#fff"/>
+                            <polygon points="97,96 103,96 100,100" fill="#f472b6"/>
+                            <ellipse cx="73" cy="98" rx="6" ry="3" fill="#fbcfe8"/>
+                            <ellipse cx="127" cy="98" rx="6" ry="3" fill="#fbcfe8"/>
+                        </svg>`
+                    },
+                    {
+                        id: 'sp_3',
+                        name: '火箭柴犬隊長',
+                        rarity: 'common',
+                        quote: '「準備倒數 3、2、1，全速衝刺汪！」',
+                        weightHint: '底部重心非常穩重，拿起來沉甸甸的',
+                        soundHint: '背後噴射器零件有紮實的悶響',
+                        story: '背著雙管燃料火箭的熱血赤柴，總是第一個衝出太空艙探索未知小行星。',
+                        svg: `<svg viewBox="0 0 200 200" class="w-full h-full">
+                            <!-- 背後小火箭 -->
+                            <rect x="46" y="105" width="18" height="48" rx="9" fill="#ef4444"/>
+                            <rect x="136" y="105" width="18" height="48" rx="9" fill="#ef4444"/>
+                            <polygon points="48,153 62,153 55,168" fill="#f59e0b"/>
+                            <polygon points="138,153 152,153 145,168" fill="#f59e0b"/>
+                            <!-- 身體 -->
+                            <rect x="66" y="122" width="68" height="54" rx="24" fill="#3b82f6"/>
+                            <path d="M84 122 L100 144 L116 122 Z" fill="#facc15"/>
+                            <!-- 柴犬耳朵 -->
+                            <polygon points="56,66 64,34 86,54" fill="#d97706"/>
+                            <polygon points="144,66 136,34 114,54" fill="#d97706"/>
+                            <!-- 臉 -->
+                            <circle cx="100" cy="84" r="44" fill="#f59e0b"/>
+                            <path d="M62 94 Q100 76 138 94 A42 42 0 0 1 62 94 Z" fill="#fef3c7"/>
+                            <!-- 眉毛與眼睛 -->
+                            <circle cx="83" cy="74" r="3.5" fill="#fef3c7"/>
+                            <circle cx="117" cy="74" r="3.5" fill="#fef3c7"/>
+                            <circle cx="83" cy="85" r="5.5" fill="#1e293b"/>
+                            <circle cx="117" cy="85" r="5.5" fill="#1e293b"/>
+                            <ellipse cx="100" cy="95" rx="6" ry="4" fill="#1e293b"/>
+                            <path d="M92 103 Q100 110 108 103" fill="none" stroke="#1e293b" stroke-width="2.5" stroke-linecap="round"/>
+                        </svg>`
+                    },
+                    {
+                        id: 'sp_4',
+                        name: '果凍外星小綠',
+                        rarity: 'common',
+                        quote: '「嗶啵嗶啵～地球的珍珠奶茶真好喝！」',
+                        weightHint: '整體重量偏輕，搖起來非常靈活',
+                        soundHint: '頭頂觸角彈簧發出「嗡嗡」微顫聲',
+                        story: '來自果凍星雲的軟萌外星人，身體半透明且富有彈性，遇見開心事頭頂天線會發光。',
+                        svg: `<svg viewBox="0 0 200 200" class="w-full h-full">
+                            <!-- 天線 -->
+                            <line x1="100" y1="44" x2="100" y2="20" stroke="#10b981" stroke-width="5" stroke-linecap="round"/>
+                            <circle cx="100" cy="18" r="8" fill="#facc15"/>
+                            <!-- 身體 -->
+                            <path d="M58 172 C58 125 142 125 142 172 Z" fill="#34d399"/>
+                            <!-- 大頭 -->
+                            <ellipse cx="100" cy="90" rx="50" ry="42" fill="#6ee7b7" stroke="#10b981" stroke-width="3"/>
+                            <!-- 三隻眼睛 -->
+                            <circle cx="74" cy="90" r="8" fill="#ffffff"/>
+                            <circle cx="74" cy="90" r="4" fill="#064e3b"/>
+                            <circle cx="100" cy="82" r="9" fill="#ffffff"/>
+                            <circle cx="100" cy="82" r="4.5" fill="#064e3b"/>
+                            <circle cx="126" cy="90" r="8" fill="#ffffff"/>
+                            <circle cx="126" cy="90" r="4" fill="#064e3b"/>
+                            <!-- 微笑 -->
+                            <path d="M88 106 Q100 116 112 106" fill="none" stroke="#065f46" stroke-width="3" stroke-linecap="round"/>
+                        </svg>`
+                    },
+                    {
+                        id: 'sp_5',
+                        name: '土星環小熊',
+                        rarity: 'rare',
+                        quote: '「轉圈圈～把煩惱都甩出太陽系吧！」',
+                        weightHint: '左右寬度飽滿，橫向搖晃幾乎沒有空隙',
+                        soundHint: '腰間星球光環磨擦內袋的「沙沙」聲',
+                        story: '腰間環繞著璀璨星塵光環的小熊，在宇宙中旋轉時會灑下金色的星光粉末。',
+                        svg: `<svg viewBox="0 0 200 200" class="w-full h-full">
+                            <!-- 熊耳朵 -->
+                            <circle cx="64" cy="54" r="16" fill="#93c5fd" stroke="#3b82f6" stroke-width="3"/>
+                            <circle cx="136" cy="54" r="16" fill="#93c5fd" stroke="#3b82f6" stroke-width="3"/>
+                            <!-- 身體 -->
+                            <rect x="68" y="122" width="64" height="52" rx="24" fill="#60a5fa"/>
+                            <!-- 頭 -->
+                            <circle cx="100" cy="86" r="42" fill="#bfdbfe" stroke="#3b82f6" stroke-width="3"/>
+                            <ellipse cx="100" cy="96" rx="16" ry="12" fill="#ffffff"/>
+                            <circle cx="100" cy="92" r="4.5" fill="#1e3a8a"/>
+                            <circle cx="82" cy="82" r="5" fill="#1e3a8a"/>
+                            <circle cx="118" cy="82" r="5" fill="#1e3a8a"/>
+                            <!-- 土星光環 -->
+                            <ellipse cx="100" cy="142" rx="74" ry="16" transform="rotate(-12 100 142)" fill="none" stroke="#fbbf24" stroke-width="8"/>
+                            <ellipse cx="100" cy="142" rx="74" ry="16" transform="rotate(-12 100 142)" fill="none" stroke="#fef08a" stroke-width="2" stroke-dasharray="8 6"/>
+                        </svg>`
+                    },
+                    {
+                        id: 'sp_6',
+                        name: '極光獨角鯨',
+                        rarity: 'rare',
+                        quote: '「在銀河極光裡游泳是最幸福的事～」',
+                        weightHint: '頭頂有尖尖的凸起感，請小心輕搖',
+                        soundHint: '水晶獨角傳來清脆的風鈴回音',
+                        story: '額頭長著彩虹水晶獨角的夢幻小鯨魚，游過的地方會留下北極光般的色彩。',
+                        svg: `<svg viewBox="0 0 200 200" class="w-full h-full">
+                            <!-- 螺旋獨角 -->
+                            <polygon points="92,48 108,48 100,12" fill="#fde047" stroke="#eab308" stroke-width="2"/>
+                            <!-- 鯨魚身體 -->
+                            <path d="M52 115 C52 55 148 55 148 115 C148 155 125 172 100 172 C75 172 52 155 52 115 Z" fill="#38bdf8" stroke="#0284c7" stroke-width="3"/>
+                            <!-- 肚皮 -->
+                            <path d="M68 135 Q100 120 132 135 C128 162 115 170 100 170 C85 170 72 162 68 135 Z" fill="#e0f2fe"/>
+                            <!-- 小魚鰭 -->
+                            <ellipse cx="46" cy="122" rx="14" ry="8" transform="rotate(-25 46 122)" fill="#0ea5e9"/>
+                            <ellipse cx="154" cy="122" rx="14" ry="8" transform="rotate(25 154 122)" fill="#0ea5e9"/>
+                            <!-- 眼睛與腮紅 -->
+                            <circle cx="80" cy="102" r="6" fill="#0f172a"/>
+                            <circle cx="78" cy="100" r="2" fill="#fff"/>
+                            <circle cx="120" cy="102" r="6" fill="#0f172a"/>
+                            <circle cx="118" cy="100" r="2" fill="#fff"/>
+                            <ellipse cx="70" cy="112" rx="6" ry="3.5" fill="#f472b6"/>
+                            <ellipse cx="130" cy="112" rx="6" ry="3.5" fill="#f472b6"/>
+                            <path d="M94 112 Q100 118 106 112" fill="none" stroke="#0f172a" stroke-width="2.5" stroke-linecap="round"/>
+                        </svg>`
+                    },
+                    {
+                        id: 'sp_7',
+                        name: '黃金太陽神喵',
+                        rarity: 'super',
+                        quote: '「耀眼光芒降臨！願好運永遠照耀著你！」',
+                        weightHint: '分量十足！整盒質感比一般款重了不少',
+                        soundHint: '背部太陽神環發出莊嚴的金屬共鳴感',
+                        story: '【超稀有款】沐浴在恆星核心誕生的太陽神喵，背後的金色日輪能驅散一切陰霾。',
+                        svg: `<svg viewBox="0 0 200 200" class="w-full h-full">
+                            <!-- 太陽神光輪 -->
+                            <circle cx="100" cy="95" r="68" fill="none" stroke="#fbbf24" stroke-width="6" stroke-dasharray="12 8"/>
+                            <circle cx="100" cy="95" r="56" fill="#fef3c7" opacity="0.6"/>
+                            <!-- 皇冠 -->
+                            <polygon points="78,44 88,24 100,38 112,24 122,44" fill="#f59e0b" stroke="#b45309" stroke-width="2"/>
+                            <!-- 身體披風 -->
+                            <path d="M58 174 L70 120 L130 120 L142 174 Z" fill="#ef4444"/>
+                            <rect x="72" y="122" width="56" height="50" rx="20" fill="#fbbf24"/>
+                            <!-- 貓頭 -->
+                            <polygon points="60,68 54,40 82,54" fill="#f59e0b"/>
+                            <polygon points="140,68 146,40 118,54" fill="#f59e0b"/>
+                            <circle cx="100" cy="86" r="42" fill="#fde047" stroke="#f59e0b" stroke-width="3"/>
+                            <!-- 星星眼 -->
+                            <circle cx="83" cy="86" r="6" fill="#78350f"/>
+                            <circle cx="117" cy="86" r="6" fill="#78350f"/>
+                            <polygon points="83,81 85,85 89,85 86,88 87,92 83,89 79,92 80,88 77,85 81,85" fill="#ffffff"/>
+                            <polygon points="117,81 119,85 123,85 120,88 121,92 117,89 113,92 114,88 111,85 115,85" fill="#ffffff"/>
+                            <path d="M94 98 Q100 104 106 98" fill="none" stroke="#78350f" stroke-width="2.5" stroke-linecap="round"/>
+                        </svg>`
+                    },
+                    {
+                        id: 'sp_8',
+                        name: '星辰創世神龍',
+                        rarity: 'secret',
+                        quote: '「跨越億萬光年，終於與有緣的你相遇！」',
+                        weightHint: '難以置信的飽滿度！上下左右幾乎零空隙',
+                        soundHint: '深沉而神秘的星塵流動聲（傳說級手感！）',
+                        story: '【隱藏款 4%】誕生於宇宙大爆炸第一道星光的幻彩神龍，據說擁有它的人一整年都會心想事成！',
+                        svg: `<svg viewBox="0 0 200 200" class="w-full h-full">
+                            <defs>
+                                <linearGradient id="secretGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#f472b6"/>
+                                    <stop offset="50%" stop-color="#c084fc"/>
+                                    <stop offset="100%" stop-color="#38bdf8"/>
+                                </linearGradient>
+                            </defs>
+                            <!-- 幻彩翅膀 -->
+                            <path d="M56 105 C20 75 18 125 58 135 Z" fill="#f472b6"/>
+                            <path d="M144 105 C180 75 182 125 142 135 Z" fill="#38bdf8"/>
+                            <!-- 龍角 -->
+                            <path d="M76 48 Q64 20 82 24" fill="none" stroke="#fbbf24" stroke-width="6" stroke-linecap="round"/>
+                            <path d="M124 48 Q136 20 118 24" fill="none" stroke="#fbbf24" stroke-width="6" stroke-linecap="round"/>
+                            <!-- 身體 -->
+                            <rect x="66" y="120" width="68" height="54" rx="26" fill="url(#secretGrad)"/>
+                            <ellipse cx="100" cy="148" rx="18" ry="20" fill="#fef08a"/>
+                            <!-- 龍頭 -->
+                            <circle cx="100" cy="84" r="44" fill="url(#secretGrad)" stroke="#ffffff" stroke-width="3"/>
+                            <!-- 額頭星印 -->
+                            <polygon points="100,52 104,60 112,60 106,65 108,73 100,68 92,73 94,65 88,60 96,60" fill="#fef08a"/>
+                            <!-- 眼睛 -->
+                            <circle cx="82" cy="88" r="6.5" fill="#1e1b4b"/>
+                            <circle cx="80" cy="86" r="2.5" fill="#ffffff"/>
+                            <circle cx="118" cy="88" r="6.5" fill="#1e1b4b"/>
+                            <circle cx="116" cy="86" r="2.5" fill="#ffffff"/>
+                            <path d="M93 100 Q100 107 107 100" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+                        </svg>`
+                    }
+                ]
+            },
+            sweet: {
+                id: 'sweet',
+                name: '夢幻甜點派對系列',
+                badge: 'SERIES 02 · 甜蜜下午茶',
+                bgClass: 'from-amber-100 via-pink-100 to-rose-100',
+                boxTheme: { primary: '#ec4899', secondary: '#f43f5e', accent: '#f59e0b', strip: '#34d399' },
+                characters: [
+                    {
+                        id: 'sw_1',
+                        name: '草莓奶油泡芙',
+                        rarity: 'common',
+                        quote: '「剛出爐的卡士達醬，甜度剛剛好喔！」',
+                        weightHint: '圓滾滾的手感，在盒子裡微微滾動',
+                        soundHint: '頭頂小草莓輕碰紙盒的「噗通」聲',
+                        story: '蓬鬆酥脆的黃金泡芙精靈，頭上頂著一顆新鮮大草莓，散發著濃郁香草奶香。',
+                        svg: `<svg viewBox="0 0 200 200" class="w-full h-full">
+                            <!-- 泡芙底座 -->
+                            <ellipse cx="100" cy="144" rx="52" ry="30" fill="#f59e0b" stroke="#d97706" stroke-width="3"/>
+                            <!-- 鮮奶油層 -->
+                            <path d="M46 125 Q60 108 75 122 Q90 105 100 122 Q115 105 128 122 Q142 108 154 125 C154 142 46 142 46 125 Z" fill="#ffffff"/>
+                            <!-- 泡芙蓋 -->
+                            <path d="M54 114 C54 68 146 68 146 114 Z" fill="#fbbf24" stroke="#d97706" stroke-width="3"/>
+                            <!-- 草莓 -->
+                            <path d="M88 68 C88 46 112 46 112 68 C112 78 100 84 100 84 C100 84 88 78 88 68 Z" fill="#f43f5e"/>
+                            <path d="M90 52 L100 58 L110 52" fill="none" stroke="#10b981" stroke-width="4" stroke-linecap="round"/>
+                            <!-- 表情 -->
+                            <circle cx="82" cy="100" r="5" fill="#451a03"/>
+                            <circle cx="118" cy="100" r="5" fill="#451a03"/>
+                            <ellipse cx="72" cy="106" rx="5" ry="3" fill="#fda4af"/>
+                            <ellipse cx="128" cy="106" rx="5" ry="3" fill="#fda4af"/>
+                            <path d="M95 104 Q100 109 105 104" fill="none" stroke="#451a03" stroke-width="2.5" stroke-linecap="round"/>
+                        </svg>`
+                    },
+                    {
+                        id: 'sw_2',
+                        name: '抹茶紅豆大福',
+                        rarity: 'common',
+                        quote: '「軟綿綿、Q彈彈，捏一下會變麻糬喔！」',
+                        weightHint: '低重心、扁圓型，底部貼合得非常緊實',
+                        soundHint: '幾乎沒有零件晃動聲，非常安靜',
+                        story: '裹滿宇治抹茶粉的軟糯大福寶寶，內餡包著甜蜜蜜的十勝紅豆泥。',
+                        svg: `<svg viewBox="0 0 200 200" class="w-full h-full">
+                            <!-- 盤子 -->
+                            <ellipse cx="100" cy="164" rx="68" ry="14" fill="#cbd5e1"/>
+                            <!-- 大福身體 -->
+                            <path d="M44 156 C44 82 156 82 156 156 Z" fill="#86efac" stroke="#22c55e" stroke-width="3"/>
+                            <!-- 抹茶粉頂 -->
+                            <path d="M66 104 Q100 84 134 104 Q118 114 100 108 Q82 114 66 104 Z" fill="#15803d"/>
+                            <!-- 表情 -->
+                            <circle cx="80" cy="130" r="5.5" fill="#14532d"/>
+                            <circle cx="120" cy="130" r="5.5" fill="#14532d"/>
+                            <circle cx="78" cy="128" r="2" fill="#fff"/>
+                            <circle cx="118" cy="128" r="2" fill="#fff"/>
+                            <path d="M94 136 Q100 142 106 136" fill="none" stroke="#14532d" stroke-width="2.5" stroke-linecap="round"/>
+                        </svg>`
+                    },
+                    {
+                        id: 'sw_3',
+                        name: '焦糖布丁汪',
+                        rarity: 'common',
+                        quote: '「ㄉㄨㄞ ㄉㄨㄞ～走路都會跟著一起晃動！」',
+                        weightHint: '上窄下寬的梯形體感，搖起來很有節奏',
+                        soundHint: '頭頂焦糖帽發出清脆的「叩叩」聲',
+                        story: '有著滑嫩雞蛋布丁身體的小狗，頭頂淋著香濃微苦的琥珀色焦糖醬。',
+                        svg: `<svg viewBox="0 0 200 200" class="w-full h-full">
+                            <!-- 布丁身體 -->
+                            <path d="M54 164 L70 76 L130 76 L146 164 Z" fill="#fef08a" stroke="#eab308" stroke-width="3" stroke-linejoin="round"/>
+                            <!-- 焦糖淋醬 -->
+                            <path d="M68 84 L72 72 L128 72 L132 84 Q122 98 112 86 Q100 100 88 86 Q78 98 68 84 Z" fill="#92400e"/>
+                            <!-- 布丁狗耳朵 -->
+                            <ellipse cx="62" cy="96" rx="14" ry="8" transform="rotate(-30 62 96)" fill="#92400e"/>
+                            <ellipse cx="138" cy="96" rx="14" ry="8" transform="rotate(30 138 96)" fill="#92400e"/>
+                            <!-- 臉 -->
+                            <circle cx="84" cy="118" r="5" fill="#451a03"/>
+                            <circle cx="116" cy="118" r="5" fill="#451a03"/>
+                            <path d="M94 124 Q100 130 106 124" fill="none" stroke="#451a03" stroke-width="2.5" stroke-linecap="round"/>
+                        </svg>`
+                    },
+                    {
+                        id: 'sw_4',
+                        name: '藍莓馬卡龍兔',
+                        rarity: 'common',
+                        quote: '「法式優雅下午茶時間開始囉～」',
+                        weightHint: '厚度適中、造型對稱，手感非常平衡',
+                        soundHint: '蕾絲裙邊與內盒輕微摩擦聲',
+                        story: '夾著酸甜藍莓果醬的馬卡龍小兔，是甜點王國裡最講究禮儀的優雅小姐。',
+                        svg: `<svg viewBox="0 0 200 200" class="w-full h-full">
+                            <!-- 兔耳朵 -->
+                            <rect x="72" y="24" width="18" height="48" rx="9" fill="#c4b5fd" stroke="#8b5cf6" stroke-width="3"/>
+                            <rect x="110" y="24" width="18" height="48" rx="9" fill="#c4b5fd" stroke="#8b5cf6" stroke-width="3"/>
+                            <!-- 上層餅殼 -->
+                            <path d="M48 106 C48 64 152 64 152 106 Z" fill="#a78bfa"/>
+                            <!-- 藍莓夾心 -->
+                            <rect x="44" y="106" width="112" height="22" rx="11" fill="#4c1d95"/>
+                            <!-- 下層餅殼 -->
+                            <path d="M48 128 C48 166 152 166 152 128 Z" fill="#a78bfa"/>
+                            <!-- 表情 -->
+                            <circle cx="82" cy="92" r="5" fill="#ffffff"/>
+                            <circle cx="118" cy="92" r="5" fill="#ffffff"/>
+                            <path d="M95 96 Q100 101 105 96" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round"/>
+                        </svg>`
+                    },
+                    {
+                        id: 'sw_5',
+                        name: '彩虹獨角霜淇淋',
+                        rarity: 'rare',
+                        quote: '「三種口味一次滿足，絕對不會融化喔！」',
+                        weightHint: '高度很高！頂部幾乎頂到盲盒上蓋',
+                        soundHint: '甜筒脆皮紋路在盒內發出細微沙沙聲',
+                        story: '融合草莓、香草與蘇打口味的三層夢幻霜淇淋，頂端還插著一根脆笛酥！',
+                        svg: `<svg viewBox="0 0 200 200" class="w-full h-full">
+                            <!-- 脆笛酥 -->
+                            <rect x="114" y="24" width="12" height="42" rx="4" transform="rotate(20 120 45)" fill="#d97706"/>
+                            <!-- 甜筒 -->
+                            <polygon points="66,114 134,114 100,182" fill="#f59e0b" stroke="#b45309" stroke-width="3" stroke-linejoin="round"/>
+                            <!-- 霜淇淋層 -->
+                            <ellipse cx="100" cy="108" rx="46" ry="18" fill="#7dd3fc"/>
+                            <ellipse cx="100" cy="86" rx="38" ry="18" fill="#fef08a"/>
+                            <path d="M70 72 C70 42 130 42 130 72 Z" fill="#f472b6"/>
+                            <!-- 表情 -->
+                            <circle cx="86" cy="86" r="5" fill="#1e293b"/>
+                            <circle cx="114" cy="86" r="5" fill="#1e293b"/>
+                            <path d="M95 92 Q100 97 105 92" fill="none" stroke="#1e293b" stroke-width="2.5" stroke-linecap="round"/>
+                        </svg>`
+                    },
+                    {
+                        id: 'sw_6',
+                        name: '珍珠黑糖波霸熊',
+                        rarity: 'rare',
+                        quote: '「微糖去冰加雙倍波霸，今天也要元氣滿滿！」',
+                        weightHint: '透明杯身裝得滿滿的，手感紮實有份量',
+                        soundHint: '杯底黑糖珍珠晃動時有顆粒碰撞聲',
+                        story: '住進手搖飲料杯裡的黑糖熊熊，最喜歡在香醇鮮奶與Q彈波霸之間潛水。',
+                        svg: `<svg viewBox="0 0 200 200" class="w-full h-full">
+                            <!-- 吸管 -->
+                            <rect x="112" y="18" width="14" height="55" rx="4" transform="rotate(15 119 45)" fill="#ec4899"/>
+                            <!-- 飲料杯 -->
+                            <polygon points="58,68 142,68 130,172 70,172" fill="#fef3c7" stroke="#d97706" stroke-width="3"/>
+                            <!-- 珍珠 -->
+                            <circle cx="82" cy="156" r="7" fill="#292524"/>
+                            <circle cx="100" cy="160" r="7" fill="#292524"/>
+                            <circle cx="118" cy="155" r="7" fill="#292524"/>
+                            <circle cx="92" cy="146" r="6.5" fill="#292524"/>
+                            <circle cx="110" cy="145" r="6.5" fill="#292524"/>
+                            <!-- 熊臉 -->
+                            <circle cx="76" cy="86" r="10" fill="#92400e"/>
+                            <circle cx="124" cy="86" r="10" fill="#92400e"/>
+                            <circle cx="100" cy="106" r="28" fill="#b45309"/>
+                            <circle cx="90" cy="104" r="4" fill="#fff"/>
+                            <circle cx="110" cy="104" r="4" fill="#fff"/>
+                            <ellipse cx="100" cy="113" rx="8" ry="6" fill="#fef3c7"/>
+                        </svg>`
+                    },
+                    {
+                        id: 'sw_7',
+                        name: '金箔皇家馬車蛋糕',
+                        rarity: 'super',
+                        quote: '「午夜鐘聲響起前，來一塊華麗的三層蛋糕吧！」',
+                        weightHint: '重量級選手！整盒拿起來沉甸甸的超有感',
+                        soundHint: '皇冠裝飾發出清脆的金屬高音',
+                        story: '【超稀有款】點綴著食用24K金箔與紅寶石櫻桃的三層慶典蛋糕，是甜點王國的國寶。',
+                        svg: `<svg viewBox="0 0 200 200" class="w-full h-full">
+                            <!-- 蛋糕底座 -->
+                            <rect x="44" y="132" width="112" height="36" rx="12" fill="#f43f5e"/>
+                            <rect x="58" y="96" width="84" height="36" rx="10" fill="#fb7185"/>
+                            <rect x="74" y="64" width="52" height="32" rx="8" fill="#fda4af"/>
+                            <!-- 奶油波浪 -->
+                            <path d="M44 132 Q62 146 80 132 Q100 146 120 132 Q138 146 156 132" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round"/>
+                            <!-- 頂部皇冠櫻桃 -->
+                            <circle cx="100" cy="48" r="14" fill="#dc2626"/>
+                            <polygon points="86,36 93,22 100,32 107,22 114,36" fill="#fbbf24"/>
+                            <!-- 表情 -->
+                            <circle cx="86" cy="114" r="5" fill="#4c0519"/>
+                            <circle cx="114" cy="114" r="5" fill="#4c0519"/>
+                            <path d="M94 120 Q100 126 106 120" fill="none" stroke="#4c0519" stroke-width="2.5" stroke-linecap="round"/>
+                        </svg>`
+                    },
+                    {
+                        id: 'sw_8',
+                        name: '夢境獨角獸聖代',
+                        rarity: 'secret',
+                        quote: '「把整片星空與彩虹都裝進聖代杯裡送給你！」',
+                        weightHint: '滿盒爆倉感！四面八方都塞得滿滿當當',
+                        soundHint: '聖代高腳杯與翅膀發出清亮的水晶共鳴',
+                        story: '【隱藏款 4%】傳說中只有在流星雨之夜才會出現的獨角獸聖代，吃一口就能夢見所有美好的事物！',
+                        svg: `<svg viewBox="0 0 200 200" class="w-full h-full">
+                            <!-- 天使翅膀 -->
+                            <path d="M54 96 C20 68 22 116 58 122 Z" fill="#ffffff" stroke="#f472b6" stroke-width="2"/>
+                            <path d="M146 96 C180 68 178 116 142 122 Z" fill="#ffffff" stroke="#f472b6" stroke-width="2"/>
+                            <!-- 聖代玻璃杯 -->
+                            <path d="M62 108 L138 108 L122 152 L78 152 Z" fill="#e0f2fe" stroke="#38bdf8" stroke-width="3"/>
+                            <rect x="92" y="152" width="16" height="20" fill="#bae6fd"/>
+                            <ellipse cx="100" cy="174" rx="30" ry="7" fill="#38bdf8"/>
+                            <!-- 獨角獸冰淇淋球 -->
+                            <circle cx="100" cy="84" r="36" fill="#fbcfe8" stroke="#f472b6" stroke-width="3"/>
+                            <polygon points="94,52 106,52 100,20" fill="#fde047"/>
+                            <polygon points="72,62 66,42 84,54" fill="#f472b6"/>
+                            <polygon points="128,62 134,42 116,54" fill="#f472b6"/>
+                            <!-- 表情 -->
+                            <circle cx="86" cy="86" r="5" fill="#831843"/>
+                            <circle cx="114" cy="86" r="5" fill="#831843"/>
+                            <path d="M94 94 Q100 100 106 94" fill="none" stroke="#831843" stroke-width="2.5" stroke-linecap="round"/>
+                        </svg>`
+                    }
+                ]
+            }
+        };
+
+        // ==========================================
+        // 3. 應用程式狀態管理
+        // ==========================================
+        let state = {
+            currentSeriesId: 'space',
+            selectedBoxIndex: null,
+            activeCharacter: null,
+            shakeCount: 0,
+            isOpened: false,
+            isAnimating: false,
+            // 收藏紀錄: { [charId]: count }
+            inventory: {},
+            totalPulls: 0
+        };
+
+        // 載入本地儲存
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('pop_wonderland_save_v1');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    state.inventory = parsed.inventory || {};
+                    state.totalPulls = parsed.totalPulls || 0;
+                }
+            } catch (e) {
+                console.warn('無法讀取存檔', e);
+            }
+        }
+
+        function saveProgress() {
+            try {
+                localStorage.setItem('pop_wonderland_save_v1', JSON.stringify({
+                    inventory: state.inventory,
+                    totalPulls: state.totalPulls
+                }));
+            } catch (e) {
+                console.warn('無法寫入存檔', e);
+            }
+        }
+
+        // ==========================================
+        // 4. SVG 盲盒渲染工廠 (支援封條撕開與蓋子彈飛動畫)
+        // ==========================================
+        function createBlindBoxSVG(theme, boxNumber = '', interactive = false) {
+            const uid = Math.random().toString(36).substring(2, 8);
+            return `
+            <svg viewBox="0 0 220 260" class="w-full h-full drop-shadow-xl overflow-visible">
+                <defs>
+                    <linearGradient id="boxFront_${uid}" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="${theme.primary}"/>
+                        <stop offset="100%" stop-color="${theme.secondary}"/>
+                    </linearGradient>
+                    <linearGradient id="boxTop_${uid}" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="#ffffff" stop-opacity="0.35"/>
+                        <stop offset="100%" stop-color="#ffffff" stop-opacity="0.05"/>
+                    </linearGradient>
+                </defs>
+
+                <!-- 底部陰影 -->
+                <ellipse cx="110" cy="242" rx="74" ry="12" fill="rgba(15, 23, 42, 0.16)"/>
+
+                <!-- 盒身主體 (開盒時下沉) -->
+                <g class="${interactive ? 'box-body-group' : ''}">
+                    <!-- 正面盒身 -->
+                    <rect x="35" y="78" width="150" height="156" rx="18" fill="url(#boxFront_${uid})" stroke="#ffffff" stroke-width="3"/>
+                    
+                    <!-- 裝飾幾何光澤 -->
+                    <circle cx="62" cy="110" r="18" fill="#ffffff" opacity="0.12"/>
+                    <circle cx="158" cy="204" r="24" fill="#ffffff" opacity="0.12"/>
+                    
+                    <!-- 中央大問號徽章 -->
+                    <circle cx="110" cy="158" r="38" fill="#ffffff" opacity="0.92"/>
+                    <text x="110" y="174" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="900" font-size="48" fill="${theme.primary}">?</text>
+                    
+                    <!-- 盒身編號標籤 -->
+                    ${boxNumber ? `
+                        <rect x="82" y="206" width="56" height="18" rx="9" fill="rgba(0,0,0,0.25)"/>
+                        <text x="110" y="219" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="700" font-size="11" fill="#ffffff">NO.0${boxNumber}</text>
+                    ` : ''}
+                </g>
+
+                <!-- 盒蓋與頂部結構 (開盒時向上彈飛) -->
+                <g class="${interactive ? 'box-lid-group' : ''}">
+                    <!-- 盒蓋立體頂面 -->
+                    <path d="M46 42 L174 42 L188 76 L32 76 Z" fill="${theme.primary}" stroke="#ffffff" stroke-width="2.5" stroke-linejoin="round"/>
+                    <path d="M46 42 L174 42 L188 76 L32 76 Z" fill="url(#boxTop_${uid})"/>
+                    <!-- 盒蓋前緣 -->
+                    <rect x="30" y="72" width="160" height="18" rx="8" fill="${theme.secondary}" stroke="#ffffff" stroke-width="2.5"/>
+                    <!-- 頂部吊掛孔裝飾 -->
+                    <rect x="94" y="52" width="32" height="8" rx="4" fill="rgba(255,255,255,0.65)"/>
+                </g>
+
+                <!-- 易撕封條 (開盒第一步向右撕飛) -->
+                <g class="${interactive ? 'box-strip-group' : ''}">
+                    <rect x="26" y="83" width="168" height="14" rx="5" fill="${theme.strip}" stroke="#ffffff" stroke-width="2"/>
+                    <line x1="36" y1="90" x2="174" y2="90" stroke="#ffffff" stroke-width="2" stroke-dasharray="6 5"/>
+                    <!-- 右側撕拉小拉環 -->
+                    <circle cx="188" cy="90" r="9" fill="${theme.accent}" stroke="#ffffff" stroke-width="2"/>
+                    <path d="M186 87 L191 90 L186 93" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </g>
+            </svg>`;
+        }
+
+        // ==========================================
+        // 5. 核心互動流程控制
+        // ==========================================
+        function switchSeries(seriesId) {
+            if (state.isAnimating) return;
+            sfx.playClick();
+            state.currentSeriesId = seriesId;
+            const series = SERIES_DATA[seriesId];
+
+            // 更新頁籤樣式
+            document.querySelectorAll('.series-tab').forEach(btn => {
+                btn.classList.remove('bg-white', 'text-indigo-600', 'text-pink-600', 'shadow-sm');
+                btn.classList.add('text-slate-600');
+            });
+            const activeTab = document.getElementById(`tab-${seriesId}`);
+            activeTab.classList.remove('text-slate-600');
+            activeTab.classList.add('bg-white', 'shadow-sm', seriesId === 'space' ? 'text-indigo-600' : 'text-pink-600');
+
+            // 更新頁面背景漸層與標題
+            document.body.className = `min-h-screen transition-colors duration-700 bg-gradient-to-br ${series.bgClass} text-slate-800 relative`;
+            document.getElementById('series-badge').textContent = series.badge;
+
+            resetToShelf(false);
+            renderCollection();
+        }
+
+        // 渲染貨架上的 6 個盲盒
+        function renderShelf() {
+            const series = SERIES_DATA[state.currentSeriesId];
+            const shelfGrid = document.querySelector('#stage-shelf .grid');
+            shelfGrid.innerHTML = '';
+
+            for (let i = 1; i <= 6; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'blind-box-card group relative flex flex-col items-center p-2 rounded-2xl transition-all duration-300 focus:outline-none';
+                btn.style.animationDelay = `${i * 0.12}s`;
+                btn.onclick = () => selectBox(i);
+                btn.innerHTML = `
+                    <div class="w-24 h-28 sm:w-28 sm:h-32 animate-float" style="animation-delay: ${i * 0.25}s">
+                        ${createBlindBoxSVG(series.boxTheme, i, false)}
+                    </div>
+                    <span class="mt-1 px-2.5 py-0.5 rounded-full bg-white/80 group-hover:bg-indigo-600 group-hover:text-white text-[11px] font-bold text-slate-600 shadow-sm transition">
+                        選取 #0${i}
+                    </span>
+                `;
+                shelfGrid.appendChild(btn);
+            }
+        }
+
+        // 依據權重隨機決定本盒內容物
+        function rollCharacter(seriesId) {
+            const chars = SERIES_DATA[seriesId].characters;
+            const pool = chars.map(char => ({
+                char,
+                weight: RARITY_META[char.rarity].weight
+            }));
+            const totalWeight = pool.reduce((sum, item) => sum + item.weight, 0);
+            let random = Math.random() * totalWeight;
+
+            for (const item of pool) {
+                if (random < item.weight) return item.char;
+                random -= item.weight;
+            }
+            return chars[0];
+        }
+
+        // 步驟一：點擊選定某個盲盒
+        function selectBox(boxIndex) {
+            if (state.isAnimating) return;
+            sfx.playClick();
+
+            state.selectedBoxIndex = boxIndex;
+            state.activeCharacter = rollCharacter(state.currentSeriesId);
+            state.shakeCount = 0;
+            state.isOpened = false;
+
+            const series = SERIES_DATA[state.currentSeriesId];
+
+            // 切換舞台 UI
+            document.getElementById('stage-title').textContent = `已拿起 #0${boxIndex} 號盲盒`;
+            document.getElementById('back-to-shelf-btn').classList.remove('hidden');
+
+            document.getElementById('stage-shelf').classList.add('hidden');
+            document.getElementById('stage-unbox').classList.remove('hidden');
+
+            // 重置開箱元素狀態
+            document.getElementById('rayburst-bg').classList.add('hidden');
+            document.getElementById('revealed-figure-container').classList.add('hidden');
+            document.getElementById('revealed-figure-container').classList.remove('flex');
+            
+            const boxContainer = document.getElementById('active-box-container');
+            boxContainer.classList.remove('hidden');
+            boxContainer.innerHTML = `<div id="active-box-inner" class="w-full h-full animate-float">${createBlindBoxSVG(series.boxTheme, boxIndex, true)}</div>`;
+
+            // 重置提示與按鈕
+            document.getElementById('shake-count').textContent = '0';
+            const btnShake = document.getElementById('btn-shake');
+            btnShake.disabled = false;
+            btnShake.classList.remove('opacity-50', 'cursor-not-allowed');
+
+            document.getElementById('hint-box').classList.remove('hidden');
+            document.getElementById('hint-text').innerHTML = '💡 提示：點擊「搖一搖」可以感知盒子裡的重量與聲音喔！';
+
+            document.getElementById('controls-shelf').classList.add('hidden');
+            document.getElementById('controls-result').classList.add('hidden');
+            document.getElementById('controls-shake').classList.remove('hidden');
+        }
+
+        // 搖一搖互動與線索揭露
+        function shakeActiveBox() {
+            if (state.isAnimating || state.isOpened || state.shakeCount >= 3) return;
+            
+            state.isAnimating = true;
+            state.shakeCount++;
+            sfx.playShake();
+
+            const boxInner = document.getElementById('active-box-inner');
+            boxInner.classList.remove('animate-float', 'animate-shake');
+            void boxInner.offsetWidth; // 觸發重繪
+            boxInner.classList.add('animate-shake');
+
+            // 產生漫畫擬聲詞泡泡
+            spawnOnomatopoeia();
+
+            // 更新搖晃次數與線索提示
+            document.getElementById('shake-count').textContent = state.shakeCount;
+            const hintEl = document.getElementById('hint-text');
+            const char = state.activeCharacter;
+
+            if (state.shakeCount === 1) {
+                hintEl.innerHTML = `⚖️ <strong>手感線索：</strong>${char.weightHint}`;
+            } else if (state.shakeCount === 2) {
+                hintEl.innerHTML = `👂 <strong>聽覺線索：</strong>${char.soundHint}`;
+            } else {
+                hintEl.innerHTML = `🔥 <strong>線索已全數掌握！</strong>準備好撕開封條揭曉答案了嗎？`;
+                const btnShake = document.getElementById('btn-shake');
+                btnShake.disabled = true;
+                btnShake.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+
+            setTimeout(() => {
+                boxInner.classList.remove('animate-shake');
+                if (!state.isOpened) boxInner.classList.add('animate-float');
+                state.isAnimating = false;
+            }, 560);
+        }
+
+        function spawnOnomatopoeia() {
+            const words = ['沙沙～', '咔噠！', '叩叩～', '晃晃！', '嘩啦～'];
+            const word = words[Math.floor(Math.random() * words.length)];
+            const container = document.getElementById('onomatopoeia-container');
+            
+            const badge = document.createElement('div');
+            const offsetX = (Math.random() - 0.5) * 140;
+            const offsetY = (Math.random() - 0.5) * 90 - 40;
+            
+            badge.className = 'sound-bubble absolute px-3 py-1 rounded-full bg-amber-400 text-slate-900 font-black text-sm shadow-md border-2 border-white';
+            badge.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+            badge.textContent = word;
+            
+            container.appendChild(badge);
+            setTimeout(() => badge.remove(), 750);
+        }
+
+        // 步驟二 & 三：撕開封條 -> 盒蓋彈開 -> 光芒迸發 -> 公仔登場
+        function openActiveBox() {
+            if (state.isAnimating || state.isOpened) return;
+            state.isAnimating = true;
+            state.isOpened = true;
+
+            document.getElementById('back-to-shelf-btn').classList.add('hidden');
+            document.getElementById('controls-shake').classList.add('hidden');
+            document.getElementById('hint-box').classList.add('hidden');
+
+            const boxInner = document.getElementById('active-box-inner');
+            boxInner.classList.remove('animate-float');
+
+            const stripGroup = boxInner.querySelector('.box-strip-group');
+            const lidGroup = boxInner.querySelector('.box-lid-group');
+            const bodyGroup = boxInner.querySelector('.box-body-group');
+
+            // 1. 撕開封條 (0ms)
+            sfx.playRip();
+            if (stripGroup) stripGroup.classList.add('animate-rip');
+
+            // 2. 盒蓋彈飛 + 盒身下沉 (350ms)
+            setTimeout(() => {
+                if (lidGroup) lidGroup.classList.add('animate-lid-pop');
+                if (bodyGroup) bodyGroup.classList.add('animate-box-open');
+            }, 350);
+
+            // 3. 光芒迸發 + 全螢幕閃光 + 碎紙噴發 + 公仔彈出 (720ms)
+            setTimeout(() => {
+                const char = state.activeCharacter;
+                const rarityInfo = RARITY_META[char.rarity];
+
+                // 播放對應稀有度歡呼音效
+                sfx.playReveal(char.rarity);
+
+                // 觸發高稀有度全螢幕閃光
+                triggerScreenFlash(char.rarity);
+
+                // 啟動放射光束背景
+                const rayBg = document.getElementById('rayburst-bg');
+                rayBg.className = 'absolute w-[480px] h-[480px] sm:w-[600px] sm:h-[600px] rounded-full pointer-events-none opacity-85 ';
+                if (char.rarity === 'secret') {
+                    rayBg.classList.add('rayburst-rainbow');
+                } else if (char.rarity === 'super') {
+                    rayBg.classList.add('rayburst-gold');
+                } else {
+                    rayBg.classList.add('rayburst');
+                }
+
+                // 噴發彩帶碎紙
+                launchConfetti(char.rarity);
+
+                // 隱藏盒子，顯示公仔
+                document.getElementById('active-box-container').classList.add('hidden');
+                
+                const figContainer = document.getElementById('revealed-figure-container');
+                const tagEl = document.getElementById('figure-rarity-tag');
+                const svgEl = document.getElementById('figure-svg-display');
+
+                tagEl.className = `px-4 py-1 rounded-full text-xs font-black tracking-wider uppercase text-white shadow-md mb-2 ${rarityInfo.color}`;
+                tagEl.textContent = rarityInfo.label;
+
+                svgEl.innerHTML = char.svg;
+                svgEl.classList.remove('animate-figure-pop');
+                void svgEl.offsetWidth;
+                svgEl.classList.add('animate-figure-pop');
+
+                document.getElementById('figure-name').textContent = char.name;
+                document.getElementById('figure-quote').textContent = char.quote;
+                document.getElementById('stage-title').textContent = '🎉 恭喜獲得新夥伴！';
+
+                figContainer.classList.remove('hidden');
+                figContainer.classList.add('flex');
+
+                // 更新收藏數據與 UI
+                state.inventory[char.id] = (state.inventory[char.id] || 0) + 1;
+                state.totalPulls++;
+                saveProgress();
+                renderCollection();
+
+                document.getElementById('controls-result').classList.remove('hidden');
+                state.isAnimating = false;
+            }, 720);
+        }
+
+        function triggerScreenFlash(rarity) {
+            const flash = document.getElementById('flash-overlay');
+            if (rarity === 'secret') {
+                flash.style.background = 'linear-gradient(135deg, #fbcfe8, #fef08a, #bae6fd)';
+            } else if (rarity === 'super') {
+                flash.style.background = '#fef08a';
+            } else {
+                flash.style.background = '#ffffff';
+            }
+            flash.style.opacity = (rarity === 'secret' || rarity === 'super') ? '0.85' : '0.55';
+            setTimeout(() => {
+                flash.style.opacity = '0';
+            }, 220);
+        }
+
+        function playAgain() {
+            if (state.isAnimating) return;
+            sfx.playClick();
+            resetToShelf(false);
+        }
+
+        function resetToShelf(playSound = true) {
+            if (state.isAnimating) return;
+            if (playSound) sfx.playClick();
+
+            state.selectedBoxIndex = null;
+            state.activeCharacter = null;
+            state.shakeCount = 0;
+            state.isOpened = false;
+
+            document.getElementById('stage-title').textContent = '請選擇一個心儀的盲盒';
+            document.getElementById('back-to-shelf-btn').classList.add('hidden');
+            document.getElementById('stage-unbox').classList.add('hidden');
+            document.getElementById('stage-shelf').classList.remove('hidden');
+
+            document.getElementById('controls-shake').classList.add('hidden');
+            document.getElementById('controls-result').classList.add('hidden');
+            document.getElementById('controls-shelf').classList.remove('hidden');
+
+            renderShelf();
+        }
+
+        // ==========================================
+        // 6. 我的收藏櫃與角色檔案詳情
+        // ==========================================
+        function renderCollection() {
+            const series = SERIES_DATA[state.currentSeriesId];
+            const grid = document.getElementById('collection-grid');
+            grid.innerHTML = '';
+
+            let unlockedCount = 0;
+
+            series.characters.forEach(char => {
+                const count = state.inventory[char.id] || 0;
+                const isUnlocked = count > 0;
+                if (isUnlocked) unlockedCount++;
+
+                const rarityInfo = RARITY_META[char.rarity];
+                const card = document.createElement('div');
+                
+                if (isUnlocked) {
+                    card.className = `group cursor-pointer bg-white/90 hover:bg-white rounded-2xl p-3 border-2 ${rarityInfo.border} shadow-sm hover:shadow-md transition-all flex flex-col items-center text-center relative`;
+                    card.onclick = () => openFigureModal(char);
+                    card.innerHTML = `
+                        <span class="absolute top-2 right-2 px-1.5 py-0.5 rounded-md bg-slate-800 text-white font-display text-[10px] font-bold">
+                            ×${count}
+                        </span>
+                        <div class="w-20 h-20 my-1 group-hover:scale-110 transition-transform">
+                            ${char.svg}
+                        </div>
+                        <span class="text-[10px] font-black ${rarityInfo.text} uppercase tracking-tight">
+                            ${char.rarity === 'secret' ? 'SECRET 隱藏' : char.rarity === 'super' ? 'SUPER 超稀有' : char.rarity === 'rare' ? 'RARE 稀有' : 'COMMON 普通'}
+                        </span>
+                        <h4 class="text-xs font-black text-slate-800 mt-0.5 line-clamp-1">${char.name}</h4>
+                    `;
+                } else {
+                    card.className = 'bg-slate-200/50 rounded-2xl p-3 border border-dashed border-slate-300 flex flex-col items-center justify-center text-center opacity-75';
+                    card.innerHTML = `
+                        <div class="w-20 h-20 my-1 flex items-center justify-center">
+                            <div class="w-14 h-14 rounded-full bg-slate-300/70 flex items-center justify-center font-display text-2xl font-bold text-slate-400">
+                                ?
+                            </div>
+                        </div>
+                        <span class="text-[10px] font-bold text-slate-400 uppercase">
+                            ${char.rarity === 'secret' ? '??? 隱藏款' : '未解鎖'}
+                        </span>
+                        <h4 class="text-xs font-bold text-slate-400 mt-0.5">
+                            ${char.rarity === 'secret' ? '神秘角色' : char.name}
+                        </h4>
+                    `;
+                }
+                grid.appendChild(card);
+            });
+
+            // 更新進度條
+            const totalChars = series.characters.length;
+            const percent = Math.round((unlockedCount / totalChars) * 100);
+            document.getElementById('collection-progress-text').textContent = `${unlockedCount} / ${totalChars}`;
+            document.getElementById('collection-progress-bar').style.width = `${percent}%`;
+            document.getElementById('total-pulls').textContent = state.totalPulls;
+
+            const completeBadge = document.getElementById('complete-badge');
+            if (unlockedCount === totalChars) {
+                completeBadge.classList.remove('hidden');
+            } else {
+                completeBadge.classList.add('hidden');
+            }
+        }
+
+        function viewCurrentFigureDetail() {
+            if (state.activeCharacter) {
+                openFigureModal(state.activeCharacter);
+            }
+        }
+
+        function openFigureModal(char) {
+            sfx.playClick();
+            const rarityInfo = RARITY_META[char.rarity];
+            const count = state.inventory[char.id] || 0;
+
+            const badge = document.getElementById('modal-rarity');
+            badge.className = `inline-block px-3 py-1 rounded-full text-xs font-black text-white mb-2 ${rarityInfo.color}`;
+            badge.textContent = rarityInfo.label;
+
+            document.getElementById('modal-svg').innerHTML = char.svg;
+            document.getElementById('modal-name').textContent = char.name;
+            document.getElementById('modal-owned').textContent = `收藏櫃已擁有：${count} 隻`;
+            document.getElementById('modal-weight').textContent = char.weightHint;
+            document.getElementById('modal-sound').textContent = char.soundHint;
+            document.getElementById('modal-story').textContent = char.story;
+
+            toggleModal('detail-modal', true);
+        }
+
+        function toggleModal(modalId, show) {
+            const modal = document.getElementById(modalId);
+            if (show) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            } else {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        function toggleSound() {
+            sfx.muted = !sfx.muted;
+            document.getElementById('sound-icon').textContent = sfx.muted ? '🔇' : '🔊';
+            if (!sfx.muted) sfx.playClick();
+        }
+
+        function confirmResetCollection() {
+            sfx.playClick();
+            toggleModal('confirm-modal', true);
+        }
+
+        function executeResetCollection() {
+            state.inventory = {};
+            state.totalPulls = 0;
+            saveProgress();
+            renderCollection();
+            toggleModal('confirm-modal', false);
+        }
+
+        // ==========================================
+        // 7. Canvas 彩色碎紙與星星噴發特效 (Confetti)
+        // ==========================================
+        const canvas = document.getElementById('confetti-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let animationFrameId = null;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function launchConfetti(rarity) {
+            const count = (rarity === 'secret' || rarity === 'super') ? 140 : 75;
+            const colors = (rarity === 'secret')
+                ? ['#f472b6', '#fbbf24', '#38bdf8', '#a855f7', '#34d399', '#ffffff']
+                : (rarity === 'super')
+                ? ['#fbbf24', '#f59e0b', '#fef08a', '#fb923c', '#ffffff']
+                : ['#ec4899', '#8b5cf6', '#3b82f6', '#10b981', '#facc15'];
+
+            const originX = canvas.width / 2;
+            const originY = canvas.height * 0.45;
+
+            for (let i = 0; i < count; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 14 + 5;
+                particles.push({
+                    x: originX,
+                    y: originY,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed - 6,
+                    size: Math.random() * 8 + 5,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    rotation: Math.random() * 360,
+                    vRot: (Math.random() - 0.5) * 14,
+                    shape: Math.random() > 0.4 ? 'rect' : 'star',
+                    alpha: 1
+                });
+            }
+
+            if (!animationFrameId) {
+                animateConfetti();
+            }
+        }
+
+        function drawStar(cx, cy, spikes, outerRadius, innerRadius) {
+            let rot = Math.PI / 2 * 3;
+            let x = cx;
+            let y = cy;
+            let step = Math.PI / spikes;
+
+            ctx.beginPath();
+            ctx.moveTo(cx, cy - outerRadius);
+            for (let i = 0; i < spikes; i++) {
+                x = cx + Math.cos(rot) * outerRadius;
+                y = cy + Math.sin(rot) * outerRadius;
+                ctx.lineTo(x, y);
+                rot += step;
+
+                x = cx + Math.cos(rot) * innerRadius;
+                y = cy + Math.sin(rot) * innerRadius;
+                ctx.lineTo(x, y);
+                rot += step;
+            }
+            ctx.lineTo(cx, cy - outerRadius);
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        function animateConfetti() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += 0.35; // 重力
+                p.vx *= 0.98; // 空氣阻力
+                p.rotation += p.vRot;
+                p.alpha -= 0.011;
+
+                if (p.alpha <= 0) {
+                    particles.splice(i, 1);
+                    continue;
+                }
+
+                ctx.save();
+                ctx.globalAlpha = p.alpha;
+                ctx.translate(p.x, p.y);
+                ctx.rotate((p.rotation * Math.PI) / 180);
+                ctx.fillStyle = p.color;
+
+                if (p.shape === 'star') {
+                    drawStar(0, 0, 5, p.size, p.size * 0.45);
+                } else {
+                    ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.65);
+                }
+                ctx.restore();
+            }
+
+            if (particles.length > 0) {
+                animationFrameId = requestAnimationFrame(animateConfetti);
+            } else {
+                animationFrameId = null;
+            }
+        }
+
+        // ==========================================
+        // 8. 頁面初始化
+        // ==========================================
+        window.onload = function () {
+            loadProgress();
+            renderShelf();
+            renderCollection();
+        };
+    </script>
+</body>
+</html>
