@@ -25,10 +25,10 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 .drawer-mask.open{display:block}
 .drawer{position:fixed;top:0;left:-290px;width:280px;height:100%;background:#fff;z-index:100;transition:left .3s ease;box-shadow:4px 0 20px rgba(0,0,0,.12);display:flex;flex-direction:column}
 .drawer.open{left:0}
-.drawer-hd{padding:20px;background:linear-gradient(135deg,#ffe5e2,#fbdce6);display:flex;justify-content:space-between;align-items:center;border-bottom:2px dashed #f2bec7}
+.drawer-hd{padding:20px;background:linear-gradient(135deg,#ffe5e2,#fbdce6);display:flex;justify-content:space-between;align-items:center;border-bottom:2px dashed #f2bec7;flex-shrink:0}
 .drawer-hd span{font-weight:800;color:#c76272;font-size:1.1rem}
 .close-btn{background:#fff;border:none;color:#c76272;font-size:1.2rem;width:34px;height:34px;border-radius:50%;cursor:pointer;font-weight:800}
-.drawer-list{list-style:none;padding:8px 0}
+.drawer-list{list-style:none;padding:8px 0 30px;overflow-y:auto;flex:1}
 .drawer-list li a{display:flex;justify-content:space-between;align-items:center;padding:18px 24px;text-decoration:none;color:#5a4649;font-weight:800;font-size:1.05rem;border-bottom:1px solid #f7e8ea;transition:.2s}
 .drawer-list li a:hover,.drawer-list li a.current{background:#fff6f7;color:#c76272}
 .arrow{color:#c76272;font-weight:800;transition:transform .25s ease}
@@ -37,7 +37,7 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 .arrow.rot{transform:rotate(90deg)}
 .submenu{display:none;list-style:none;background:#fffafa}
 .submenu.open{display:block}
-.submenu li a{padding:14px 24px 14px 42px;font-size:.96rem;border-bottom:1px dashed #f7e8ea;color:#7a5c61}
+.submenu li a{padding:14px 20px 14px 36px;font-size:.96rem;border-bottom:1px dashed #f7e8ea;color:#7a5c61}
 
 .wrap{position:relative;z-index:1;max-width:760px;margin:22px auto 40px;padding:0 16px}
 .hero{background:rgba(255,255,255,.94);backdrop-filter:blur(8px);border-radius:28px;padding:30px 22px;text-align:center;box-shadow:0 8px 25px rgba(226,158,168,.16);border:2px solid #f9dfe3;margin-bottom:22px}
@@ -50,7 +50,6 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 .portal-title{font-size:1.15rem;font-weight:800;color:#c76272;margin-bottom:4px}
 .portal-desc{font-size:.84rem;color:#947479;line-height:1.45}
 
-/* 公會名稱故事海報展示區（直向比例適配手機與電腦） */
 .story-card{background:rgba(255,255,255,.95);backdrop-filter:blur(6px);border-radius:28px;padding:18px;box-shadow:0 8px 25px rgba(226,158,168,.16);border:2px solid #f9dfe3;text-align:center}
 .story-hd{font-size:1.05rem;font-weight:800;color:#c76272;margin-bottom:12px;letter-spacing:1px}
 .story-img-wrap{max-width:600px;margin:0 auto;border-radius:20px;overflow:hidden;border:2px dashed #f2bec7;background:#fff9fa}
@@ -58,7 +57,6 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 .story-img:hover{transform:scale(1.01)}
 .story-hint{font-size:.82rem;color:#947479;margin-top:10px;font-weight:700}
 
-/* 點擊放大燈箱 */
 .zoom-modal{display:none;position:fixed;inset:0;background:rgba(40,28,30,.82);z-index:200;align-items:center;justify-content:center;padding:16px}
 .zoom-modal.open{display:flex}
 .zoom-card{position:relative;background:#fff;padding:10px;border-radius:22px;border:3px solid #f9dfe3;max-width:95vw;max-height:92vh;box-shadow:0 15px 35px rgba(0,0,0,.35)}
@@ -76,8 +74,7 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 }
 </style>
 <script>
-// ★ 每次修改 index.html 只要把這裡的版本號改掉，所有手機用戶開啟首頁都會自動強制重新載入最新畫面
-const SITE_VERSION = "20261119_v3";
+const SITE_VERSION = "20261120_v4";
 (function(){
     const url = new URL(window.location.href);
     if (url.searchParams.get("v") !== SITE_VERSION) {
@@ -107,12 +104,7 @@ const SITE_VERSION = "20261119_v3";
         <li><a href="card.html"><span>🎴 小卡圖鑑</span><span class="arrow">&gt;</span></a></li>
         <li>
             <div class="sub-toggle" onclick="toggleSubMenu()"><span>🎁 驚喜盲盒</span><span class="arrow" id="subArrow">&gt;</span></div>
-            <ul class="submenu" id="subMenu">
-                <li><a href="box.html?job=花間 × 袋裝零食"><span>花間 × 袋裝零食</span><span class="arrow">&gt;</span></a></li>
-                <li><a href="box.html?job=花間 × 飲品"><span>花間 × 飲品盒</span><span class="arrow">&gt;</span></a></li>
-                <li><a href="box.html?job=花間 × 童話反派"><span>花間 × 童話反派</span><span class="arrow">&gt;</span></a></li>
-                <li><a href="box.html?job=花間 × 多巴胺女團"><span>花間 × 多巴胺女團</span><span class="arrow">&gt;</span></a></li>
-            </ul>
+            <ul class="submenu" id="subMenu"></ul>
         </li>
     </ul>
 </nav>
@@ -135,11 +127,10 @@ const SITE_VERSION = "20261119_v3";
         </div>
     </div>
 
-    <!-- 公會品牌故事海報（Kakan的原.jpg 完整自適應顯示，點擊可放大） -->
     <div class="story-card">
         <div class="story-hd">🌸 關於 KaKan・名字背後的故事 🌸</div>
         <div class="story-img-wrap">
-            <img class="story-img" src="Kakan的原.jpg?v=20261119_v3" alt="KaKan 名字背後的意義" onclick="openZoom()" onerror="if(!this.dataset.step){this.dataset.step=1;this.src='Kakan的原.JPG?v=20261119_v3';}else if(this.dataset.step==1){this.dataset.step=2;this.src='花間/Kakan的原.jpg?v=20261119_v3';}else{this.onerror=null;this.src='花間/Kakan的原.JPG?v=20261119_v3';}">
+            <img class="story-img" src="Kakan的原.jpg?v=20261120_v4" alt="KaKan 名字背後的意義" onclick="openZoom()" onerror="if(!this.dataset.step){this.dataset.step=1;this.src='Kakan的原.JPG?v=20261120_v4';}else if(this.dataset.step==1){this.dataset.step=2;this.src='花間/Kakan的原.jpg?v=20261120_v4';}else{this.onerror=null;this.src='花間/Kakan的原.JPG?v=20261120_v4';}">
         </div>
         <div class="story-hint">🔍 點擊圖片可全螢幕放大閱讀文字細節</div>
     </div>
@@ -148,10 +139,11 @@ const SITE_VERSION = "20261119_v3";
 <div class="zoom-modal" id="zoomModal" onclick="if(event.target===this) closeZoom()">
     <div class="zoom-card">
         <button class="close-btn" onclick="closeZoom()" style="position:absolute;top:-14px;right:-14px;box-shadow:0 3px 10px rgba(0,0,0,.2)">✕</button>
-        <img src="Kakan的原.jpg?v=20261119_v3" alt="KaKan 名字背後的意義" onerror="if(!this.dataset.step){this.dataset.step=1;this.src='Kakan的原.JPG?v=20261119_v3';}else if(this.dataset.step==1){this.dataset.step=2;this.src='花間/Kakan的原.jpg?v=20261119_v3';}else{this.onerror=null;this.src='花間/Kakan的原.JPG?v=20261119_v3';}">
+        <img src="Kakan的原.jpg?v=20261120_v4" alt="KaKan 名字背後的意義" onerror="if(!this.dataset.step){this.dataset.step=1;this.src='Kakan的原.JPG?v=20261120_v4';}else if(this.dataset.step==1){this.dataset.step=2;this.src='花間/Kakan的原.jpg?v=20261120_v4';}else{this.onerror=null;this.src='花間/Kakan的原.JPG?v=20261120_v4';}">
     </div>
 </div>
 
+<script src="menu-sync.js?v=20261120_v4"></script>
 <script>
 function toggleMenu(){
     document.getElementById('drawer').classList.toggle('open');
@@ -168,7 +160,7 @@ function closeZoom(){
     document.getElementById('zoomModal').classList.remove('open');
 }
 
-(function(){
+window.addEventListener('DOMContentLoaded', async function(){
     const bg=document.getElementById('fxBg');
     for(let i=0;i<45;i++){
         const p=document.createElement('div');p.className='petal';
@@ -182,7 +174,11 @@ function closeZoom(){
         b.style.left=(Math.random()*100)+'vw';b.style.animationDuration=(10+Math.random()*10)+'s';
         b.style.animationDelay=(-Math.random()*8)+'s';bg.appendChild(b);
     }
-})();
+    if (window.HuajianMenu) {
+        const cfg = await window.HuajianMenu.fetchAllSeries();
+        window.HuajianMenu.renderSharedSubMenu(cfg);
+    }
+});
 </script>
 </body>
 </html>
