@@ -60,7 +60,6 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 
 .wrap{position:relative;z-index:1;max-width:680px;margin:20px auto;padding:0 16px}
 
-/* 當前盲盒系列大橫幅 + 快速切換系列小按鈕 */
 .active-series-banner{background:rgba(255,255,255,.95);backdrop-filter:blur(6px);border-radius:24px;padding:14px 18px;margin-bottom:14px;box-shadow:0 6px 18px rgba(226,158,168,.14);border:2px solid #f39c12;display:flex;align-items:center;justify-content:space-between;gap:12px}
 .asb-info{text-align:left;min-width:0}
 .asb-sub{font-size:.74rem;font-weight:800;letter-spacing:1px;color:#f39c12;margin-bottom:2px}
@@ -75,7 +74,6 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 .series-tag{font-size:.82rem;font-weight:800;letter-spacing:1px;margin-bottom:4px}
 .stage-title{font-size:1.45rem;font-weight:800;color:#5a4649;margin-bottom:20px}
 
-/* 6格盲盒網格 */
 .box-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
 .box-item{cursor:pointer;transition:.25s;padding:10px 6px;border-radius:18px;background:#fff9fa;border:2px solid transparent}
 .box-item:hover{transform:translateY(-5px);border-color:#f2bec7;background:#fff}
@@ -86,7 +84,6 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 .pick-lbl{font-size:.85rem;font-weight:800;color:#7a5c61}
 .hint-banner{background:#fff8f0;border:1.5px dashed #f5cba7;color:#b9770e;padding:12px;border-radius:16px;font-size:.88rem;font-weight:700}
 
-/* 單盒搖晃與拆封區 */
 .big-box-wrap{padding:15px 0 20px}
 .big-box{width:170px;height:200px;margin:0 auto;border-radius:24px;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 12px 24px rgba(0,0,0,.15);transition:.2s}
 .tear-strip{position:absolute;top:44px;left:-4px;right:-4px;height:14px;background:#ff4d6d;border-top:2px dashed #fff;border-bottom:2px dashed #fff;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;color:#fff;font-size:.7rem;font-weight:900;border-radius:4px}
@@ -103,7 +100,6 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 .btn-open{padding:14px;border-radius:18px;border:none;color:#fff;font-size:1rem;font-weight:800;cursor:pointer;box-shadow:0 5px 15px rgba(0,0,0,.15);transition:.2s}
 .btn-open:hover,.btn-shake:not(:disabled):hover{transform:translateY(-2px)}
 
-/* 揭曉結果區 */
 .rarity-pill{display:inline-block;padding:4px 16px;border-radius:20px;font-size:.82rem;font-weight:900;color:#fff;margin-bottom:14px;letter-spacing:1px}
 .result-img-box{width:230px;height:230px;margin:0 auto 14px;border-radius:22px;background:#fff9fa;border:3px solid #f9dfe3;display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 8px 20px rgba(226,158,168,.2)}
 .result-img-box img{width:100%;height:100%;object-fit:contain;cursor:zoom-in;transition:transform .2s}
@@ -114,7 +110,6 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 @keyframes cfall{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(460px) rotate(720deg);opacity:0}}
 .quota-bar{background:#fff8f9;border:2px dashed #f2bec7;color:#c76272;padding:8px 18px;border-radius:20px;font-weight:800;font-size:.92rem;margin-bottom:16px;text-align:center;box-shadow:0 3px 8px rgba(226,158,168,.1)}
 
-/* 右下角浮動圖鑑按鈕與收集冊彈窗 */
 .dex-fab{position:fixed;right:20px;bottom:22px;z-index:80;background:linear-gradient(135deg,#ff9a9e,#f68084);color:#fff;border:2px solid #fff;padding:12px 18px;border-radius:30px;font-weight:800;font-size:.95rem;cursor:pointer;box-shadow:0 6px 18px rgba(246,128,132,.4);display:flex;align-items:center;gap:6px;transition:.25s}
 .dex-fab:hover{transform:translateY(-3px) scale(1.03)}
 .dex-modal{display:none;position:fixed;inset:0;background:rgba(90,70,73,.55);z-index:120;align-items:center;justify-content:center;padding:16px}
@@ -129,7 +124,6 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 .dex-item-name{font-weight:800;color:#5a4649;font-size:.95rem}
 .dex-item-tag{display:inline-block;font-size:.72rem;color:#fff;padding:2px 8px;border-radius:10px;margin-top:4px;font-weight:700}
 
-/* 圖片點擊放大燈箱 */
 .zoom-modal{display:none;position:fixed;inset:0;background:rgba(40,28,30,.82);z-index:200;align-items:center;justify-content:center;padding:20px;flex-direction:column}
 .zoom-modal.open{display:flex}
 .zoom-card{position:relative;background:#fff;padding:16px;border-radius:24px;border:3px solid #f9dfe3;max-width:92vw;max-height:86vh;display:flex;flex-direction:column;align-items:center;box-shadow:0 15px 35px rgba(0,0,0,.35);animation:pop .2s ease}
@@ -160,7 +154,6 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 </nav>
 
 <div class="wrap">
-    <!-- 當前盲盒系列大橫幅 + 快速切換系列小按鈕 -->
     <div class="active-series-banner" id="activeSeriesBanner">
         <div class="asb-info">
             <div class="asb-sub" id="asbSub">載入盲盒系列中...</div>
@@ -176,10 +169,8 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
     <div class="stage-card" id="stageCard"></div>
 </div>
 
-<!-- 右下角漂浮圖鑑按鈕 -->
 <button class="dex-fab" onclick="openDex()">🏅 我的已獲得圖鑑 (<span id="dexCount">0</span>)</button>
 
-<!-- 已獲得盲盒圖鑑彈窗 -->
 <div class="dex-modal" id="dexModal" onclick="if(event.target===this) closeDex()">
     <div class="dex-card">
         <div class="dex-hd">
@@ -190,7 +181,6 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
     </div>
 </div>
 
-<!-- 圖片放大預覽彈窗 -->
 <div class="zoom-modal" id="zoomModal" onclick="if(event.target===this) closeZoom()">
     <div class="zoom-card">
         <button class="close-btn" onclick="closeZoom()" style="position:absolute;top:-14px;right:-14px;box-shadow:0 3px 10px rgba(0,0,0,.2)">✕</button>
@@ -199,52 +189,10 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
     </div>
 </div>
 
+<script src="menu-sync.js?v=20261120_v4"></script>
 <script>
-// ★ 1. 設定「每個系列」各自可抽選的次數上限
 const MAX_DRAWS = 3;
-
-// ★ 2. 直接鎖定你的 GitHub 儲存庫：qscxz19920516 / Kakan
-const GITHUB_CONFIG = {
-    owner: "qscxz19920516",
-    repo: "Kakan",
-    branch: "main"
-};
-
-// ★ 3. 黃金角度動態不重複調色盤產生器（前 30+ 組盲盒底色皆自動產生且完全不重複）
-function getSeriesTheme(index) {
-    const hue = Math.round((index * 137.508 + 28) % 360);
-    const sat = index % 2 === 0 ? 74 : 66;
-    const lightMain = index % 3 === 1 ? 45 : 50;
-    const lightTop = Math.min(68, lightMain + 11);
-    const lightBot = Math.max(34, lightMain - 9);
-    return {
-        color: `hsl(${hue}, ${sat}%, ${lightMain}%)`,
-        softBg: `hsl(${hue}, 85%, 96%)`,
-        bg: `linear-gradient(135deg, hsl(${hue}, ${sat}%, ${lightTop}%), hsl(${(hue + 14) % 360}, ${sat}%, ${lightBot}%))`
-    };
-}
-
-// ★ 4. 保底備援清單（當離線或 API 達上限時自動啟用）
-const FALLBACK_RAW = [
-    { name: "袋裝零食", folder: "花間 × 袋裝零食", members: ["爆米花", "奶油曲奇", "棉花糖", "糖果球", "洋芋片", "巧克力"] },
-    { name: "飲品", folder: "花間 × 飲品", members: ["哈密瓜午睡", "桃氣出逃", "莓有煩惱", "葡萄夜航", "橘子超載", "檸檬暴走", "藍色失重"] },
-    { name: "童話反派", folder: "花間 × 童話反派", members: ["虎克船長", "後母", "烏蘇拉", "黑魔女", "賈方", "壞皇后"] },
-    { name: "多巴胺女團", folder: "花間 × 多巴胺女團", members: ["C位", "Leader", "Rapper", "主唱", "主舞", "門面"] }
-];
-
 let seriesConfig = {};
-FALLBACK_RAW.forEach((item, idx) => {
-    const theme = getSeriesTheme(idx);
-    const num = String(idx + 1).padStart(2, '0');
-    seriesConfig[item.name] = {
-        folder: item.folder,
-        color: theme.color,
-        softBg: theme.softBg,
-        bg: theme.bg,
-        seriesNo: `SERIES ${num}・${item.folder}`,
-        members: item.members
-    };
-});
 
 const cluesPool = [
     { sound: "沙沙～", text: "💡 手感線索：手感適中，上下晃動空間剛剛好！" },
@@ -254,129 +202,34 @@ const cluesPool = [
 
 let curJob = "袋裝零食", pickedNo = 1, shakeCount = 0, drawnMember = "";
 
-// 排除非盲盒的系統/網站資料夾
-const EXCLUDED_FOLDERS = new Set([".github", "assets", "css", "js", "images", "img", "fonts", "職業", "職業介紹", "小卡", "小卡圖鑑", "card", "cards"]);
-
-// 寬鬆匹配：同時支援「花間 × 〇〇」、「花間×〇〇」、「花間x〇〇」或任何放有角色圖片的盲盒資料夾
-function isBlindBoxFolder(folderName) {
-    if (!folderName || EXCLUDED_FOLDERS.has(folderName.toLowerCase())) return false;
-    if (/^花間\s*[×xX＊*]\s*/.test(folderName)) return true;
-    return false;
-}
-
-function extractShortSeriesName(folderName) {
-    return folderName.replace(/^花間\s*[×xX＊*]\s*/, '').replace(/盒$/, '').trim() || folderName;
-}
-
-// 自動從 GitHub API 掃描 qscxz19920516/Kakan 儲存庫中的所有盲盒資料夾與圖片
-async function loadAutoSeriesFromGitHub(bypassCache = false) {
-    const { owner, repo, branch } = GITHUB_CONFIG;
-    const cacheKey = `huajian_kakan_series_v3_${owner}_${repo}`;
-
-    if (!bypassCache) {
-        try {
-            const cached = sessionStorage.getItem(cacheKey);
-            if (cached) {
-                const parsed = JSON.parse(cached);
-                if (Object.keys(parsed).length > 0) {
-                    seriesConfig = parsed;
-                    return;
-                }
+function highlightActiveMenu() {
+    const cfg = seriesConfig[curJob];
+    document.querySelectorAll('#subMenu a').forEach(a => {
+        const isCurrent = a.dataset.series === curJob;
+        a.classList.toggle('active-series', isCurrent);
+        const oldPill = a.querySelector('.active-pill');
+        if (oldPill) oldPill.remove();
+        const arrowEl = a.querySelector('.arrow');
+        if (isCurrent && cfg) {
+            a.style.setProperty('--series-color', cfg.color);
+            a.style.setProperty('--series-soft', cfg.softBg || '#fff0f3');
+            if (arrowEl) {
+                arrowEl.insertAdjacentHTML('beforebegin', '<span class="active-pill">使用中</span>');
             }
-        } catch (e) {}
-    }
-
-    const branches = [branch, "master"];
-    for (const br of branches) {
-        try {
-            // 加入時間戳避免瀏覽器快取 API 回應
-            const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/git/trees/${br}?recursive=1&_=${Date.now()}`);
-            if (!res.ok) continue;
-            const data = await res.json();
-            if (!data.tree) continue;
-
-            // 支援盲盒資料夾在最外層（花間 × 〇〇/角色.jpg）或包在「花間/」一層內（花間/花間 × 〇〇/角色.jpg）
-            const folderMap = {};
-            const allFolderMap = {};
-
-            data.tree.forEach(item => {
-                if (item.type !== 'blob') return;
-                if (!/\.(jpg|jpeg|png|webp|gif)$/i.test(item.path)) return;
-
-                const parts = item.path.split('/');
-                if (parts.length < 2) return; // 最外層根目錄圖片（如 Kakan的原.jpg）略過
-
-                const fileName = parts[parts.length - 1];
-                const parentFolderName = parts[parts.length - 2];
-                const folderRelPath = parts.slice(0, -1).join('/');
-                const memberName = fileName.replace(/\.(jpg|jpeg|png|webp|gif)$/i, '');
-
-                if (isBlindBoxFolder(parentFolderName)) {
-                    if (!folderMap[folderRelPath]) {
-                        folderMap[folderRelPath] = { displayName: parentFolderName, members: [] };
-                    }
-                    if (!folderMap[folderRelPath].members.includes(memberName)) {
-                        folderMap[folderRelPath].members.push(memberName);
-                    }
-                } else if (!EXCLUDED_FOLDERS.has(parentFolderName.toLowerCase()) && parts.length === 2) {
-                    if (!allFolderMap[folderRelPath]) {
-                        allFolderMap[folderRelPath] = { displayName: parentFolderName, members: [] };
-                    }
-                    if (!allFolderMap[folderRelPath].members.includes(memberName)) {
-                        allFolderMap[folderRelPath].members.push(memberName);
-                    }
-                }
-            });
-
-            // 若有符合「花間 × 〇〇」的資料夾優先使用；若用戶新建資料夾沒寫「花間 × 」前綴也能自動納入！
-            const targetMap = Object.keys(folderMap).length > 0 ? folderMap : allFolderMap;
-            const folderPaths = Object.keys(targetMap);
-
-            if (folderPaths.length > 0) {
-                const autoConfig = {};
-                folderPaths.forEach((relPath, idx) => {
-                    const info = targetMap[relPath];
-                    const shortName = extractShortSeriesName(info.displayName);
-                    const theme = getSeriesTheme(idx);
-                    const num = String(idx + 1).padStart(2, '0');
-                    autoConfig[shortName] = {
-                        folder: relPath,
-                        displayFolder: info.displayName,
-                        color: theme.color,
-                        softBg: theme.softBg,
-                        bg: theme.bg,
-                        seriesNo: `SERIES ${num}・${info.displayName}`,
-                        members: info.members
-                    };
-                });
-                seriesConfig = autoConfig;
-                try { sessionStorage.setItem(cacheKey, JSON.stringify(autoConfig)); } catch (e) {}
-                return;
-            }
-        } catch (e) {}
-    }
+        } else {
+            a.style.removeProperty('--series-color');
+            a.style.removeProperty('--series-soft');
+        }
+    });
 }
 
 async function forceRefreshSeries() {
     const btn = document.querySelector('.asb-sync-btn');
     if (btn) btn.innerText = '⏳';
-    await loadAutoSeriesFromGitHub(true);
-    renderSideMenu();
+    seriesConfig = await window.HuajianMenu.fetchAllSeries(true);
+    window.HuajianMenu.renderSharedSubMenu(seriesConfig, { onRendered: highlightActiveMenu });
     selectSeries(curJob);
     if (btn) btn.innerText = '🔄';
-}
-
-// 動態產生側邊漢堡選單的所有盲盒系列項目
-function renderSideMenu() {
-    const subMenu = document.getElementById('subMenu');
-    if (!subMenu) return;
-    let html = '';
-    Object.keys(seriesConfig).forEach(key => {
-        const cfg = seriesConfig[key];
-        const label = cfg.displayFolder || cfg.folder;
-        html += `<li><a href="box.html?job=${encodeURIComponent(label)}" data-series="${key}" onclick="goBox(event, '${key}')"><span>${label}</span><span class="arrow">&gt;</span></a></li>`;
-    });
-    subMenu.innerHTML = html;
 }
 
 function getUsedDraws(job = curJob) {
@@ -438,23 +291,7 @@ function selectSeries(job){
         sub.innerText = cfg.seriesNo;
         title.innerText = `${curJob}盲盒`;
     }
-    document.querySelectorAll('#subMenu a').forEach(a => {
-        const isCurrent = a.dataset.series === curJob;
-        a.classList.toggle('active-series', isCurrent);
-        const oldPill = a.querySelector('.active-pill');
-        if (oldPill) oldPill.remove();
-        const arrowEl = a.querySelector('.arrow');
-        if (isCurrent && cfg) {
-            a.style.setProperty('--series-color', cfg.color);
-            a.style.setProperty('--series-soft', cfg.softBg || '#fff0f3');
-            if (arrowEl) {
-                arrowEl.insertAdjacentHTML('beforebegin', '<span class="active-pill">使用中</span>');
-            }
-        } else {
-            a.style.removeProperty('--series-color');
-            a.style.removeProperty('--series-soft');
-        }
-    });
+    highlightActiveMenu();
     updateQuotaUI();
     renderGrid();
 }
@@ -546,7 +383,7 @@ function normalizeJobName(rawName) {
     const firstKey = Object.keys(seriesConfig)[0] || "袋裝零食";
     if (!rawName) return firstKey;
     if (seriesConfig[rawName]) return rawName;
-    const cleaned = extractShortSeriesName(rawName);
+    const cleaned = window.HuajianMenu ? window.HuajianMenu.extractShortSeriesName(rawName) : rawName;
     if (seriesConfig[cleaned]) return cleaned;
     const matched = Object.keys(seriesConfig).find(k => rawName.includes(k) || k.includes(cleaned));
     return matched || firstKey;
@@ -575,8 +412,8 @@ window.addEventListener('DOMContentLoaded', async function() {
         for(let i=0;i<45;i++){ const p=document.createElement('div');p.className='petal'; const s=9+Math.random()*13;p.style.width=s+'px';p.style.height=(s*.75)+'px'; p.style.left=(Math.random()*100)+'vw';p.style.animationDuration=(6+Math.random()*8)+'s'; p.style.animationDelay=(-Math.random()*10)+'s';bg.appendChild(p); }
         for(let i=0;i<25;i++){ const b=document.createElement('div');b.className='bubble'; const s=20+Math.random()*45;b.style.width=s+'px';b.style.height=s+'px'; b.style.left=(Math.random()*100)+'vw';b.style.animationDuration=(10+Math.random()*10)+'s'; b.style.animationDelay=(-Math.random()*8)+'s';bg.appendChild(b); }
     }
-    await loadAutoSeriesFromGitHub();
-    renderSideMenu();
+    seriesConfig = await window.HuajianMenu.fetchAllSeries();
+    window.HuajianMenu.renderSharedSubMenu(seriesConfig);
     const u = new URLSearchParams(window.location.search).get('job');
     selectSeries(normalizeJobName(u));
     updateQuotaUI();
