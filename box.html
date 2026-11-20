@@ -77,13 +77,6 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 .series-tag{font-size:.82rem;font-weight:800;letter-spacing:1px;margin-bottom:4px}
 .stage-title{font-size:1.38rem;font-weight:800;color:#5a4649;margin-bottom:16px}
 
-/* 三款抽獎箱切換器 */
-.box-skin-bar{display:flex;justify-content:center;gap:8px;margin-bottom:16px;flex-wrap:wrap}
-.skin-chip{background:#fff8f9;border:1.5px solid #f0c2ca;color:#7a5c61;padding:6px 13px;border-radius:18px;font-size:.82rem;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:.2s}
-.skin-chip:hover{transform:translateY(-1px);border-color:#c76272}
-.skin-chip.active{background:#c76272;border-color:#c76272;color:#fff;box-shadow:0 3px 10px rgba(199,98,114,.28)}
-.skin-dot{width:10px;height:10px;border-radius:50%;display:inline-block;border:1px solid rgba(255,255,255,.8)}
-
 /* 抽獎箱舞台區 */
 .lottery-stage{position:relative;padding:8px 0 12px;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .lottery-box-wrap{position:relative;width:270px;max-width:78vw;margin:0 auto;cursor:pointer;user-select:none}
@@ -209,12 +202,25 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 const MAX_DRAWS = 3;
 let seriesConfig = {};
 
-// ★ 三款專屬抽獎箱款式設定（自動相容根目錄或「花間/」資料夾，並支援大小寫副檔名）
+// ★ 七款專屬抽獎箱隨機池（每次進入、切換系列或再抽一次時隨機搭配，不提供手動選擇）
 const BOX_SKINS = [
-    { id: 0, name: "櫻粉款", file: "盲盒箱子3", dot: "#f48fb1" },
-    { id: 1, name: "夢幻紫款", file: "盲盒箱子2", dot: "#b39ddb" },
-    { id: 2, name: "酷黑粉款", file: "盲盒箱子1", dot: "#4a4446" }
+    "盲盒箱子",
+    "盲盒箱子1",
+    "盲盒箱子2",
+    "盲盒箱子3",
+    "盲盒箱子4",
+    "盲盒箱子5",
+    "盲盒箱子6"
 ];
+
+function pickRandomBoxSkin(excludeIdx = -1) {
+    if (BOX_SKINS.length <= 1) return 0;
+    let next = Math.floor(Math.random() * BOX_SKINS.length);
+    if (next === excludeIdx) {
+        next = (next + 1 + Math.floor(Math.random() * (BOX_SKINS.length - 1))) % BOX_SKINS.length;
+    }
+    return next;
+}
 
 const cluesPool = [
     { sound: "沙沙～", text: "💡 手感線索：搖晃抽獎箱時聽到「沙沙」聲，感覺裡面藏著可愛的小夥伴！" },
@@ -306,6 +312,7 @@ function updateQuotaUI(){
 function selectSeries(job){
     const keys = Object.keys(seriesConfig);
     curJob = seriesConfig[job] ? job : (keys[0] || "袋裝零食");
+    curSkinIdx = pickRandomBoxSkin(curSkinIdx);
     shakeCount = 0;
     isDrawing = false;
     const cfg = seriesConfig[curJob];
@@ -323,30 +330,16 @@ function selectSeries(job){
     renderLotteryBox();
 }
 
-function switchBoxSkin(idx) {
-    if (isDrawing) return;
-    curSkinIdx = idx;
-    const currentBubble = document.querySelector('.sound-bubble');
-    const currentClue = document.getElementById('clueBoxText');
-    renderLotteryBox(
-        currentBubble ? currentBubble.innerText : "",
-        currentClue ? currentClue.innerText : undefined
-    );
-}
-
-// 渲染抽獎箱主畫面（可直接搖晃抽獎箱，或點擊抽獎箱/按鈕伸手抽出盲盒）
-function renderLotteryBox(snd = "", clue = "💡 提示：點擊「搖一搖抽獎箱」聽聽裡面的聲音，再伸手抽出盲盒！") {
+// 渲染抽獎箱主畫面（隨機搭配七款抽獎箱，可直接搖晃或點擊抽出盲盒）
+function renderLotteryBox(snd = "", clue = "💡 提示：點擊「搖一搖抽獎箱」聽聽裡面的聲音，再伸手抽出盲盒！", randomizeSkin = false) {
+    if (randomizeSkin) {
+        curSkinIdx = pickRandomBoxSkin(curSkinIdx);
+    }
     const cfg = seriesConfig[curJob];
-    const skin = BOX_SKINS[curSkinIdx];
+    const skinFile = BOX_SKINS[curSkinIdx];
     const left = Math.max(0, MAX_DRAWS - getUsedDraws(curJob));
     const available = cfg.members.filter(name => !getDrawnList(curJob).includes(name));
     const canDraw = left > 0 && available.length > 0;
-
-    let skinTabsHtml = BOX_SKINS.map((s, i) => `
-        <button class="skin-chip ${i === curSkinIdx ? 'active' : ''}" onclick="switchBoxSkin(${i})">
-            <span class="skin-dot" style="background:${s.dot}"></span>${s.name}
-        </button>
-    `).join('');
 
     const drawBtnText = !canDraw
         ? (left <= 0 ? '🔒 本系列次數已用完' : '🎉 已抽完本系列全角色')
@@ -355,12 +348,11 @@ function renderLotteryBox(snd = "", clue = "💡 提示：點擊「搖一搖抽�
     document.getElementById('stageCard').innerHTML = `
         <div class="series-tag" style="color:${cfg.color}">${cfg.seriesNo}</div>
         <div class="stage-title">${canDraw ? '搖一搖抽獎箱，抽出你的專屬盲盒！' : '本系列抽選已完成'}</div>
-        <div class="box-skin-bar">${skinTabsHtml}</div>
         <div class="lottery-stage">
             <div class="lottery-box-wrap" id="lotteryBoxWrap" onclick="${canDraw ? 'drawFromLotteryBox()' : ''}" title="${canDraw ? '點擊抽獎箱直接抽出盲盒' : ''}">
                 ${snd ? `<div class="sound-bubble">${snd}</div>` : ''}
-                <img class="lottery-box-img" id="lotteryBoxImg" src="${skin.file}.jpg?v=20261120" alt="${skin.name}抽獎箱"
-                    onerror="if(!this.dataset.step){this.dataset.step=1;this.src='${skin.file}.JPG?v=20261120';}else if(this.dataset.step==1){this.dataset.step=2;this.src='花間/${skin.file}.jpg?v=20261120';}else{this.onerror=null;this.src='花間/${skin.file}.JPG?v=20261120';}">
+                <img class="lottery-box-img" id="lotteryBoxImg" src="${skinFile}.jpg?v=20261120_7" alt="隨機盲盒抽獎箱"
+                    onerror="if(!this.dataset.step){this.dataset.step=1;this.src='${skinFile}.JPG?v=20261120_7';}else if(this.dataset.step==1){this.dataset.step=2;this.src='花間/${skinFile}.jpg?v=20261120_7';}else{this.onerror=null;this.src='花間/${skinFile}.JPG?v=20261120_7';}">
             </div>
         </div>
         <div class="clue-box" id="clueBoxText">${clue}</div>
@@ -432,7 +424,7 @@ function revealDrawnResult(drawnMember) {
     const canDrawAgain = left > 0 && availableCount > 0;
 
     const rightBtn = canDrawAgain
-        ? `<button class="btn-open" style="background:${cfg.color}" onclick="renderLotteryBox()">🎁 再抽一次 (剩${left}次)</button>`
+        ? `<button class="btn-open" style="background:${cfg.color}" onclick="renderLotteryBox('', undefined, true)">🎁 再抽一次 (剩${left}次)</button>`
         : `<button class="btn-open" style="background:#b8a6a9;cursor:not-allowed" disabled>🔒 ${curJob}次數已用完</button>`;
 
     document.getElementById('stageCard').innerHTML = `
@@ -446,7 +438,7 @@ function revealDrawnResult(drawnMember) {
         <div class="result-name">🎉 ${drawnMember}</div>
         <div class="result-quote">「從花間抽獎箱裡抽出了【${drawnMember}】！」</div>
         <div class="action-row">
-            <button class="btn-shake" style="border-color:#d48c95;color:#c76272;background:#fff" onclick="renderLotteryBox()">🔙 回到抽獎箱</button>
+            <button class="btn-shake" style="border-color:#d48c95;color:#c76272;background:#fff" onclick="renderLotteryBox('', undefined, true)">🔙 回到抽獎箱</button>
             ${rightBtn}
         </div>
     `;
