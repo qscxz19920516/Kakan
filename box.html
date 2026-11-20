@@ -78,21 +78,53 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 .stage-title{font-size:1.38rem;font-weight:800;color:#5a4649;margin-bottom:16px}
 
 /* 抽獎箱舞台區 */
-.lottery-stage{position:relative;padding:8px 0 12px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.lottery-stage{position:relative;padding:18px 0 12px;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .lottery-box-wrap{position:relative;width:270px;max-width:78vw;margin:0 auto;cursor:pointer;user-select:none}
 .lottery-box-img{width:100%;height:auto;display:block;border-radius:22px;filter:drop-shadow(0 10px 18px rgba(180,110,125,.22));transition:transform .2s ease}
 .lottery-box-wrap:hover .lottery-box-img{transform:scale(1.02)}
 
-/* 抽獎箱獨立音效軌道與不遮擋插畫的漸隱狀聲詞 */
-.sound-track{height:38px;margin-bottom:6px;display:flex;align-items:center;justify-content:center;gap:8px;pointer-events:none}
-.sound-pill{background:linear-gradient(135deg,#fff9db,#ffe066);color:#6e4f23;padding:4px 16px;border-radius:20px;font-size:1.05rem;font-weight:900;border:2px solid #fff;box-shadow:0 4px 12px rgba(243,156,18,.22);display:inline-flex;align-items:center;gap:5px;animation:soundFloat 1.5s cubic-bezier(.22,1,.36,1) forwards}
-.draw-pill{background:linear-gradient(135deg,#fff,#ffeef2);color:#c76272;padding:5px 18px;border-radius:20px;font-size:.98rem;font-weight:900;border:2px solid #f0a8b4;box-shadow:0 4px 14px rgba(199,98,114,.25);display:inline-flex;align-items:center;gap:6px;animation:pop .25s ease}
-@keyframes pop{0%{transform:scale(.5)}80%{transform:scale(1.12)}100%{transform:scale(1)}}
-@keyframes soundFloat{
-    0%{opacity:0;transform:translateY(8px) scale(.75)}
-    18%{opacity:1;transform:translateY(0) scale(1.06)}
-    72%{opacity:1;transform:translateY(-3px) scale(1)}
-    100%{opacity:0;transform:translateY(-10px) scale(.95)}
+/* 左上角洞口留白區漫畫狀聲詞氣泡（完全不遮擋角色與箱身） */
+.sound-comic{
+    position:absolute;
+    top:-14px;
+    left:-14px;
+    z-index:6;
+    pointer-events:none;
+    background:linear-gradient(135deg,#fffbe6 0%,#ffe066 100%);
+    color:#6b4423;
+    padding:6px 15px;
+    border-radius:20px 20px 6px 20px;
+    font-size:1.08rem;
+    font-weight:900;
+    letter-spacing:1px;
+    border:2.5px solid #fff;
+    box-shadow:0 5px 14px rgba(214,137,16,.28), 0 0 0 2px #f5cba7;
+    white-space:nowrap;
+    animation:comicPopFloat 1.65s cubic-bezier(.22,1,.36,1) forwards;
+}
+.draw-comic{
+    position:absolute;
+    top:-14px;
+    left:-12px;
+    z-index:6;
+    pointer-events:none;
+    background:linear-gradient(135deg,#fff 0%,#ffeef2 100%);
+    color:#c76272;
+    padding:6px 15px;
+    border-radius:20px 20px 6px 20px;
+    font-size:.96rem;
+    font-weight:900;
+    border:2.5px solid #fff;
+    box-shadow:0 5px 14px rgba(199,98,114,.28), 0 0 0 2px #f0a8b4;
+    white-space:nowrap;
+    animation:pop .25s ease forwards;
+}
+@keyframes pop{0%{transform:scale(.5) rotate(-8deg)}80%{transform:scale(1.1) rotate(-5deg)}100%{transform:scale(1) rotate(-6deg)}}
+@keyframes comicPopFloat{
+    0%{opacity:0;transform:translate(8px,10px) scale(.65) rotate(-10deg)}
+    16%{opacity:1;transform:translate(0,0) scale(1.08) rotate(-6deg)}
+    72%{opacity:1;transform:translate(-2px,-4px) scale(1) rotate(-5deg)}
+    100%{opacity:0;transform:translate(-4px,-12px) scale(.94) rotate(-4deg)}
 }
 
 /* 抽獎箱搖晃動畫 */
@@ -115,7 +147,8 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 
 /* 揭曉結果區 */
 .rarity-pill{display:inline-block;padding:4px 16px;border-radius:20px;font-size:.82rem;font-weight:900;color:#fff;margin-bottom:14px;letter-spacing:1px}
-.result-img-box{width:230px;height:230px;margin:0 auto 14px;border-radius:22px;background:#fff9fa;border:3px solid #f9dfe3;display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 8px 20px rgba(226,158,168,.2);animation:pop .35s ease}
+.result-img-box{width:230px;height:230px;margin:0 auto 14px;border-radius:22px;background:#fff9fa;border:3px solid #f9dfe3;display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 8px 20px rgba(226,158,168,.2);animation:popResult .35s ease}
+@keyframes popResult{0%{transform:scale(.6)}80%{transform:scale(1.06)}100%{transform:scale(1)}}
 .result-img-box img{width:100%;height:100%;object-fit:contain;cursor:zoom-in;transition:transform .2s}
 .result-img-box img:hover{transform:scale(1.04)}
 .result-name{font-size:1.6rem;font-weight:900;color:#c76272;margin-bottom:4px}
@@ -128,7 +161,7 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 .dex-fab:hover{transform:translateY(-3px) scale(1.03)}
 .dex-modal{display:none;position:fixed;inset:0;background:rgba(90,70,73,.55);z-index:120;align-items:center;justify-content:center;padding:16px}
 .dex-modal.open{display:flex}
-.dex-card{background:#fff;width:100%;max-width:560px;max-height:82vh;border-radius:28px;border:3px solid #f9dfe3;box-shadow:0 12px 30px rgba(0,0,0,.2);display:flex;flex-direction:column;overflow:hidden;animation:pop .25s ease}
+.dex-card{background:#fff;width:100%;max-width:560px;max-height:82vh;border-radius:28px;border:3px solid #f9dfe3;box-shadow:0 12px 30px rgba(0,0,0,.2);display:flex;flex-direction:column;overflow:hidden;animation:popResult .25s ease}
 .dex-hd{padding:18px 22px;background:linear-gradient(135deg,#ffe5e2,#fbdce6);display:flex;justify-content:space-between;align-items:center;border-bottom:2px dashed #f2bec7}
 .dex-hd h3{color:#c76272;font-size:1.15rem;font-weight:800}
 .dex-body{padding:18px;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px}
@@ -140,7 +173,7 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 
 .zoom-modal{display:none;position:fixed;inset:0;background:rgba(40,28,30,.82);z-index:200;align-items:center;justify-content:center;padding:20px;flex-direction:column}
 .zoom-modal.open{display:flex}
-.zoom-card{position:relative;background:#fff;padding:16px;border-radius:24px;border:3px solid #f9dfe3;max-width:92vw;max-height:86vh;display:flex;flex-direction:column;align-items:center;box-shadow:0 15px 35px rgba(0,0,0,.35);animation:pop .2s ease}
+.zoom-card{position:relative;background:#fff;padding:16px;border-radius:24px;border:3px solid #f9dfe3;max-width:92vw;max-height:86vh;display:flex;flex-direction:column;align-items:center;box-shadow:0 15px 35px rgba(0,0,0,.35);animation:popResult .2s ease}
 .zoom-card img{max-width:84vw;max-height:72vh;object-fit:contain;border-radius:14px}
 .zoom-title{margin-top:10px;font-size:1.1rem;font-weight:800;color:#c76272}
 </style>
@@ -235,7 +268,7 @@ const cluesPool = [
 ];
 
 let curJob = "袋裝零食";
-let curSkinIdx = Math.floor(Math.random() * BOX_SKINS.length); // 每次開啟隨機挑一款抽獎箱，也可隨時切換
+let curSkinIdx = Math.floor(Math.random() * BOX_SKINS.length);
 let shakeCount = 0;
 let isDrawing = false;
 
@@ -278,7 +311,7 @@ function addUsedDraw(job = curJob) {
 }
 
 // ★ 隱藏密技：連續點擊頂部「驚喜盲盒」四個字 5 次並輸入通關密語，可重置抽選次數（完整保留已獲得圖鑑）
-const SECRET_CODE = "kakan"; // 可自行修改通關密語（不分大小寫）
+const SECRET_CODE = "kakan";
 let secretTapCount = 0;
 let secretTapTimer = null;
 
@@ -374,7 +407,7 @@ function selectSeries(job){
     renderLotteryBox();
 }
 
-// 渲染抽獎箱主畫面（隨機搭配七款抽獎箱，可直接搖晃或點擊抽出盲盒）
+// 渲染抽獎箱主畫面（狀聲詞氣泡放在抽獎箱左上角洞口留白處，完全不遮擋角色與箱身）
 function renderLotteryBox(snd = "", clue = "💡 提示：點擊「搖一搖抽獎箱」聽聽裡面的聲音，再伸手抽出盲盒！", randomizeSkin = false) {
     if (randomizeSkin) {
         curSkinIdx = pickRandomBoxSkin(curSkinIdx);
@@ -393,12 +426,10 @@ function renderLotteryBox(snd = "", clue = "💡 提示：點擊「搖一搖抽�
         <div class="series-tag" style="color:${cfg.color}">${cfg.seriesNo}</div>
         <div class="stage-title">${canDraw ? '搖一搖抽獎箱，抽出你的專屬盲盒！' : '本系列抽選已完成'}</div>
         <div class="lottery-stage">
-            <div class="sound-track" id="soundTrack">
-                ${snd ? `<span class="sound-pill" key="${Date.now()}">🎵 ${snd}</span>` : ''}
-            </div>
             <div class="lottery-box-wrap" id="lotteryBoxWrap" onclick="${canDraw ? 'drawFromLotteryBox()' : ''}" title="${canDraw ? '點擊抽獎箱直接抽出盲盒' : ''}">
-                <img class="lottery-box-img" id="lotteryBoxImg" src="${skinFile}.jpg?v=20261120_7" alt="隨機盲盒抽獎箱"
-                    onerror="if(!this.dataset.step){this.dataset.step=1;this.src='${skinFile}.JPG?v=20261120_7';}else if(this.dataset.step==1){this.dataset.step=2;this.src='花間/${skinFile}.jpg?v=20261120_7';}else{this.onerror=null;this.src='花間/${skinFile}.JPG?v=20261120_7';}">
+                <div id="comicBubbleSlot">${snd ? `<div class="sound-comic">🎵 ${snd}</div>` : ''}</div>
+                <img class="lottery-box-img" id="lotteryBoxImg" src="${skinFile}.jpg?v=20261120_8" alt="隨機盲盒抽獎箱"
+                    onerror="if(!this.dataset.step){this.dataset.step=1;this.src='${skinFile}.JPG?v=20261120_8';}else if(this.dataset.step==1){this.dataset.step=2;this.src='花間/${skinFile}.jpg?v=20261120_8';}else{this.onerror=null;this.src='花間/${skinFile}.JPG?v=20261120_8';}">
             </div>
         </div>
         <div class="clue-box" id="clueBoxText">${clue}</div>
@@ -443,11 +474,10 @@ function drawFromLotteryBox() {
     isDrawing = true;
     const chosen = available[Math.floor(Math.random() * available.length)];
 
-    // 先播放抽獎箱晃動 + 從洞口抽出盲盒的過場動畫
     const wrap = document.getElementById('lotteryBoxWrap');
-    const track = document.getElementById('soundTrack');
-    if (track) {
-        track.innerHTML = `<span class="draw-pill">✨ 正在從洞口抽出盲盒... ✨</span>`;
+    const slot = document.getElementById('comicBubbleSlot');
+    if (slot) {
+        slot.innerHTML = `<div class="draw-comic">✨ 抽出中...</div>`;
     }
     if (wrap) {
         wrap.classList.remove('shaking');
