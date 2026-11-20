@@ -144,7 +144,7 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 
 <div class="topbar">
     <button class="menu-btn" onclick="toggleMenu()">☰</button>
-    <div class="brand">🎁 驚喜盲盒 🎁</div>
+    <div class="brand" style="user-select:none">🎁 <span id="secretBrand" onclick="triggerSecretReset()" style="cursor:pointer">驚喜盲盒</span> 🎁</div>
     <div class="spacer"></div>
 </div>
 
@@ -269,6 +269,35 @@ function getUsedDraws(job = curJob) {
 function addUsedDraw(job = curJob) {
     const next = getUsedDraws(job) + 1;
     localStorage.setItem('huajian_draws_' + job, next);
+}
+
+// ★ 隱藏密技：點擊頂部「驚喜盲盒」四個字並輸入通關密語，可重置抽選次數（完整保留已獲得圖鑑）
+const SECRET_CODE = "kakan"; // 可自行修改通關密語（不分大小寫）
+
+function triggerSecretReset() {
+    const input = prompt("🌸 觸發花間小憩隱藏密技！\n請輸入通關密語以重置抽選次數（已獲得圖鑑會完整保留）：");
+    if (input === null) return;
+    if (input.trim().toLowerCase() !== SECRET_CODE.toLowerCase()) {
+        alert("❌ 密語不正確喔！");
+        return;
+    }
+    const resetAll = confirm("密語驗證成功！\n\n【確定】重置「全部系列」的抽選次數\n【取消】僅重置目前【" + curJob + "盲盒】的抽選次數\n\n（註：所有已獲得圖鑑小卡皆會完整保留）");
+    if (resetAll) {
+        const keysToClear = new Set(Object.keys(seriesConfig));
+        for (let i = 0; i < localStorage.length; i++) {
+            const k = localStorage.key(i);
+            if (k && k.startsWith('huajian_draws_')) {
+                keysToClear.add(k.replace('huajian_draws_', ''));
+            }
+        }
+        keysToClear.forEach(job => localStorage.removeItem('huajian_draws_' + job));
+        alert("✨ 已重置全部系列的抽選次數，已獲得圖鑑已完整保留！");
+    } else {
+        localStorage.removeItem('huajian_draws_' + curJob);
+        alert("✨ 已重置【" + curJob + "盲盒】的抽選次數，已獲得圖鑑已完整保留！");
+    }
+    updateQuotaUI();
+    renderLotteryBox();
 }
 
 function getDrawnList(job = curJob) {
