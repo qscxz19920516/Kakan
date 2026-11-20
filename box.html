@@ -83,11 +83,17 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 .lottery-box-img{width:100%;height:auto;display:block;border-radius:22px;filter:drop-shadow(0 10px 18px rgba(180,110,125,.22));transition:transform .2s ease}
 .lottery-box-wrap:hover .lottery-box-img{transform:scale(1.02)}
 
-/* 洞口冒出的聲音泡泡與手伸入動畫 */
-.sound-bubble{position:absolute;top:8px;right:-8px;z-index:5;background:#ffe066;color:#5a4649;padding:6px 15px;border-radius:20px;font-size:1.1rem;font-weight:900;border:2.5px solid #fff;box-shadow:0 4px 12px rgba(0,0,0,.15);animation:pop .25s ease}
-.draw-rise-badge{position:absolute;top:16%;left:50%;transform:translateX(-50%);z-index:6;background:linear-gradient(135deg,#fff,#ffeef2);border:2.5px solid #f0a8b4;color:#c76272;padding:8px 16px;border-radius:20px;font-weight:900;font-size:.95rem;white-space:nowrap;box-shadow:0 8px 20px rgba(199,98,114,.3);animation:riseOut .65s cubic-bezier(.22,1,.36,1) forwards}
+/* 抽獎箱獨立音效軌道與不遮擋插畫的漸隱狀聲詞 */
+.sound-track{height:38px;margin-bottom:6px;display:flex;align-items:center;justify-content:center;gap:8px;pointer-events:none}
+.sound-pill{background:linear-gradient(135deg,#fff9db,#ffe066);color:#6e4f23;padding:4px 16px;border-radius:20px;font-size:1.05rem;font-weight:900;border:2px solid #fff;box-shadow:0 4px 12px rgba(243,156,18,.22);display:inline-flex;align-items:center;gap:5px;animation:soundFloat 1.5s cubic-bezier(.22,1,.36,1) forwards}
+.draw-pill{background:linear-gradient(135deg,#fff,#ffeef2);color:#c76272;padding:5px 18px;border-radius:20px;font-size:.98rem;font-weight:900;border:2px solid #f0a8b4;box-shadow:0 4px 14px rgba(199,98,114,.25);display:inline-flex;align-items:center;gap:6px;animation:pop .25s ease}
 @keyframes pop{0%{transform:scale(.5)}80%{transform:scale(1.12)}100%{transform:scale(1)}}
-@keyframes riseOut{0%{opacity:0;transform:translate(-50%,35px) scale(.6)}60%{opacity:1;transform:translate(-50%,-18px) scale(1.06)}100%{opacity:1;transform:translate(-50%,-12px) scale(1)}}
+@keyframes soundFloat{
+    0%{opacity:0;transform:translateY(8px) scale(.75)}
+    18%{opacity:1;transform:translateY(0) scale(1.06)}
+    72%{opacity:1;transform:translateY(-3px) scale(1)}
+    100%{opacity:0;transform:translateY(-10px) scale(.95)}
+}
 
 /* 抽獎箱搖晃動畫 */
 .shaking{animation:boxShake .48s ease-in-out}
@@ -387,8 +393,10 @@ function renderLotteryBox(snd = "", clue = "💡 提示：點擊「搖一搖抽�
         <div class="series-tag" style="color:${cfg.color}">${cfg.seriesNo}</div>
         <div class="stage-title">${canDraw ? '搖一搖抽獎箱，抽出你的專屬盲盒！' : '本系列抽選已完成'}</div>
         <div class="lottery-stage">
+            <div class="sound-track" id="soundTrack">
+                ${snd ? `<span class="sound-pill" key="${Date.now()}">🎵 ${snd}</span>` : ''}
+            </div>
             <div class="lottery-box-wrap" id="lotteryBoxWrap" onclick="${canDraw ? 'drawFromLotteryBox()' : ''}" title="${canDraw ? '點擊抽獎箱直接抽出盲盒' : ''}">
-                ${snd ? `<div class="sound-bubble">${snd}</div>` : ''}
                 <img class="lottery-box-img" id="lotteryBoxImg" src="${skinFile}.jpg?v=20261120_7" alt="隨機盲盒抽獎箱"
                     onerror="if(!this.dataset.step){this.dataset.step=1;this.src='${skinFile}.JPG?v=20261120_7';}else if(this.dataset.step==1){this.dataset.step=2;this.src='花間/${skinFile}.jpg?v=20261120_7';}else{this.onerror=null;this.src='花間/${skinFile}.JPG?v=20261120_7';}">
             </div>
@@ -437,11 +445,14 @@ function drawFromLotteryBox() {
 
     // 先播放抽獎箱晃動 + 從洞口抽出盲盒的過場動畫
     const wrap = document.getElementById('lotteryBoxWrap');
+    const track = document.getElementById('soundTrack');
+    if (track) {
+        track.innerHTML = `<span class="draw-pill">✨ 正在從洞口抽出盲盒... ✨</span>`;
+    }
     if (wrap) {
         wrap.classList.remove('shaking');
         void wrap.offsetWidth;
         wrap.classList.add('shaking');
-        wrap.insertAdjacentHTML('beforeend', `<div class="draw-rise-badge">✨ 正在從洞口抽出盲盒... ✨</div>`);
     }
 
     setTimeout(() => {
