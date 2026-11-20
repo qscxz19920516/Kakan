@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>花間小憩 - 驚喜盲盒</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:"PingFang TC","Microsoft JhengHei","Rounded Mplus 1c",sans-serif}
@@ -62,8 +65,11 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 .asb-info{text-align:left;min-width:0}
 .asb-sub{font-size:.74rem;font-weight:800;letter-spacing:1px;color:#f39c12;margin-bottom:2px}
 .asb-title{font-size:1.2rem;font-weight:900;color:#5a4649;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.asb-switch-btn{flex-shrink:0;background:#fff7f8;border:2px solid #f0a8b4;color:#c76272;padding:8px 14px;border-radius:18px;font-size:.84rem;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:.2s;box-shadow:0 2px 6px rgba(226,158,168,.15)}
+.asb-actions{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.asb-switch-btn{background:#fff7f8;border:2px solid #f0a8b4;color:#c76272;padding:8px 14px;border-radius:18px;font-size:.84rem;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:.2s;box-shadow:0 2px 6px rgba(226,158,168,.15)}
 .asb-switch-btn:hover{background:#c76272;border-color:#c76272;color:#fff;transform:translateY(-1px)}
+.asb-sync-btn{background:#fff;border:1.5px solid #e6c5ca;color:#8c7075;width:36px;height:36px;border-radius:50%;font-size:.95rem;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:.2s}
+.asb-sync-btn:hover{border-color:#c76272;color:#c76272;transform:rotate(90deg)}
 
 .stage-card{background:rgba(255,255,255,.95);backdrop-filter:blur(6px);border-radius:28px;padding:26px 20px;box-shadow:0 8px 25px rgba(226,158,168,.16);border:2px solid #f9dfe3;text-align:center;position:relative;overflow:hidden}
 .series-tag{font-size:.82rem;font-weight:800;letter-spacing:1px;margin-bottom:4px}
@@ -160,7 +166,10 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
             <div class="asb-sub" id="asbSub">載入盲盒系列中...</div>
             <div class="asb-title" id="asbTitle">驚喜盲盒</div>
         </div>
-        <button class="asb-switch-btn" onclick="openSeriesDrawer()">切換其他系列</button>
+        <div class="asb-actions">
+            <button class="asb-sync-btn" title="重新掃描 GitHub 盲盒資料夾" onclick="forceRefreshSeries()">🔄</button>
+            <button class="asb-switch-btn" onclick="openSeriesDrawer()">切換其他系列</button>
+        </div>
     </div>
 
     <div class="quota-bar" id="quotaBar">🎟️ 剩餘抽選次數：3 / 3 次</div>
@@ -191,20 +200,18 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 </div>
 
 <script>
-// ★ 1. 設定「每個系列」各自可抽選的次數上限（例如改為 1、3 或 5）
+// ★ 1. 設定「每個系列」各自可抽選的次數上限
 const MAX_DRAWS = 3;
 
-// ★ 2. GitHub 自動掃描設定
+// ★ 2. 直接鎖定你的 GitHub 儲存庫：qscxz19920516 / Kakan
 const GITHUB_CONFIG = {
-    owner: "qscxz19920516",   // 留空會自動從 *.github.io 網址抓取；若使用自訂網域請填 GitHub 帳號
-    repo: "Kakan",    // 留空會自動從網址路徑抓取；若為帳號首頁儲存庫則自動對應 owner.github.io
-    branch: "main",
-    folderPrefix: "花間 × " // 只要 GitHub 上有「花間 × 〇〇」開頭的資料夾，就會自動變成一個盲盒系列！
+    owner: "qscxz19920516",
+    repo: "Kakan",
+    branch: "main"
 };
 
-// ★ 3. 黃金角度動態不重複調色盤產生器（前 30+ 組 blind box 底色皆自動產生且完全不重複）
+// ★ 3. 黃金角度動態不重複調色盤產生器（前 30+ 組盲盒底色皆自動產生且完全不重複）
 function getSeriesTheme(index) {
-    // 使用黃金角度 137.508° 分散色相，並搭配微妙明暗交替，確保連續 30+ 組盲盒顏色皆鮮明且絕不重複
     const hue = Math.round((index * 137.508 + 28) % 360);
     const sat = index % 2 === 0 ? 74 : 66;
     const lightMain = index % 3 === 1 ? 45 : 50;
@@ -217,7 +224,7 @@ function getSeriesTheme(index) {
     };
 }
 
-// ★ 4. 保底備援清單（當離線測試或 GitHub API 暫時達上限時自動啟用，已移除前綴圖案並套用循環不重複底色）
+// ★ 4. 保底備援清單（當離線或 API 達上限時自動啟用）
 const FALLBACK_RAW = [
     { name: "袋裝零食", folder: "花間 × 袋裝零食", members: ["爆米花", "奶油曲奇", "棉花糖", "糖果球", "洋芋片", "巧克力"] },
     { name: "飲品", folder: "花間 × 飲品", members: ["哈密瓜午睡", "桃氣出逃", "莓有煩惱", "葡萄夜航", "橘子超載", "檸檬暴走", "藍色失重"] },
@@ -247,73 +254,99 @@ const cluesPool = [
 
 let curJob = "袋裝零食", pickedNo = 1, shakeCount = 0, drawnMember = "";
 
-// 自動解析 GitHub 帳號與儲存庫名稱，並掃描所有「花間 × 〇〇」資料夾與圖片
-async function loadAutoSeriesFromGitHub() {
-    let owner = GITHUB_CONFIG.owner;
-    let repo = GITHUB_CONFIG.repo;
-    const host = window.location.hostname;
-    const pathParts = window.location.pathname.split('/').filter(Boolean);
+// 排除非盲盒的系統/網站資料夾
+const EXCLUDED_FOLDERS = new Set([".github", "assets", "css", "js", "images", "img", "fonts", "職業", "職業介紹", "小卡", "小卡圖鑑", "card", "cards"]);
 
-    if (!owner && host.endsWith('.github.io')) {
-        owner = host.replace('.github.io', '');
-        if (!repo) {
-            repo = (pathParts.length > 0 && !pathParts[0].endsWith('.html')) ? pathParts[0] : host;
-        }
-    }
-    if (!owner || !repo) return;
+// 寬鬆匹配：同時支援「花間 × 〇〇」、「花間×〇〇」、「花間x〇〇」或任何放有角色圖片的盲盒資料夾
+function isBlindBoxFolder(folderName) {
+    if (!folderName || EXCLUDED_FOLDERS.has(folderName.toLowerCase())) return false;
+    if (/^花間\s*[×xX＊*]\s*/.test(folderName)) return true;
+    return false;
+}
 
-    const cacheKey = `huajian_auto_series_v2_${owner}_${repo}`;
-    try {
-        const cached = sessionStorage.getItem(cacheKey);
-        if (cached) {
-            const parsed = JSON.parse(cached);
-            if (Object.keys(parsed).length > 0) {
-                seriesConfig = parsed;
-                return;
+function extractShortSeriesName(folderName) {
+    return folderName.replace(/^花間\s*[×xX＊*]\s*/, '').replace(/盒$/, '').trim() || folderName;
+}
+
+// 自動從 GitHub API 掃描 qscxz19920516/Kakan 儲存庫中的所有盲盒資料夾與圖片
+async function loadAutoSeriesFromGitHub(bypassCache = false) {
+    const { owner, repo, branch } = GITHUB_CONFIG;
+    const cacheKey = `huajian_kakan_series_v3_${owner}_${repo}`;
+
+    if (!bypassCache) {
+        try {
+            const cached = sessionStorage.getItem(cacheKey);
+            if (cached) {
+                const parsed = JSON.parse(cached);
+                if (Object.keys(parsed).length > 0) {
+                    seriesConfig = parsed;
+                    return;
+                }
             }
-        }
-    } catch (e) {}
+        } catch (e) {}
+    }
 
-    const branches = [GITHUB_CONFIG.branch, "master"];
+    const branches = [branch, "master"];
     for (const br of branches) {
         try {
-            const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/git/trees/${br}?recursive=1`);
+            // 加入時間戳避免瀏覽器快取 API 回應
+            const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/git/trees/${br}?recursive=1&_=${Date.now()}`);
             if (!res.ok) continue;
             const data = await res.json();
             if (!data.tree) continue;
 
+            // 支援盲盒資料夾在最外層（花間 × 〇〇/角色.jpg）或包在「花間/」一層內（花間/花間 × 〇〇/角色.jpg）
             const folderMap = {};
+            const allFolderMap = {};
+
             data.tree.forEach(item => {
                 if (item.type !== 'blob') return;
-                const slashIdx = item.path.indexOf('/');
-                if (slashIdx === -1) return;
-                const folderName = item.path.slice(0, slashIdx);
-                const fileName = item.path.slice(slashIdx + 1);
-                if (!folderName.startsWith(GITHUB_CONFIG.folderPrefix)) return;
-                if (fileName.includes('/')) return;
-                if (!/\.(jpg|jpeg|png|webp|gif)$/i.test(fileName)) return;
+                if (!/\.(jpg|jpeg|png|webp|gif)$/i.test(item.path)) return;
 
+                const parts = item.path.split('/');
+                if (parts.length < 2) return; // 最外層根目錄圖片（如 Kakan的原.jpg）略過
+
+                const fileName = parts[parts.length - 1];
+                const parentFolderName = parts[parts.length - 2];
+                const folderRelPath = parts.slice(0, -1).join('/');
                 const memberName = fileName.replace(/\.(jpg|jpeg|png|webp|gif)$/i, '');
-                if (!folderMap[folderName]) folderMap[folderName] = [];
-                if (!folderMap[folderName].includes(memberName)) {
-                    folderMap[folderName].push(memberName);
+
+                if (isBlindBoxFolder(parentFolderName)) {
+                    if (!folderMap[folderRelPath]) {
+                        folderMap[folderRelPath] = { displayName: parentFolderName, members: [] };
+                    }
+                    if (!folderMap[folderRelPath].members.includes(memberName)) {
+                        folderMap[folderRelPath].members.push(memberName);
+                    }
+                } else if (!EXCLUDED_FOLDERS.has(parentFolderName.toLowerCase()) && parts.length === 2) {
+                    if (!allFolderMap[folderRelPath]) {
+                        allFolderMap[folderRelPath] = { displayName: parentFolderName, members: [] };
+                    }
+                    if (!allFolderMap[folderRelPath].members.includes(memberName)) {
+                        allFolderMap[folderRelPath].members.push(memberName);
+                    }
                 }
             });
 
-            const folders = Object.keys(folderMap);
-            if (folders.length > 0) {
+            // 若有符合「花間 × 〇〇」的資料夾優先使用；若用戶新建資料夾沒寫「花間 × 」前綴也能自動納入！
+            const targetMap = Object.keys(folderMap).length > 0 ? folderMap : allFolderMap;
+            const folderPaths = Object.keys(targetMap);
+
+            if (folderPaths.length > 0) {
                 const autoConfig = {};
-                folders.forEach((folderName, idx) => {
-                    const shortName = folderName.replace(GITHUB_CONFIG.folderPrefix, '').trim() || folderName;
+                folderPaths.forEach((relPath, idx) => {
+                    const info = targetMap[relPath];
+                    const shortName = extractShortSeriesName(info.displayName);
                     const theme = getSeriesTheme(idx);
                     const num = String(idx + 1).padStart(2, '0');
                     autoConfig[shortName] = {
-                        folder: folderName,
+                        folder: relPath,
+                        displayFolder: info.displayName,
                         color: theme.color,
                         softBg: theme.softBg,
                         bg: theme.bg,
-                        seriesNo: `SERIES ${num}・${folderName}`,
-                        members: folderMap[folderName]
+                        seriesNo: `SERIES ${num}・${info.displayName}`,
+                        members: info.members
                     };
                 });
                 seriesConfig = autoConfig;
@@ -324,6 +357,15 @@ async function loadAutoSeriesFromGitHub() {
     }
 }
 
+async function forceRefreshSeries() {
+    const btn = document.querySelector('.asb-sync-btn');
+    if (btn) btn.innerText = '⏳';
+    await loadAutoSeriesFromGitHub(true);
+    renderSideMenu();
+    selectSeries(curJob);
+    if (btn) btn.innerText = '🔄';
+}
+
 // 動態產生側邊漢堡選單的所有盲盒系列項目
 function renderSideMenu() {
     const subMenu = document.getElementById('subMenu');
@@ -331,7 +373,8 @@ function renderSideMenu() {
     let html = '';
     Object.keys(seriesConfig).forEach(key => {
         const cfg = seriesConfig[key];
-        html += `<li><a href="box.html?job=${encodeURIComponent(cfg.folder)}" data-series="${key}" onclick="goBox(event, '${key}')"><span>${cfg.folder}</span><span class="arrow">&gt;</span></a></li>`;
+        const label = cfg.displayFolder || cfg.folder;
+        html += `<li><a href="box.html?job=${encodeURIComponent(label)}" data-series="${key}" onclick="goBox(event, '${key}')"><span>${label}</span><span class="arrow">&gt;</span></a></li>`;
     });
     subMenu.innerHTML = html;
 }
@@ -467,7 +510,7 @@ function openDex() {
     Object.keys(seriesConfig).forEach(job => {
         const cfg = seriesConfig[job];
         getDrawnList(job).forEach(name => {
-            html += `<div class="dex-item"><img src="${cfg.folder}/${name}.jpg" alt="${name}" title="點擊放大檢視" onclick="openZoom('${cfg.folder}','${name}','${job}')" onerror="this.onerror=null;this.src='${cfg.folder}/${name}.png'"><div class="dex-item-name">${name}</div><span class="dex-item-tag" style="background:${cfg.color}">${job}</span></div>`;
+            html += `<div class="dex-item"><img src="${cfg.folder}/${name}.jpg" alt="${name}" title="點擊放大檢視" onclick="openZoom('${cfg.folder}','${name}','${job}')" onerror="if(!this.dataset.step){this.dataset.step=1;this.src='${cfg.folder}/${name}.JPG';}else if(this.dataset.step==1){this.dataset.step=2;this.src='${cfg.folder}/${name}.png';}else{this.onerror=null;this.src='${cfg.folder}/${name}.PNG';}"><div class="dex-item-name">${name}</div><span class="dex-item-tag" style="background:${cfg.color}">${job}</span></div>`;
         });
     });
     body.innerHTML = html || '<div style="grid-column:1/-1;text-align:center;padding:40px 10px;color:#947479;font-weight:700">🌸 還沒有抽到任何小卡喔，快去挑選盲盒吧！</div>';
@@ -480,11 +523,17 @@ function closeDex() {
 
 function openZoom(folder, name, job) {
     const zImg = document.getElementById('zoomImg');
+    let step = 0;
+    const exts = ['.jpg', '.JPG', '.png', '.PNG', '.webp'];
     zImg.onerror = function() {
-        this.onerror = null;
-        this.src = folder + '/' + name + '.png';
+        step++;
+        if (step < exts.length) {
+            this.src = folder + '/' + name + exts[step];
+        } else {
+            this.onerror = null;
+        }
     };
-    zImg.src = folder + '/' + name + '.jpg';
+    zImg.src = folder + '/' + name + exts[0];
     document.getElementById('zoomTitle').innerText = `🌸 ${job}・${name}`;
     document.getElementById('zoomModal').classList.add('open');
 }
@@ -497,7 +546,7 @@ function normalizeJobName(rawName) {
     const firstKey = Object.keys(seriesConfig)[0] || "袋裝零食";
     if (!rawName) return firstKey;
     if (seriesConfig[rawName]) return rawName;
-    const cleaned = rawName.replace(/^花間\s*×\s*/, '').replace(/盒$/, '').trim();
+    const cleaned = extractShortSeriesName(rawName);
     if (seriesConfig[cleaned]) return cleaned;
     const matched = Object.keys(seriesConfig).find(k => rawName.includes(k) || k.includes(cleaned));
     return matched || firstKey;
@@ -515,7 +564,7 @@ function openBox(){
 
     const cfg = seriesConfig[curJob], left = Math.max(0, MAX_DRAWS - getUsedDraws(curJob));
     const btn = left > 0 ? `<button class="btn-open" style="background:${cfg.color}" onclick="pickBox(pickedNo)">🎁 再抽一盒 (剩${left}次)</button>` : `<button class="btn-open" style="background:#b8a6a9;cursor:not-allowed" disabled>🔒 ${curJob}次數已用完</button>`;
-    document.getElementById('stageCard').innerHTML = `<div id="confettiBox"></div><div class="rarity-pill" style="background:${cfg.color}">🌸 花間小憩・${curJob}系列 🌸</div><div class="result-img-box"><img src="${cfg.folder}/${drawnMember}.jpg" alt="${drawnMember}" title="點擊放大檢視" onclick="openZoom('${cfg.folder}','${drawnMember}','${curJob}')" onerror="this.onerror=null;this.src='${cfg.folder}/${drawnMember}.png'"></div><div class="result-name">🎉 ${drawnMember}</div><div class="result-quote">「${curJob}夥伴・${drawnMember} 閃亮登場！」</div><div class="action-row"><button class="btn-shake" style="border-color:#d48c95;color:#c76272;background:#fff" onclick="renderGrid()">🔙 返回盲盒區</button>${btn}</div>`;
+    document.getElementById('stageCard').innerHTML = `<div id="confettiBox"></div><div class="rarity-pill" style="background:${cfg.color}">🌸 花間小憩・${curJob}系列 🌸</div><div class="result-img-box"><img src="${cfg.folder}/${drawnMember}.jpg" alt="${drawnMember}" title="點擊放大檢視" onclick="openZoom('${cfg.folder}','${drawnMember}','${curJob}')" onerror="if(!this.dataset.step){this.dataset.step=1;this.src='${cfg.folder}/${drawnMember}.JPG';}else if(this.dataset.step==1){this.dataset.step=2;this.src='${cfg.folder}/${drawnMember}.png';}else{this.onerror=null;this.src='${cfg.folder}/${drawnMember}.PNG';}"></div><div class="result-name">🎉 ${drawnMember}</div><div class="result-quote">「${curJob}夥伴・${drawnMember} 閃亮登場！」</div><div class="action-row"><button class="btn-shake" style="border-color:#d48c95;color:#c76272;background:#fff" onclick="renderGrid()">🔙 返回盲盒區</button>${btn}</div>`;
     const box = document.getElementById('confettiBox'), cols = ['#ff7675','#74b9ff','#ffeaa7','#55efc4','#fd79a8'];
     for(let i=0;i<35;i++){ const c=document.createElement('div'); c.className='confetti'; c.style.left=(Math.random()*100)+'%'; c.style.background=cols[i%5]; c.style.animationDelay=(Math.random()*0.4)+'s'; box.appendChild(c); }
 }
