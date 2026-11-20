@@ -22,10 +22,10 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 .drawer-mask.open{display:block}
 .drawer{position:fixed;top:0;left:-290px;width:280px;height:100%;background:#fff;z-index:100;transition:left .3s ease;box-shadow:4px 0 20px rgba(0,0,0,.12);display:flex;flex-direction:column}
 .drawer.open{left:0}
-.drawer-hd{padding:20px;background:linear-gradient(135deg,#ffe5e2,#fbdce6);display:flex;justify-content:space-between;align-items:center;border-bottom:2px dashed #f2bec7}
+.drawer-hd{padding:20px;background:linear-gradient(135deg,#ffe5e2,#fbdce6);display:flex;justify-content:space-between;align-items:center;border-bottom:2px dashed #f2bec7;flex-shrink:0}
 .drawer-hd span{font-weight:800;color:#c76272;font-size:1.1rem}
 .close-btn{background:#fff;border:none;color:#c76272;font-size:1.2rem;width:34px;height:34px;border-radius:50%;cursor:pointer;font-weight:800}
-.drawer-list{list-style:none;padding:8px 0}
+.drawer-list{list-style:none;padding:8px 0 30px;overflow-y:auto;flex:1}
 .drawer-list li a{display:flex;justify-content:space-between;align-items:center;padding:18px 24px;text-decoration:none;color:#5a4649;font-weight:800;font-size:1.05rem;border-bottom:1px solid #f7e8ea;transition:.2s}
 .drawer-list li a:hover,.drawer-list li a.current{background:#fff6f7;color:#c76272}
 .arrow{color:#c76272;font-weight:800;transition:transform .25s ease}
@@ -34,7 +34,7 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 .arrow.rot{transform:rotate(90deg)}
 .submenu{display:none;list-style:none;background:#fffafa}
 .submenu.open{display:block}
-.submenu li a{padding:14px 24px 14px 42px;font-size:.96rem;border-bottom:1px dashed #f7e8ea;color:#7a5c61}
+.submenu li a{padding:14px 20px 14px 36px;font-size:.96rem;border-bottom:1px dashed #f7e8ea;color:#7a5c61}
 
 .wrap{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:0 16px}
 .stat{background:rgba(255,255,255,.92);backdrop-filter:blur(6px);border-radius:26px;padding:16px 24px;box-shadow:0 6px 20px rgba(226,158,168,.12);border:2px solid #f9dfe3;margin-bottom:22px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:14px}
@@ -100,12 +100,7 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
         <li><a href="card.html" class="current"><span>🎴 小卡圖鑑</span><span class="arrow">&gt;</span></a></li>
         <li>
             <div class="sub-toggle" onclick="toggleSubMenu()"><span>🎁 驚喜盲盒</span><span class="arrow" id="subArrow">&gt;</span></div>
-            <ul class="submenu" id="subMenu">
-                <li><a href="box.html?job=花間 × 袋裝零食"><span>花間 × 袋裝零食</span><span class="arrow">&gt;</span></a></li>
-                <li><a href="box.html?job=花間 × 飲品"><span>花間 × 飲品盒</span><span class="arrow">&gt;</span></a></li>
-                <li><a href="box.html?job=花間 × 童話反派"><span>花間 × 童話反派</span><span class="arrow">&gt;</span></a></li>
-                <li><a href="box.html?job=花間 × 多巴胺女團"><span>花間 × 多巴胺女團</span><span class="arrow">&gt;</span></a></li>
-            </ul>
+            <ul class="submenu" id="subMenu"></ul>
         </li>
     </ul>
 </nav>
@@ -286,6 +281,15 @@ function init() {
 }
 
 init();
+</script>
+<script src="menu-sync.js?v=20261120_v4"></script>
+<script>
+window.addEventListener('DOMContentLoaded', async function() {
+    if (window.HuajianMenu) {
+        const cfg = await window.HuajianMenu.fetchAllSeries();
+        window.HuajianMenu.renderSharedSubMenu(cfg);
+    }
+});
 </script>
 </body>
 </html>
