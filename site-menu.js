@@ -12,6 +12,9 @@
     const gameLink = isHome
         ? '<a href="#meow-milk" onclick="openGame(event)">'
         : '<a href="index.html#meow-milk">';
+    const game1Link = isHome
+        ? '<a href="#game1" onclick="openGame1(event)">'
+        : '<a href="index.html#game1">';
     const brand = isHome
         ? '🌸 花間小憩 🌸'
         : isCard
@@ -40,6 +43,7 @@
                     <ul class="submenu" id="subMenu"></ul>
                 </li>
                 <li>${gameLink}<span>🥛 喵喵乳糖挑戰</span><span class="arrow">&gt;</span></a></li>
+                <li>${game1Link}<span>🩴 暴打小菜雞</span><span class="arrow">&gt;</span></a></li>
             </ul>
         </nav>`;
 
