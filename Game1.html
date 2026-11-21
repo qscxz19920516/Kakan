@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>暴打小菜雞：我就菜！</title>
+<style>
+  * {
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-user-select: none;
+    margin: 0;
+    padding: 0;
+  }
+  body {
+    background: #1a2318;
+    font-family: "Microsoft JhengHei", "PingFang TC", "Noto Sans TC", sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+  }
+  #game-wrapper {
+    position: relative;
+    width: 100vw;
+    max-width: 960px;
+    aspect-ratio: 16 / 10;
+    max-height: 100vh;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.65);
+    border-radius: 16px;
+    overflow: hidden;
+    background: #9cd4f5;
+  }
+  canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    cursor: none;
+  }
+  #hud {
+    position: absolute;
+    top: 14px;
+    left: 16px;
+    right: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    pointer-events: none;
+    z-index: 10;
+  }
+  .hud-left {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .hud-pill {
+    background: rgba(255, 255, 255, 0.92);
+    border: 3px solid #4d3b2c;
+    border-radius: 999px;
+    padding: 6px 18px;
+    font-weight: 900;
+    font-size: clamp(14px, 2vw, 20px);
+    color: #3a2a1d;
+    box-shadow: 0 4px 0 #4d3b2c;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .hud-pill span.val {
+    color: #e64833;
+    font-size: 1.15em;
+  }
+  #slipper-bar {
+    background: rgba(255, 255, 255, 0.92);
+    border: 3px solid #4d3b2c;
+    border-radius: 16px;
+    padding: 6px 14px;
+    box-shadow: 0 4px 0 #4d3b2c;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 900;
+    font-size: 14px;
+    color: #3a2a1d;
+  }
+  .cd-track {
+    width: 90px;
+    height: 12px;
+    background: #d7cec5;
+    border-radius: 999px;
+    border: 2px solid #4d3b2c;
+    overflow: hidden;
+  }
+  #cd-fill {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, #3298db, #49d17c);
+    transition: width 0.05s linear;
+  }
+  #combo-badge {
+    background: linear-gradient(135deg, #ff9d2e, #ff4757);
+    color: #fff;
+    border: 3px solid #4d3b2c;
+    border-radius: 999px;
+    padding: 6px 18px;
+    font-weight: 900;
+    font-size: clamp(14px, 2vw, 20px);
+    box-shadow: 0 4px 0 #4d3b2c;
+    transform: scale(0);
+    transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  #combo-badge.active {
+    transform: scale(1);
+  }
+  #overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(34, 44, 28, 0.68);
+    backdrop-filter: blur(4px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 20;
+    text-align: center;
+    padding: 20px;
+  }
+  .card {
+    background: #fffdf7;
+    border: 4px solid #4d3b2c;
+    border-radius: 24px;
+    padding: 26px 34px;
+    max-width: 500px;
+    width: 92%;
+    box-shadow: 0 10px 0 #4d3b2c;
+    animation: popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes popIn {
+    0% { transform: scale(0.7); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .title-tag {
+    display: inline-block;
+    background: #84c454;
+    color: #fff;
+    font-weight: 900;
+    padding: 4px 14px;
+    border-radius: 999px;
+    border: 2px solid #4d3b2c;
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+  h1 {
+    font-size: clamp(26px, 4.2vw, 38px);
+    color: #3a2a1d;
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+  }
+  p.desc {
+    color: #5e4b3b;
+    font-size: 15px;
+    line-height: 1.65;
+    margin-bottom: 18px;
+  }
+  .rule-box {
+    background: #f5efe2;
+    border: 2px dashed #b8a38d;
+    border-radius: 14px;
+    padding: 12px 14px;
+    margin-bottom: 20px;
+    font-size: 13.5px;
+    color: #4d3b2c;
+    text-align: left;
+    line-height: 1.65;
+  }
+  .btn {
+    background: linear-gradient(180deg, #ff7648, #e64833);
+    color: #fff;
+    border: 3px solid #4d3b2c;
+    border-radius: 999px;
+    padding: 14px 36px;
+    font-size: 22px;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 0 6px 0 #4d3b2c;
+    transition: transform 0.08s, box-shadow 0.08s;
+  }
+  .btn:hover {
+    filter: brightness(1.06);
+  }
+  .btn:active {
+    transform: translateY(4px);
+    box-shadow: 0 2px 0 #4d3b2c;
+  }
+  #result-stats {
+    display: none;
+    margin-bottom: 18px;
+  }
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .stat-item {
+    background: #f4eedc;
+    border: 2px solid #4d3b2c;
+    border-radius: 12px;
+    padding: 8px 4px;
+  }
+  .stat-item .num {
+    font-size: 22px;
+    font-weight: 900;
+    color: #e64833;
+  }
+  .stat-item .lbl {
+    font-size: 12px;
+    color: #5e4b3b;
+    font-weight: 700;
+  }
+  #sound-btn {
+    position: absolute;
+    bottom: 14px;
+    right: 16px;
+    z-index: 15;
+    background: rgba(255,255,255,0.9);
+    border: 3px solid #4d3b2c;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    font-size: 20px;
+    cursor: pointer;
+    box-shadow: 0 3px 0 #4d3b2c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+</style>
+</head>
+<body>
+
+<div id="game-wrapper">
+  <canvas id="gameCanvas" width="960" height="600"></canvas>
+
+  <div id="hud">
+    <div class="hud-left">
+      <div class="hud-pill">👟 教訓分數：<span class="val" id="score-el">0</span></div>
+      <div id="slipper-bar">
+        <span id="slipper-icons">🩴🩴</span>
+        <div class="cd-track"><div id="cd-fill"></div></div>
+        <span id="cd-text" style="font-size:12px;color:#2f855a;">可發射</span>
+      </div>
+    </div>
+    <div id="combo-badge">🔥 <span id="combo-el">0</span> 連擊！</div>
+    <div class="hud-pill">⏱️ 剩餘：<span class="val" id="time-el">45</span>s</div>
+  </div>
+
+  <button id="sound-btn" title="切換音效">🔊</button>
+
+  <div id="overlay">
+    <div class="card">
+      <div class="title-tag">🩴 國民神兵藍白拖 · 誤傷警告版</div>
+      <h1 id="modal-title">暴打小菜雞：我就菜！</h1>
+      <p class="desc" id="modal-desc">
+        穿著小雞裝的灰髮小菜雞又在草原上亂竄挑釁啦！<br>
+        更過分的是，他還會躲在無辜路人身邊當肉盾！
+      </p>
+      <div class="rule-box" id="rule-box">
+        • <b>冷卻裝填</b>：拖鞋每次出手有 <b>0.65 秒</b> 冷卻，嚴禁無腦連發。<br>
+        • <b>抓準時機</b>：趁他停下喊<b>「我就菜！」</b>或<b>「略略略打我啊～」</b>時暴擊雙倍分！<br>
+        • <b>小心路人</b>：場上會經過 <b>4 位超帥路人與小熊貓</b>，誤傷會 <b>-200 分</b> 並被路人怒瞪開罵，小菜雞還會停下來狂笑你！
+      </div>
+      <div id="result-stats">
+        <div style="font-size: 18px; font-weight: 900; color: #3a2a1d;" id="rank-title">稱號：拖鞋神射手</div>
+        <div class="stat-grid">
+          <div class="stat-item"><div class="num" id="final-score">0</div><div class="lbl">總教訓分</div></div>
+          <div class="stat-item"><div class="num" id="final-hits">0</div><div class="lbl">命中次數</div></div>
+          <div class="stat-item"><div class="num" id="final-ff">0</div><div class="lbl">誤傷路人</div></div>
+        </div>
+      </div>
+      <button class="btn" id="start-btn">抄起藍白拖開打！</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const canvas = document.getElementById('gameCanvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width;
+  const H = canvas.height;
+
+  const scoreEl = document.getElementById('score-el');
+  const timeEl = document.getElementById('time-el');
+  const comboEl = document.getElementById('combo-el');
+  const comboBadge = document.getElementById('combo-badge');
+  const slipperIconsEl = document.getElementById('slipper-icons');
+  const cdFillEl = document.getElementById('cd-fill');
+  const cdTextEl = document.getElementById('cd-text');
+  const overlay = document.getElementById('overlay');
+  const startBtn = document.getElementById('start-btn');
+  const modalTitle = document.getElementById('modal-title');
+  const modalDesc = document.getElementById('modal-desc');
+  const ruleBox = document.getElementById('rule-box');
+  const resultStats = document.getElementById('result-stats');
+  const finalScoreEl = document.getElementById('final-score');
+  const finalHitsEl = document.getElementById('final-hits');
+  const finalFfEl = document.getElementById('final-ff');
+  const rankTitleEl = document.getElementById('rank-title');
+  const soundBtn = document.getElementById('sound-btn');
+
+  // --- 音效系統 (Web Audio API) ---
+  let soundEnabled = true;
+  let audioCtx = null;
+
+  function initAudio() {
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+  }
+
+  soundBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    soundEnabled = !soundEnabled;
+    soundBtn.textContent = soundEnabled ? '🔊' : '🔇';
+  });
+
+  function playSound(type) {
+    if (!soundEnabled || !audioCtx) return;
+    const now = audioCtx.currentTime;
+
+    if (type === 'throw') {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(520, now);
+      osc.frequency.exponentialRampToValueAtTime(140, now + 0.16);
+      gain.gain.setValueAtTime(0.22, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.16);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.16);
+    } else if (type === 'cooldown') {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(160, now);
+      osc.frequency.setValueAtTime(130, now + 0.06);
+      gain.gain.setValueAtTime(0.15, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.12);
+    } else if (type === 'hit' || type === 'crit') {
+      const bufferSize = audioCtx.sampleRate * 0.14;
+      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (audioCtx.sampleRate * 0.035));
+      }
+      const noise = audioCtx.createBufferSource();
+      noise.buffer = buffer;
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.setValueAtTime(type === 'crit' ? 1100 : 750, now);
+      const gain = audioCtx.createGain();
+      gain.gain.setValueAtTime(type === 'crit' ? 0.65 : 0.45, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.14);
+      noise.connect(filter);
+      filter.connect(gain);
+      gain.connect(audioCtx.destination);
+      noise.start(now);
+
+      const osc = audioCtx.createOscillator();
+      const oscGain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(type === 'crit' ? 680 : 480, now);
+      osc.frequency.exponentialRampToValueAtTime(180, now + 0.18);
+      oscGain.gain.setValueAtTime(0.3, now);
+      oscGain.gain.exponentialRampToValueAtTime(0.01, now + 0.18);
+      osc.connect(oscGain);
+      oscGain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.18);
+    } else if (type === 'friendlyFire') {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(220, now);
+      osc.frequency.linearRampToValueAtTime(110, now + 0.28);
+      gain.gain.setValueAtTime(0.28, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.28);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.28);
+    } else if (type === 'rock') {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(320, now);
+      osc.frequency.exponentialRampToValueAtTime(90, now + 0.1);
+      gain.gain.setValueAtTime(0.2, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.1);
+    } else if (type === 'taunt') {
+      const notes = [523.25, 659.25, 587.33, 783.99];
+      notes.forEach((freq, idx) => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now + idx * 0.055);
+        gain.gain.setValueAtTime(0.1, now + idx * 0.055);
+        gain.gain.exponentialRampToValueAtTime(0.005, now + idx * 0.055 + 0.07);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now + idx * 0.055);
+        osc.stop(now + idx * 0.055 + 0.07);
+      });
+    } else if (type === 'laugh') {
+      const notes = [660, 520, 660, 520, 740, 490];
+      notes.forEach((freq, idx) => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(freq, now + idx * 0.065);
+        gain.gain.setValueAtTime(0.16, now + idx * 0.065);
+        gain.gain.exponentialRampToValueAtTime(0.005, now + idx * 0.065 + 0.08);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now + idx * 0.065);
+        osc.stop(now + idx * 0.065 + 0.08);
+      });
+    } else if (type === 'miss') {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(280, now);
+      osc.frequency.linearRampToValueAtTime(180, now + 0.14);
+      gain.gain.setValueAtTime(0.12, now);
+      gain.gain.exponentialRampToValueAtTime(0.005, now + 0.14);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.14);
+    }
+  }
+
+  // --- 遊戲狀態 ---
+  let gameState = 'START';
+  let score = 0;
+  let timeLeft = 45;
+  let combo = 0;
+  let totalHits = 0;
+  let friendlyFireCount = 0;
+  let lastTime = 0;
+  let screenShake = 0;
+  let aimX = W / 2;
+  let aimY = H / 2;
+  let aimShake = 0;
+
+  // 拖鞋冷卻系統
+  const MAX_SLIPPERS = 2;
+  const COOLDOWN_TIME = 0.65;
+  let cooldownTimer = 0;
+  let nextFoot = 1;
+
+  const rock = { x: 115, y: 470, rx: 75, ry: 72 };
+
+  const flowers = Array.from({ length: 24 }, (_, i) => ({
+    x: 40 + (i * 41) % (W - 80),
+    y: 410 + ((i * 73) % 165),
+    color: i % 3 === 0 ? '#ff9f43' : (i % 3 === 1 ? '#ffffff' : '#ff6b81'),
+    size: 4 + (i % 3)
+  }));
+
+  // --- 路人角色資料庫 ---
+  const PASSERBY_TYPES = [
+    {
+      id: 'dragon_mage',
+      name: '龍角眼鏡法師',
+      hasPanda: true,
+      speed: 95,
+      hitRadius: 56,
+      scolds: [
+        '……你眼睛沒問題吧？',
+        '敢拿拖鞋丟本座？！',
+        '別嚇到我家小熊貓！',
+        '這準頭是閉著眼睛丟的？'
+      ]
+    },
+    {
+      id: 'wolf_boy',
+      name: '狼耳紅眼少年',
+      hasPanda: true,
+      speed: 125,
+      hitRadius: 54,
+      scolds: [
+        '喂！長點眼睛啊！',
+        '差點砸到小熊貓了！',
+        '你朝哪裡丟呢笨蛋！',
+        '再亂丟我就不客氣了！'
+      ]
+    },
+    {
+      id: 'oni_samurai',
+      name: '鬼面傘武士',
+      hasPanda: false,
+      speed: 108,
+      hitRadius: 52,
+      scolds: [
+        '……找死嗎？',
+        '區區藍白拖也敢造次！',
+        '眼神不好就別出來丟人。',
+        '想嘗嘗油紙傘的滋味？'
+      ]
+    },
+    {
+      id: 'angel_knight',
+      name: '聖劍天使騎士',
+      hasPanda: false,
+      speed: 88,
+      hitRadius: 56,
+      scolds: [
+        '哎呀，真是失禮呢。',
+        '這種準頭需要幫你祈禱嗎？',
+        '請看清楚目標再動手喔。',
+        '我的聖劍可不是裝飾品～'
+      ]
+    }
+  ];
+
+  let passersby = [];
+  let passerbySpawnTimer = 1.6;
+  let lastPasserbyIdx = -1;
+
+  // --- 主角：小菜雞 ---
+  const boy = {
+    x: W * 0.56,
+    y: 465,
+    vx: 220,
+    facing: 1,
+    state: 'RUN',
+    stateTimer: 1.5,
+    walkCycle: 0,
+    scaleX: 1,
+    scaleY: 1,
+    hitStarsAngle: 0,
+    tauntText: '',
+    dashCooldown: 0
+  };
+
+  let slippers = [];
+  let groundMarks = [];
+  let floatingTexts = [];
+  let particles = [];
+
+  const laughQuotes = [
+    '哈哈哈哈打錯人啦！',
+    '連路人都打，我就菜都比你準！',
+    '略略略～你被路人瞪了！',
+    '笑死！幫你幫倒忙哈哈！',
+    '眼力這麼差還想打我？'
+  ];
+
+  // --- 互動事件 ---
+  function updateAimFromEvent(e) {
+    const rect = canvas.getBoundingClientRect();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    aimX = ((clientX - rect.left) / rect.width) * W;
+    aimY = ((clientY - rect.top) / rect.height) * H;
+  }
+
+  canvas.addEventListener('mousemove', updateAimFromEvent);
+  canvas.addEventListener('mousedown', (e) => {
+    if (gameState !== 'PLAYING') return;
+    updateAimFromEvent(e);
+    throwSlipper(aimX, aimY);
+  });
+  canvas.addEventListener('touchstart', (e) => {
+    if (gameState !== 'PLAYING') return;
+    e.preventDefault();
+    updateAimFromEvent(e);
+    throwSlipper(aimX, aimY);
+  }, { passive: false });
+
+  function updateSlipperHUD() {
+    const available = MAX_SLIPPERS - slippers.length;
+    let icons = '';
+    for (let i = 0; i < MAX_SLIPPERS; i++) {
+      icons += i < available ? '🩴' : '<span style="opacity:0.25">🩴</span>';
+    }
+    slipperIconsEl.innerHTML = icons;
+
+    if (cooldownTimer > 0) {
+      const pct = Math.max(0, Math.min(100, ((COOLDOWN_TIME - cooldownTimer) / COOLDOWN_TIME) * 100));
+      cdFillEl.style.width = pct + '%';
+      cdFillEl.style.background = '#f39c12';
+      cdTextEl.textContent = '冷卻中';
+      cdTextEl.style.color = '#d35400';
+    } else if (available <= 0) {
+      cdFillEl.style.width = '15%';
+      cdFillEl.style.background = '#e74c3c';
+      cdTextEl.textContent = '飛行中';
+      cdTextEl.style.color = '#c0392b';
+    } else {
+      cdFillEl.style.width = '100%';
+      cdFillEl.style.background = 'linear-gradient(90deg, #3298db, #49d17c)';
+      cdTextEl.textContent = '可發射';
+      cdTextEl.style.color = '#2f855a';
+    }
+  }
+
+  function throwSlipper(tx, ty) {
+    if (cooldownTimer > 0 || slippers.length >= MAX_SLIPPERS) {
+      aimShake = 0.25;
+      playSound('cooldown');
+      addFloatingText(tx, ty - 22, cooldownTimer > 0 ? '冷卻中！別急！' : '拖鞋還在飛！', '#ff7675', 18);
+      return;
+    }
+
+    playSound('throw');
+    cooldownTimer = COOLDOWN_TIME;
+
+    const isGolden = combo >= 5;
+    const startX = W / 2 + nextFoot * 180;
+    const startY = H + 45;
+    nextFoot *= -1;
+
+    slippers.push({
+      startX,
+      startY,
+      targetX: tx,
+      targetY: ty,
+      x: startX,
+      y: startY,
+      progress: 0,
+      duration: 0.36,
+      rotation: 0,
+      spinSpeed: (Math.random() > 0.5 ? 1 : -1) * 19,
+      isGolden
+    });
+    updateSlipperHUD();
+  }
+
+  function addFloatingText(x, y, text, color = '#ffeb3b', size = 28) {
+    floatingTexts.push({
+      x,
+      y,
+      text,
+      color,
+      size,
+      vy: -72,
+      life: 1.05,
+      maxLife: 1.05
+    });
+  }
+
+  function spawnParticles(x, y, color, count = 16) {
+    for (let i = 0; i < count; i++) {
+      const ang = (Math.PI * 2 * i) / count + Math.random() * 0.4;
+      const spd = 85 + Math.random() * 190;
+      particles.push({
+        x,
+        y,
+        vx: Math.cos(ang) * spd,
+        vy: Math.sin(ang) * spd - 45,
+        size: 5 + Math.random() * 7,
+        color,
+        life: 0.55 + Math.random() * 0.25,
+        maxLife: 0.8
+      });
+    }
+  }
+
+  function spawnPasserby() {
+    if (passersby.length >= 2) return;
+    let idx = Math.floor(Math.random() * PASSERBY_TYPES.length);
+    if (idx === lastPasserbyIdx) {
+      idx = (idx + 1) % PASSERBY_TYPES.length;
+    }
+    lastPasserbyIdx = idx;
+    const tpl = PASSERBY_TYPES[idx];
+    const dir = Math.random() > 0.5 ? 1 : -1;
+    const laneY = 448 + Math.random() * 44;
+
+    passersby.push({
+      ...tpl,
+      x: dir === 1 ? -70 : W + 70,
+      y: laneY,
+      dir,
+      vx: dir * tpl.speed,
+      walkCycle: Math.random() * 6,
+      angryTimer: 0,
+      scoldText: '',
+      pauseTimer: 1.2 + Math.random() * 2.0,
+      isPausing: false
+    });
+  }
+
+  function startGame() {
+    initAudio();
+    score = 0;
+    timeLeft = 45;
+    combo = 0;
+    totalHits = 0;
+    friendlyFireCount = 
