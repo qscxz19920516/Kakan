@@ -57,12 +57,23 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 .story-img:hover{transform:scale(1.01)}
 .story-hint{font-size:.82rem;color:#947479;margin-top:10px;font-weight:700}
 
+.wrap.game-active{max-width:1500px;width:calc(100% - 32px)}
+.game-card{display:none;background:rgba(255,255,255,.96);border-radius:28px;padding:12px;box-shadow:0 8px 25px rgba(226,158,168,.16);border:2px solid #f9dfe3}
+.game-card.open{display:block}
+.game-hd{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:4px 6px 10px}
+.game-title{font-size:1.05rem;font-weight:800;color:#c76272}
+.game-back{border:1.5px solid #f0a8b4;background:#fff8f9;color:#c76272;border-radius:12px;padding:7px 12px;font-weight:800;cursor:pointer}
+.game-frame-wrap{height:calc(100vh - 150px);height:calc(100dvh - 150px);min-height:420px;border:2px dashed #f2bec7;border-radius:20px;overflow:hidden;background:#7dd3fc}
+.game-frame{width:100%;height:100%;border:0;display:block}
+.home-view.hidden{display:none}
+
 .zoom-modal{display:none;position:fixed;inset:0;background:rgba(40,28,30,.82);z-index:200;align-items:center;justify-content:center;padding:16px}
 .zoom-modal.open{display:flex}
 .zoom-card{position:relative;background:#fff;padding:10px;border-radius:22px;border:3px solid #f9dfe3;max-width:95vw;max-height:92vh;box-shadow:0 15px 35px rgba(0,0,0,.35)}
 .zoom-card img{max-width:90vw;max-height:86vh;object-fit:contain;border-radius:14px;display:block}
 
 @media(max-width:520px){
+    .wrap.game-active{width:calc(100% - 16px)}
     .hero{padding:24px 14px}
     .hero h1{font-size:1.65rem}
     .cards{gap:10px}
@@ -71,6 +82,8 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
     .portal-title{font-size:1.02rem}
     .portal-desc{font-size:.78rem}
     .story-card{padding:14px 12px}
+    .game-card{padding:8px}
+    .game-frame-wrap{height:calc(100vh - 132px);height:calc(100dvh - 132px);min-height:380px}
 }
 </style>
 <script>
@@ -100,8 +113,8 @@ const SITE_VERSION = "20261120_v4";
         <button class="close-btn" onclick="toggleMenu()">✕</button>
     </div>
     <ul class="drawer-list">
-        <li><a href="index.html" class="current"><span>🏠 首頁</span><span class="arrow">&gt;</span></a></li>
-        <li><a href="MeowMilk.html"><span>🥛 喵喵乳糖挑戰</span><span class="arrow">&gt;</span></a></li>
+        <li><a href="index.html" class="current" onclick="showHome(event)"><span>🏠 首頁</span><span class="arrow">&gt;</span></a></li>
+        <li><a href="#meow-milk" onclick="openGame(event)"><span>🥛 喵喵乳糖挑戰</span><span class="arrow">&gt;</span></a></li>
         <li><a href="card.html"><span>🎴 小卡圖鑑</span><span class="arrow">&gt;</span></a></li>
         <li>
             <div class="sub-toggle" onclick="toggleSubMenu()"><span>🎁 驚喜盲盒</span><span class="arrow" id="subArrow">&gt;</span></div>
@@ -110,7 +123,8 @@ const SITE_VERSION = "20261120_v4";
     </ul>
 </nav>
 
-<div class="wrap">
+<div class="wrap" id="mainWrap">
+    <div class="home-view" id="homeView">
     <div class="hero">
         <h1>✨ 歡迎來到花間小憩 ✨</h1>
         <p>點擊左上角選單或下方卡片，探索成員專屬小卡與驚喜盲盒！</p>
@@ -125,7 +139,7 @@ const SITE_VERSION = "20261120_v4";
                 <div class="portal-title">驚喜盲盒區</div>
                 <div class="portal-desc">花間小憩專屬盲盒活動專區</div>
             </a>
-            <a href="MeowMilk.html" class="portal">
+            <a href="#meow-milk" class="portal" onclick="openGame(event)">
                 <span class="portal-icon">🥛</span>
                 <div class="portal-title">喵喵乳糖挑戰</div>
                 <div class="portal-desc">一劍友情灌奶的花間大亂鬥遊戲</div>
@@ -139,6 +153,17 @@ const SITE_VERSION = "20261120_v4";
             <img class="story-img" src="Kakan的原.jpg?v=20261120_v4" alt="KaKan 名字背後的意義" onclick="openZoom()" onerror="if(!this.dataset.step){this.dataset.step=1;this.src='Kakan的原.JPG?v=20261120_v4';}else if(this.dataset.step==1){this.dataset.step=2;this.src='花間/Kakan的原.jpg?v=20261120_v4';}else{this.onerror=null;this.src='花間/Kakan的原.JPG?v=20261120_v4';}">
         </div>
         <div class="story-hint">🔍 點擊圖片可全螢幕放大閱讀文字細節</div>
+    </div>
+    </div>
+
+    <div class="game-card" id="gameCard">
+        <div class="game-hd">
+            <div class="game-title">🥛 喵喵乳糖挑戰</div>
+            <button type="button" class="game-back" onclick="showHome()">返回首頁</button>
+        </div>
+        <div class="game-frame-wrap">
+            <iframe id="gameFrame" class="game-frame" title="喵喵乳糖挑戰" src="MeowMilk.html?v=20261120_v4"></iframe>
+        </div>
     </div>
 </div>
 
@@ -165,8 +190,34 @@ function openZoom(){
 function closeZoom(){
     document.getElementById('zoomModal').classList.remove('open');
 }
+function openGame(event){
+    if (event) event.preventDefault();
+    document.getElementById('homeView').classList.add('hidden');
+    document.getElementById('mainWrap').classList.add('game-active');
+    const gameCard=document.getElementById('gameCard');
+    gameCard.classList.add('open');
+    const frame=document.getElementById('gameFrame');
+    if (!frame.getAttribute('src')) frame.setAttribute('src','MeowMilk.html?v=20261120_v4');
+    if (window.location.hash !== '#meow-milk') history.replaceState(null,'','#meow-milk');
+    toggleMenuIfOpen();
+    window.scrollTo({top:0,behavior:'smooth'});
+}
+function showHome(event){
+    if (event) event.preventDefault();
+    document.getElementById('homeView').classList.remove('hidden');
+    document.getElementById('mainWrap').classList.remove('game-active');
+    document.getElementById('gameCard').classList.remove('open');
+    if (window.location.hash === '#meow-milk') history.replaceState(null,'',window.location.pathname + window.location.search);
+    toggleMenuIfOpen();
+    window.scrollTo({top:0,behavior:'smooth'});
+}
+function toggleMenuIfOpen(){
+    const drawer=document.getElementById('drawer');
+    if (drawer.classList.contains('open')) toggleMenu();
+}
 
 window.addEventListener('DOMContentLoaded', async function(){
+    if (window.location.hash === '#meow-milk') openGame();
     const bg=document.getElementById('fxBg');
     for(let i=0;i<45;i++){
         const p=document.createElement('div');p.className='petal';
