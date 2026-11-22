@@ -65,7 +65,7 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 </style>
 <link rel="stylesheet" href="site-menu.css?v=20261121_v1">
 <script>
-const SITE_VERSION = "20261120_v4";
+const SITE_VERSION = "20261122_v1";
 (function(){
     const url = new URL(window.location.href);
     if (url.searchParams.get("v") !== SITE_VERSION) {
@@ -78,7 +78,7 @@ const SITE_VERSION = "20261120_v4";
 <body>
 <div class="fx-bg" id="fxBg"></div>
 <div id="siteMenu"></div>
-<script src="site-menu.js?v=20261121_v2"></script>
+<script src="site-menu.js?v=20261122_v1"></script>
 
 <div class="wrap" id="mainWrap">
     <div class="home-view" id="homeView">
@@ -145,10 +145,10 @@ function closeZoom(){
     document.getElementById('zoomModal').classList.remove('open');
 }
 function openGame(event){
-    openEmbeddedGame(event, 'MeowMilk.html?v=20261120_v4', '#meow-milk', '🥛 喵喵乳糖挑戰');
+    openEmbeddedGame(event, 'MeowMilk.html?v=20261122_v1', '#meow-milk', '🥛 喵喵乳糖挑戰');
 }
 function openGame1(event){
-    openEmbeddedGame(event, 'HitMeow.html?v=20261121_v1', '#game1', '🩴 暴打小菜雞');
+    openEmbeddedGame(event, 'HitMeow.html?v=20261122_v1', '#game1', '🩴 暴打小菜雞');
 }
 function openEmbeddedGame(event, source, hash, title){
     if (event) event.preventDefault();

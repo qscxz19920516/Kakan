@@ -6,14 +6,16 @@
     const isHome = page === '' || page === 'index.html';
     const isCard = page === 'card.html';
     const isBox = page === 'box.html';
+    const isMilkGame = isHome && window.location.hash === '#meow-milk';
+    const isHitMeowGame = isHome && window.location.hash === '#game1';
     const homeLink = isHome
         ? '<a href="index.html" class="current" onclick="showHome(event)">'
         : '<a href="index.html">';
     const gameLink = isHome
-        ? '<a href="#meow-milk" onclick="openGame(event)">'
+        ? `<a href="#meow-milk"${isMilkGame ? ' class="current"' : ''} onclick="openGame(event)">`
         : '<a href="index.html#meow-milk">';
     const game1Link = isHome
-        ? '<a href="#game1" onclick="openGame1(event)">'
+        ? `<a href="#game1"${isHitMeowGame ? ' class="current"' : ''} onclick="openGame1(event)">`
         : '<a href="index.html#game1">';
     const brand = isHome
         ? '🌸 花間小憩 🌸'
@@ -42,8 +44,15 @@
                     <div class="sub-toggle" onclick="toggleSubMenu()"><span>🎁 驚喜盲盒</span><span class="arrow" id="subArrow">&gt;</span></div>
                     <ul class="submenu" id="subMenu"></ul>
                 </li>
-                <li>${gameLink}<span>🥛 喵喵乳糖挑戰</span><span class="arrow">&gt;</span></a></li>
-                <li>${game1Link}<span>🩴 暴打小菜雞</span><span class="arrow">&gt;</span></a></li>
+                <li>
+                    <div class="sub-toggle" onclick="toggleGuildGames()" aria-expanded="false" aria-controls="gameSubMenu">
+                        <span>🎮 公會小遊戲</span><span class="arrow" id="gameSubArrow">&gt;</span>
+                    </div>
+                    <ul class="submenu" id="gameSubMenu">
+                        <li>${gameLink}<span>🥛 喵喵乳糖挑戰</span><span class="arrow">&gt;</span></a></li>
+                        <li>${game1Link}<span>🩴 暴打小菜雞</span><span class="arrow">&gt;</span></a></li>
+                    </ul>
+                </li>
             </ul>
         </nav>`;
 
@@ -57,5 +66,12 @@
     window.toggleSubMenu = function(){
         document.getElementById('subMenu').classList.toggle('open');
         document.getElementById('subArrow').classList.toggle('rot');
+    };
+
+    window.toggleGuildGames = function(){
+        const submenu = document.getElementById('gameSubMenu');
+        const isOpen = submenu.classList.toggle('open');
+        document.getElementById('gameSubArrow').classList.toggle('rot', isOpen);
+        mount.querySelector('[aria-controls="gameSubMenu"]').setAttribute('aria-expanded', String(isOpen));
     };
 })();
