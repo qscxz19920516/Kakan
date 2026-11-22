@@ -65,7 +65,7 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 </style>
 <link rel="stylesheet" href="site-menu.css?v=20261121_v1">
 <script>
-const SITE_VERSION = "20261122_v1";
+const SITE_VERSION = "20261122_v2";
 (function(){
     const url = new URL(window.location.href);
     if (url.searchParams.get("v") !== SITE_VERSION) {
@@ -78,7 +78,7 @@ const SITE_VERSION = "20261122_v1";
 <body>
 <div class="fx-bg" id="fxBg"></div>
 <div id="siteMenu"></div>
-<script src="site-menu.js?v=20261122_v1"></script>
+<script src="site-menu.js?v=20261122_v2"></script>
 
 <div class="wrap" id="mainWrap">
     <div class="home-view" id="homeView">
@@ -101,7 +101,7 @@ const SITE_VERSION = "20261122_v1";
                 <div class="portal-title">喵喵乳糖挑戰</div>
                 <div class="portal-desc">一劍友情灌奶的花間大亂鬥遊戲</div>
             </a>
-            <a href="#game1" class="portal" onclick="openGame1(event)">
+            <a href="#hit-meow" class="portal" onclick="openGame1(event)">
                 <span class="portal-icon">🩴</span>
                 <div class="portal-title">暴打小菜雞</div>
                 <div class="portal-desc">抄起藍白拖，挑戰你的瞄準手感</div>
@@ -136,7 +136,7 @@ const SITE_VERSION = "20261122_v1";
     </div>
 </div>
 
-<script src="menu-sync.js?v=20261122_v5"></script>
+<script src="menu-sync.js?v=20261122_v6"></script>
 <script>
 function openZoom(){
     document.getElementById('zoomModal').classList.add('open');
@@ -145,11 +145,22 @@ function closeZoom(){
     document.getElementById('zoomModal').classList.remove('open');
 }
 function openGame(event){
-    openEmbeddedGame(event, 'MeowMilk.html?v=20261122_v1', '#meow-milk', '🥛 喵喵乳糖挑戰');
+    openEmbeddedGame(event, 'MeowMilk.html?v=20261122_v2', '#meow-milk', '🥛 喵喵乳糖挑戰');
 }
 function openGame1(event){
-    openEmbeddedGame(event, 'HitMeow.html?v=20261122_v1', '#game1', '🩴 暴打小菜雞');
+    openEmbeddedGame(event, 'HitMeow.html?v=20261122_v2', '#hit-meow', '🩴 暴打小菜雞');
 }
+let cachedSeriesConfig = null;
+
+function syncMenuActiveState(){
+    if (!window.HuajianMenu) return;
+    if (cachedSeriesConfig) {
+        window.HuajianMenu.renderSharedSubMenu(cachedSeriesConfig);
+    } else {
+        window.HuajianMenu.mountGlobalDrawer();
+    }
+}
+
 function openEmbeddedGame(event, source, hash, title){
     if (event) event.preventDefault();
     document.getElementById('homeView').classList.add('hidden');
@@ -161,6 +172,7 @@ function openEmbeddedGame(event, source, hash, title){
     frame.title=title;
     document.getElementById('gameTitle').textContent=title;
     if (window.location.hash !== hash) history.replaceState(null,'',hash);
+    syncMenuActiveState();
     toggleMenuIfOpen();
     window.scrollTo({top:0,behavior:'smooth'});
 }
@@ -169,9 +181,12 @@ function showHome(event){
     document.getElementById('homeView').classList.remove('hidden');
     document.getElementById('mainWrap').classList.remove('game-active');
     document.getElementById('gameCard').classList.remove('open');
-    if (window.location.hash === '#meow-milk' || window.location.hash === '#game1') {
+    const frame=document.getElementById('gameFrame');
+    if (frame) frame.removeAttribute('src');
+    if (window.location.hash === '#meow-milk' || window.location.hash === '#hit-meow') {
         history.replaceState(null,'',window.location.pathname + window.location.search);
     }
+    syncMenuActiveState();
     toggleMenuIfOpen();
     window.scrollTo({top:0,behavior:'smooth'});
 }
@@ -182,7 +197,7 @@ function toggleMenuIfOpen(){
 
 window.addEventListener('DOMContentLoaded', async function(){
     if (window.location.hash === '#meow-milk') openGame();
-    else if (window.location.hash === '#game1') openGame1();
+    else if (window.location.hash === '#hit-meow') openGame1();
     const bg=document.getElementById('fxBg');
     for(let i=0;i<45;i++){
         const p=document.createElement('div');p.className='petal';
@@ -197,8 +212,8 @@ window.addEventListener('DOMContentLoaded', async function(){
         b.style.animationDelay=(-Math.random()*8)+'s';bg.appendChild(b);
     }
     if (window.HuajianMenu) {
-        const cfg = await window.HuajianMenu.fetchAllSeries();
-        window.HuajianMenu.renderSharedSubMenu(cfg);
+        cachedSeriesConfig = await window.HuajianMenu.fetchAllSeries();
+        window.HuajianMenu.renderSharedSubMenu(cachedSeriesConfig);
     }
 });
 </script>
