@@ -16,8 +16,8 @@
             icon: "🎮",
             label: "公會小遊戲",
             items: [
-                { icon: "🥛", label: "喵喵乳糖挑戰", href: "MeowMilk.html" },
-                { icon: "🩴", label: "暴打小菜雞", href: "HitMeow.html" }
+                { icon: "🥛", label: "喵喵乳糖挑戰", hash: "#meow-milk", handler: "openGame" },
+                { icon: "🩴", label: "暴打小菜雞", hash: "#game1", handler: "openGame1" }
             ]
         }
     ];
@@ -91,6 +91,7 @@
         if (!drawerList) return;
 
         const curFile = getCurrentPageFile();
+        const isHome = curFile === 'index.html';
         let html = '';
 
         SITE_NAV_ITEMS.forEach(item => {
@@ -104,9 +105,11 @@
                 </li>`;
             } else if (item.type === 'guildGames') {
                 const gamesHtml = item.items.map(game => {
-                    const isCur = curFile === game.href.toLowerCase();
+                    const isCur = isHome && window.location.hash === game.hash;
+                    const href = isHome ? game.hash : `index.html${game.hash}`;
+                    const clickAttr = isHome ? `onclick="${game.handler}(event)"` : '';
                     return `<li>
-                        <a href="${game.href}" class="${isCur ? 'current' : ''}">
+                        <a href="${href}" class="${isCur ? 'current' : ''}" ${clickAttr}>
                             <span>${game.icon} ${game.label}</span>
                             <span class="arrow">&gt;</span>
                         </a>
