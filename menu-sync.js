@@ -11,10 +11,15 @@
         { icon: "🏠", label: "首頁", href: "index.html" },
         { icon: "🎴", label: "小卡圖鑑", href: "card.html" },
         { type: "blindbox", icon: "🎁", label: "驚喜盲盒" },
-        { icon: "🎮", label: "喵喵乳糖挑戰", href: "MeowMilk.html" },
-        { icon: "🎮", label: "暴打小菜雞", href: "HitMeow.html" }
-        // 未來要加第二個遊戲，只要在上面那行後面加逗號，並貼上下一行即可：
-        // ,{ icon: "🎲", label: "公會小遊戲 2", href: "game2.html" }
+        {
+            type: "guildGames",
+            icon: "🎮",
+            label: "公會小遊戲",
+            items: [
+                { icon: "🥛", label: "喵喵乳糖挑戰", href: "MeowMilk.html" },
+                { icon: "🩴", label: "暴打小菜雞", href: "HitMeow.html" }
+            ]
+        }
     ];
 
     const FALLBACK_RAW = [
@@ -96,6 +101,23 @@
                         <span class="arrow" id="subArrow">&gt;</span>
                     </div>
                     <ul class="submenu" id="subMenu"></ul>
+                </li>`;
+            } else if (item.type === 'guildGames') {
+                const gamesHtml = item.items.map(game => {
+                    const isCur = curFile === game.href.toLowerCase();
+                    return `<li>
+                        <a href="${game.href}" class="${isCur ? 'current' : ''}">
+                            <span>${game.icon} ${game.label}</span>
+                            <span class="arrow">&gt;</span>
+                        </a>
+                    </li>`;
+                }).join('');
+                html += `<li>
+                    <div class="sub-toggle" onclick="toggleGuildGames()" aria-expanded="false" aria-controls="gameSubMenu">
+                        <span>${item.icon} ${item.label}</span>
+                        <span class="arrow" id="gameSubArrow">&gt;</span>
+                    </div>
+                    <ul class="submenu" id="gameSubMenu">${gamesHtml}</ul>
                 </li>`;
             } else {
                 const isCur = curFile === (item.href || '').toLowerCase();
