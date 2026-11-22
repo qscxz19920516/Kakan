@@ -1,9 +1,21 @@
-// ★ 花間小憩全站共用盲盒選單與資料夾自動同步模組 (支援 100+ 系列與快速搜尋)
+// ★ 花間小憩全站共用選單與盲盒自動同步模組
+// 【以後新增遊戲或頁面，只需修改下方 SITE_NAV_ITEMS，全站所有網頁都會自動同步顯示！】
 (function(){
     const GITHUB_OWNER = "qscxz19920516";
     const GITHUB_REPO = "Kakan";
     const CACHE_KEY = "huajian_kakan_series_v4_" + GITHUB_OWNER + "_" + GITHUB_REPO;
     const EXCLUDED_FOLDERS = new Set([".github", "assets", "css", "js", "images", "img", "fonts", "職業", "職業介紹", "小卡", "小卡圖鑑", "card", "cards"]);
+
+    // ▼ 全站主選單總表（全站每一頁都會同步讀取這份清單）
+    const SITE_NAV_ITEMS = [
+        { icon: "🏠", label: "首頁", href: "index.html" },
+        { icon: "🎴", label: "小卡圖鑑", href: "card.html" },
+        { type: "blindbox", icon: "🎁", label: "驚喜盲盒" },
+        { icon: "🎮", label: "喵喵乳糖挑戰", href: "MeowMilk.html" },
+        { icon: "🎮", label: "暴打小菜雞", href: "HitMeow.html" }
+        // 未來要加第二個遊戲，只要在上面那行後面加逗號，並貼上下一行即可：
+        // ,{ icon: "🎲", label: "公會小遊戲 2", href: "game2.html" }
+    ];
 
     const FALLBACK_RAW = [
         { name: "袋裝零食", folder: "花間 × 袋裝零食", members: ["爆米花", "奶油曲奇", "棉花糖", "糖果球", "洋芋片", "巧克力"] },
@@ -30,7 +42,6 @@
     }
 
     function buildConfigFromMap(targetMap) {
-        // 依照中文筆畫/自然數字順序排序，確保 44 ~ 100+ 個系列排列整齊
         const folderPaths = Object.keys(targetMap).sort((a, b) =>
             targetMap[a].displayName.localeCompare(targetMap[b].displayName, 'zh-Hant', { numeric: true })
         );
@@ -38,7 +49,6 @@
         folderPaths.forEach((relPath, idx) => {
             const info = targetMap[relPath];
             let shortName = extractShortSeriesName(info.displayName);
-            // 若不同資料夾去掉前綴後恰好同名，保留完整資料夾名避免覆蓋
             if (autoConfig[shortName]) {
                 shortName = info.displayName;
             }
@@ -65,6 +75,42 @@
         return buildConfigFromMap(map);
     }
 
+    function getCurrentPageFile() {
+        const path = window.location.pathname.split('/').pop();
+        return (!path || path === '') ? 'index.html' : path.toLowerCase();
+    }
+
+    // 自動渲染全站一致的側邊選單骨架（支援所有頁面與無限新增遊戲）
+    function mountGlobalDrawer() {
+        const drawerList = document.querySelector('#drawer .drawer-list');
+        if (!drawerList) return;
+
+        const curFile = getCurrentPageFile();
+        let html = '';
+
+        SITE_NAV_ITEMS.forEach(item => {
+            if (item.type === 'blindbox') {
+                html += `<li>
+                    <div class="sub-toggle" onclick="toggleSubMenu()">
+                        <span>${item.icon} ${item.label}</span>
+                        <span class="arrow" id="subArrow">&gt;</span>
+                    </div>
+                    <ul class="submenu" id="subMenu"></ul>
+                </li>`;
+            } else {
+                const isCur = curFile === (item.href || '').toLowerCase();
+                html += `<li>
+                    <a href="${item.href}" class="${isCur ? 'current' : ''}">
+                        <span>${item.icon} ${item.label}</span>
+                        <span class="arrow">&gt;</span>
+                    </a>
+                </li>`;
+            }
+        });
+
+        drawerList.innerHTML = html;
+    }
+
     async function fetchAllSeries(bypassCache = false) {
         if (!bypassCache) {
             try {
@@ -79,7 +125,6 @@
         const branches = ["main", "master"];
         for (const br of branches) {
             try {
-                // 1. 取得該分支最新 commit 的 tree SHA，避免直接呼叫 trees/main 時遇到分支快取或深層樹截斷
                 const branchRes = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/branches/${br}?_=${Date.now()}`);
                 let treeSha = br;
                 if (branchRes.ok) {
@@ -89,7 +134,6 @@
                     }
                 }
 
-                // 2. 遞迴讀取完整檔案樹
                 const res = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/git/trees/${treeSha}?recursive=1&_=${Date.now()}`);
                 if (!res.ok) continue;
                 const data = await res.json();
@@ -101,14 +145,13 @@
                     if (!/\.(jpg|jpeg|png|webp|gif)$/i.test(item.path)) return;
 
                     const parts = item.path.split('/');
-                    if (parts.length < 2) return; // 略過根目錄單張圖片（如 Kakan的原.jpg）
+                    if (parts.length < 2) return;
 
                     const fileName = parts[parts.length - 1];
                     const parentFolderName = parts[parts.length - 2];
                     const folderRelPath = parts.slice(0, -1).join('/');
                     const memberName = fileName.replace(/\.(jpg|jpeg|png|webp|gif)$/i, '');
 
-                    // 排除非盲盒的系統資料夾，其餘只要裡面放有圖片的資料夾全部收錄（不受前綴符號限制）
                     if (EXCLUDED_FOLDERS.has(parentFolderName.toLowerCase())) return;
                     if (parts.some(p => EXCLUDED_FOLDERS.has(p.toLowerCase()))) return;
 
@@ -131,19 +174,18 @@
     }
 
     function renderSharedSubMenu(seriesConfig, options = {}) {
+        mountGlobalDrawer();
         const subMenu = document.getElementById('subMenu');
         if (!subMenu) return;
 
         const keys = Object.keys(seriesConfig);
         const isBoxPage = typeof window.selectSeries === 'function';
 
-        // 更新「驚喜盲盒」主標題旁顯示總系列數量徽章
         const subToggleSpan = document.querySelector('.sub-toggle > span:first-child');
         if (subToggleSpan) {
             subToggleSpan.innerHTML = `🎁 驚喜盲盒 <span style="font-size:.75rem;background:#ffeef1;color:#c76272;padding:2px 8px;border-radius:10px;margin-left:4px">共 ${keys.length} 組</span>`;
         }
 
-        // 當系列超過 8 組時，在子選單頂部自動加入即時搜尋框，方便 44~100 組快速篩選
         let searchHtml = '';
         if (keys.length > 8) {
             searchHtml = `<li style="padding:10px 14px 10px 30px;background:#fff5f7;border-bottom:1px dashed #f2bec7;position:sticky;top:0;z-index:2">
@@ -158,7 +200,7 @@
             const cfg = seriesConfig[key];
             const label = cfg.displayFolder || cfg.folder;
             const clickAttr = isBoxPage
-                ? `onclick="goBox(event, '${key.replace(/'/g, "\'")}')"`
+                ? `onclick="goBox(event, '${key.replace(/'/g, "\\'")}')"`
                 : '';
             itemsHtml += `<li class="series-menu-item" data-label="${label.toLowerCase()}">
                 <a href="box.html?job=${encodeURIComponent(label)}" data-series="${key}" ${clickAttr}>
@@ -172,7 +214,15 @@
         if (options.onRendered) options.onRendered(seriesConfig);
     }
 
+    // 頁面一載入先立刻畫出主選單骨架，等 GitHub 資料回來再自動補上盲盒列表
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', mountGlobalDrawer);
+    } else {
+        mountGlobalDrawer();
+    }
+
     window.HuajianMenu = {
+        mountGlobalDrawer,
         fetchAllSeries,
         renderSharedSubMenu,
         extractShortSeriesName,
