@@ -17,7 +17,7 @@
             label: "公會小遊戲",
             items: [
                 { icon: "🥛", label: "喵喵乳糖挑戰", hash: "#meow-milk", handler: "openGame" },
-                { icon: "🩴", label: "暴打小菜雞", hash: "#game1", handler: "openGame1" }
+                { icon: "🩴", label: "暴打小菜雞", hash: "#hit-meow", handler: "openGame1" }
             ]
         }
     ];
