@@ -49,7 +49,56 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 .zoom-card{position:relative;background:#fff;padding:10px;border-radius:22px;border:3px solid #f9dfe3;max-width:95vw;max-height:92vh;box-shadow:0 15px 35px rgba(0,0,0,.35)}
 .zoom-card img{max-width:90vw;max-height:86vh;object-fit:contain;border-radius:14px;display:block}
 
+
+/* 頂部導覽列右側「每日一籤」迷你膠囊按鈕（嵌在 topbar 內部右側，捲動時不懸空遮擋） */
+.topbar .spacer{width:auto !important;min-width:42px;display:flex;align-items:center;justify-content:flex-end}
+.topbar-omikuji-btn{position:relative;background:linear-gradient(135deg,#fff8f9,#ffe6eb);border:2px solid #f0a8b4;color:#c76272;height:38px;padding:0 11px;border-radius:19px;font-size:.8rem;font-weight:900;cursor:pointer;display:inline-flex;align-items:center;gap:4px;box-shadow:0 2px 8px rgba(226,158,168,.2);transition:.2s;white-space:nowrap}
+body.game-mode-active .topbar-omikuji-btn{display:none}
+.topbar-omikuji-btn:hover{transform:translateY(-1px);background:#fff;border-color:#e27386}
+.topbar-omikuji-btn.has-unread{animation:omikujiPulse 2.2s infinite}
+.omikuji-dot{width:8px;height:8px;border-radius:50%;background:#ff4757;display:inline-block;margin-left:2px;box-shadow:0 0 0 2px #fff}
+@keyframes omikujiPulse{
+    0%,100%{box-shadow:0 3px 10px rgba(226,158,168,.22)}
+    50%{box-shadow:0 0 0 5px rgba(255,143,163,.25),0 4px 12px rgba(226,158,168,.3)}
+}
+
+/* 每日御神籤置中彈窗 (Modal) */
+.omikuji-modal{display:none;position:fixed;inset:0;background:rgba(55,38,42,.58);backdrop-filter:blur(3px);z-index:160;align-items:center;justify-content:center;padding:16px}
+.omikuji-modal.open{display:flex}
+.omikuji-dialog{position:relative;background:linear-gradient(180deg,#fff 0%,#fff9fa 100%);width:100%;max-width:400px;max-height:90vh;border-radius:28px;border:3px solid #f9dfe3;box-shadow:0 14px 36px rgba(45,25,30,.28);padding:22px 18px 20px;text-align:center;overflow-y:auto;animation:omikujiModalPop .26s cubic-bezier(.22,1,.36,1)}
+@keyframes omikujiModalPop{0%{opacity:0;transform:scale(.88) translateY(10px)}100%{opacity:1;transform:scale(1) translateY(0)}}
+.omikuji-close{position:absolute;top:12px;right:12px;background:#fff0f3;border:1.5px solid #f2bec7;color:#c76272;width:32px;height:32px;border-radius:50%;font-size:1rem;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s}
+.omikuji-close:hover{background:#c76272;color:#fff}
+.omikuji-hd{display:flex;align-items:center;justify-content:center;gap:6px;font-size:1.15rem;font-weight:900;color:#c76272;margin-bottom:4px;letter-spacing:1px}
+.omikuji-sub{font-size:.82rem;color:#8c7075;margin-bottom:14px;font-weight:700;line-height:1.45}
+.omikuji-stage{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 0 4px}
+.omikuji-tube-wrap{position:relative;width:195px;max-width:58vw;margin:0 auto;cursor:pointer;user-select:none}
+.omikuji-tube-img{width:100%;height:auto;display:block;border-radius:20px;filter:drop-shadow(0 8px 16px rgba(199,98,114,.22));transition:transform .2s ease}
+.omikuji-tube-wrap:hover .omikuji-tube-img{transform:scale(1.03)}
+.omikuji-shaking{animation:omikujiShake .85s ease-in-out}
+@keyframes omikujiShake{
+    0%,100%{transform:rotate(0deg) translateY(0)}
+    15%{transform:rotate(-11deg) translateY(-6px)}
+    30%{transform:rotate(11deg) translateY(-10px)}
+    45%{transform:rotate(-9deg) translateY(-6px)}
+    60%{transform:rotate(9deg) translateY(-8px)}
+    75%{transform:rotate(-5deg) translateY(-3px)}
+}
+.omikuji-comic{position:absolute;top:-10px;left:-12px;z-index:5;background:linear-gradient(135deg,#fffbe6,#ffe066);color:#6b4423;padding:5px 13px;border-radius:18px 18px 4px 18px;font-size:.92rem;font-weight:900;border:2px solid #fff;box-shadow:0 4px 12px rgba(214,137,16,.28);white-space:nowrap;animation:omikujiPop .3s ease}
+@keyframes omikujiPop{0%{transform:scale(.5) rotate(-8deg)}80%{transform:scale(1.1) rotate(-5deg)}100%{transform:scale(1) rotate(-6deg)}}
+.omikuji-btn{margin-top:14px;background:linear-gradient(135deg,#ff8fa3,#f4728c);color:#fff;border:none;padding:12px 24px;border-radius:22px;font-size:.96rem;font-weight:900;cursor:pointer;box-shadow:0 5px 15px rgba(244,114,140,.32);transition:.2s;display:inline-flex;align-items:center;gap:6px}
+.omikuji-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 7px 18px rgba(244,114,140,.4)}
+.omikuji-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.omikuji-result-wrap{display:flex;flex-direction:column;align-items:center;animation:omikujiReveal .45s cubic-bezier(.22,1,.36,1)}
+@keyframes omikujiReveal{0%{opacity:0;transform:translateY(14px) scale(.9)}100%{opacity:1;transform:translateY(0) scale(1)}}
+.omikuji-badge{display:inline-block;padding:4px 14px;border-radius:16px;font-size:.82rem;font-weight:900;color:#fff;margin-bottom:10px;letter-spacing:1px}
+.omikuji-slip-box{max-width:240px;width:70vw;margin:0 auto;border-radius:18px;overflow:hidden;border:2.5px solid #f7d7dc;background:#fff9fa;box-shadow:0 8px 22px rgba(226,158,168,.24)}
+.omikuji-slip-img{width:100%;height:auto;display:block;object-fit:contain;cursor:zoom-in;transition:transform .2s}
+.omikuji-slip-img:hover{transform:scale(1.02)}
+.omikuji-done-note{margin-top:12px;background:#fff8f9;border:1.5px dashed #f2bec7;color:#8c7075;padding:7px 12px;border-radius:14px;font-size:.78rem;font-weight:700}
+
 @media(max-width:520px){
+    .topbar-omikuji-btn{padding:0 9px;font-size:.74rem;height:36px}
     .wrap.game-active{width:calc(100% - 16px)}
     .hero{padding:24px 14px}
     .hero h1{font-size:1.65rem}
@@ -65,7 +114,7 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 </style>
 <link rel="stylesheet" href="site-menu.css?v=20261121_v1">
 <script>
-const SITE_VERSION = "20261122_v2";
+const SITE_VERSION = "20261123_v3";
 (function(){
     const url = new URL(window.location.href);
     if (url.searchParams.get("v") !== SITE_VERSION) {
@@ -78,7 +127,7 @@ const SITE_VERSION = "20261122_v2";
 <body>
 <div class="fx-bg" id="fxBg"></div>
 <div id="siteMenu"></div>
-<script src="site-menu.js?v=20261122_v2"></script>
+<script src="site-menu.js?v=20261123_v1"></script>
 
 <div class="wrap" id="mainWrap">
     <div class="home-view" id="homeView">
@@ -129,26 +178,209 @@ const SITE_VERSION = "20261122_v2";
     </div>
 </div>
 
-<div class="zoom-modal" id="zoomModal" onclick="if(event.target===this) closeZoom()">
-    <div class="zoom-card">
-        <button class="close-btn" onclick="closeZoom()" style="position:absolute;top:-14px;right:-14px;box-shadow:0 3px 10px rgba(0,0,0,.2)">✕</button>
-        <img src="Kakan的原.jpg?v=20261120_v4" alt="KaKan 名字背後的意義" onerror="if(!this.dataset.step){this.dataset.step=1;this.src='Kakan的原.JPG?v=20261120_v4';}else if(this.dataset.step==1){this.dataset.step=2;this.src='花間/Kakan的原.jpg?v=20261120_v4';}else{this.onerror=null;this.src='花間/Kakan的原.JPG?v=20261120_v4';}">
+<div class="omikuji-modal" id="omikujiModal" onclick="if(event.target===this) closeOmikujiModal()">
+    <div class="omikuji-dialog">
+        <button type="button" class="omikuji-close" onclick="closeOmikujiModal()" aria-label="關閉御神籤">✕</button>
+        <div class="omikuji-hd">⛩️ 花間小憩・每日御神籤 ⛩️</div>
+        <div class="omikuji-sub" id="omikujiSub">誠心搖一搖籤筒，看看今天的運勢吧！</div>
+        <div id="omikujiStage"></div>
     </div>
 </div>
 
-<script src="menu-sync.js?v=20261122_v6"></script>
+<div class="zoom-modal" id="zoomModal" onclick="if(event.target===this) closeZoom()">
+    <div class="zoom-card">
+        <button class="close-btn" onclick="closeZoom()" style="position:absolute;top:-14px;right:-14px;box-shadow:0 3px 10px rgba(0,0,0,.2)">✕</button>
+        <img id="zoomModalImg" src="Kakan的原.jpg?v=20261120_v4" alt="放大預覽">
+    </div>
+</div>
+
+<script src="menu-sync.js?v=20261123_v7"></script>
 <script>
-function openZoom(){
+function openZoom(customSrc){
+    const zImg = document.getElementById('zoomModalImg');
+    if (customSrc) {
+        zImg.onerror = null;
+        zImg.src = customSrc;
+    } else {
+        zImg.dataset.step = '';
+        zImg.onerror = function(){
+            if(!this.dataset.step){this.dataset.step=1;this.src='Kakan的原.JPG?v=20261120_v4';}
+            else if(this.dataset.step==1){this.dataset.step=2;this.src='花間/Kakan的原.jpg?v=20261120_v4';}
+            else{this.onerror=null;this.src='花間/Kakan的原.JPG?v=20261120_v4';}
+        };
+        zImg.src = 'Kakan的原.jpg?v=20261120_v4';
+    }
     document.getElementById('zoomModal').classList.add('open');
+}
+
+// ★ 每日御神籤系統（右上角迷你膠囊按鈕 + 置中彈窗，完全不佔首頁主版面）
+const OMIKUJI_SLIPS = [
+    { key: "大吉", file: "御神籤_大吉", color: "#e11d48", weight: 14 },
+    { key: "吉",   file: "御神籤_吉",   color: "#16a34a", weight: 16 },
+    { key: "中吉", file: "御神籤_中吉", color: "#9333ea", weight: 18 },
+    { key: "小吉", file: "御神籤_小吉", color: "#d97706", weight: 18 },
+    { key: "末吉", file: "御神籤_末吉", color: "#0284c7", weight: 12 },
+    { key: "末小吉", file: "御神籤_末小吉", color: "#ec4899", weight: 10 },
+    { key: "平",   file: "御神籤_平",   color: "#64748b", weight: 7 },
+    { key: "小兇", file: "御神籤_小兇", color: "#ea580c", weight: 5 }
+];
+
+function getTodayDateKey() {
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = String(now.getMonth() + 1).padStart(2, '0');
+    const d = String(now.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+}
+
+function getTodayOmikujiRecord() {
+    try {
+        const raw = localStorage.getItem('huajian_daily_omikuji_v1');
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        if (parsed && parsed.date === getTodayDateKey() && parsed.slip) {
+            return parsed.slip;
+        }
+    } catch (e) {}
+    return null;
+}
+
+function saveTodayOmikujiRecord(slip) {
+    try {
+        localStorage.setItem('huajian_daily_omikuji_v1', JSON.stringify({
+            date: getTodayDateKey(),
+            slip: slip
+        }));
+    } catch (e) {}
+}
+
+function pickWeightedOmikuji() {
+    const total = OMIKUJI_SLIPS.reduce((sum, item) => sum + item.weight, 0);
+    let roll = Math.random() * total;
+    for (const item of OMIKUJI_SLIPS) {
+        if (roll < item.weight) return item;
+        roll -= item.weight;
+    }
+    return OMIKUJI_SLIPS[0];
+}
+
+function mountTopbarOmikujiBtn() {
+    if (document.getElementById('topbarOmikujiBtn')) return;
+    const spacer = document.querySelector('#siteMenu .topbar .spacer');
+    if (!spacer) return;
+    spacer.innerHTML = `<button type="button" class="topbar-omikuji-btn has-unread" id="topbarOmikujiBtn" onclick="openOmikujiModal()">
+        <span>⛩️</span><span id="topbarOmikujiText">每日一籤</span><span class="omikuji-dot" id="topbarOmikujiDot"></span>
+    </button>`;
+}
+
+function updateTopbarOmikujiBtn() {
+    mountTopbarOmikujiBtn();
+    const btn = document.getElementById('topbarOmikujiBtn');
+    const txt = document.getElementById('topbarOmikujiText');
+    const dot = document.getElementById('topbarOmikujiDot');
+    if (!btn || !txt) return;
+
+    const todaySlip = getTodayOmikujiRecord();
+    if (todaySlip) {
+        txt.innerText = todaySlip.key;
+        btn.style.borderColor = todaySlip.color;
+        btn.style.color = todaySlip.color;
+        btn.classList.remove('has-unread');
+        if (dot) dot.style.display = 'none';
+    } else {
+        txt.innerText = '每日一籤';
+        btn.style.borderColor = '#f0a8b4';
+        btn.style.color = '#c76272';
+        btn.classList.add('has-unread');
+        if (dot) dot.style.display = 'inline-block';
+    }
+}
+
+function openOmikujiModal() {
+    renderOmikujiSection();
+    document.getElementById('omikujiModal').classList.add('open');
+}
+
+function closeOmikujiModal() {
+    document.getElementById('omikujiModal').classList.remove('open');
+}
+
+let isDrawingOmikuji = false;
+
+function renderOmikujiSection() {
+    updateTopbarOmikujiBtn();
+    const stage = document.getElementById('omikujiStage');
+    const sub = document.getElementById('omikujiSub');
+    if (!stage) return;
+
+    const todaySlip = getTodayOmikujiRecord();
+    if (todaySlip) {
+        sub.innerText = `✨ 今日（${getTodayDateKey()}）已求得神籤，點擊籤紙可放大 ✨`;
+        const imgPath = `御神籤/${todaySlip.file}.jpg`;
+        stage.innerHTML = `
+            <div class="omikuji-result-wrap">
+                <span class="omikuji-badge" style="background:${todaySlip.color}">🌸 今日運勢・${todaySlip.key} 🌸</span>
+                <div class="omikuji-slip-box">
+                    <img class="omikuji-slip-img" src="${imgPath}?v=20261123" alt="御神籤_${todaySlip.key}"
+                        onclick="openZoom(this.src)"
+                        onerror="if(!this.dataset.step){this.dataset.step=1;this.src='御神籤/${todaySlip.file}.JPG?v=20261123';}else if(this.dataset.step==1){this.dataset.step=2;this.src='御神籤/${todaySlip.file}.png?v=20261123';}else{this.onerror=null;this.src='御神籤/${todaySlip.file}.PNG?v=20261123';}">
+                </div>
+                <div class="omikuji-done-note">🌙 今日抽籤已使用（1/1次），明天 00:00 自動重置</div>
+            </div>
+        `;
+        return;
+    }
+
+    sub.innerText = `誠心搖一搖籤筒，看看今天（${getTodayDateKey()}）的公會運勢！（每日限抽 1 次）`;
+    stage.innerHTML = `
+        <div class="omikuji-stage">
+            <div class="omikuji-tube-wrap" id="omikujiTubeWrap" onclick="drawDailyOmikuji()" title="點擊籤筒抽取今日御神籤">
+                <div id="omikujiComicSlot"></div>
+                <img class="omikuji-tube-img" src="御神籤/御神籤籤筒.jpg?v=20261123" alt="花間小憩御神籤籤筒"
+                    onerror="if(!this.dataset.step){this.dataset.step=1;this.src='御神籤/御神籤籤筒.JPG?v=20261123';}else if(this.dataset.step==1){this.dataset.step=2;this.src='御神籤/御神籤籤筒.png?v=20261123';}else{this.onerror=null;this.src='御神籤/御神籤籤筒.PNG?v=20261123';}">
+            </div>
+            <button type="button" class="omikuji-btn" id="omikujiDrawBtn" onclick="drawDailyOmikuji()">
+                🎋 搖動籤筒・抽取今日神籤
+            </button>
+        </div>
+    `;
+}
+
+function drawDailyOmikuji() {
+    if (isDrawingOmikuji || getTodayOmikujiRecord()) return;
+    isDrawingOmikuji = true;
+
+    const btn = document.getElementById('omikujiDrawBtn');
+    if (btn) {
+        btn.disabled = true;
+        btn.innerText = '🎋 誠心祈願搖籤中...';
+    }
+    const wrap = document.getElementById('omikujiTubeWrap');
+    const slot = document.getElementById('omikujiComicSlot');
+    if (slot) {
+        slot.innerHTML = '<div class="omikuji-comic">🎵 喀啦喀啦～</div>';
+    }
+    if (wrap) {
+        wrap.classList.remove('omikuji-shaking');
+        void wrap.offsetWidth;
+        wrap.classList.add('omikuji-shaking');
+    }
+
+    const chosen = pickWeightedOmikuji();
+    setTimeout(() => {
+        saveTodayOmikujiRecord(chosen);
+        isDrawingOmikuji = false;
+        renderOmikujiSection();
+    }, 950);
 }
 function closeZoom(){
     document.getElementById('zoomModal').classList.remove('open');
 }
 function openGame(event){
-    openEmbeddedGame(event, 'MeowMilk.html?v=20261122_v2', '#meow-milk', '🥛 喵喵乳糖挑戰');
+    openEmbeddedGame(event, 'MeowMilk.html?v=20261123_v3', '#meow-milk', '🥛 喵喵乳糖挑戰');
 }
 function openGame1(event){
-    openEmbeddedGame(event, 'HitMeow.html?v=20261122_v2', '#hit-meow', '🩴 暴打小菜雞');
+    openEmbeddedGame(event, 'HitMeow.html?v=20261123_v3', '#hit-meow', '🩴 暴打小菜雞');
 }
 let cachedSeriesConfig = null;
 
@@ -165,6 +397,7 @@ function openEmbeddedGame(event, source, hash, title){
     if (event) event.preventDefault();
     document.getElementById('homeView').classList.add('hidden');
     document.getElementById('mainWrap').classList.add('game-active');
+    document.body.classList.add('game-mode-active');
     const gameCard=document.getElementById('gameCard');
     gameCard.classList.add('open');
     const frame=document.getElementById('gameFrame');
@@ -180,6 +413,7 @@ function showHome(event){
     if (event) event.preventDefault();
     document.getElementById('homeView').classList.remove('hidden');
     document.getElementById('mainWrap').classList.remove('game-active');
+    document.body.classList.remove('game-mode-active');
     document.getElementById('gameCard').classList.remove('open');
     const frame=document.getElementById('gameFrame');
     if (frame) frame.removeAttribute('src');
@@ -196,6 +430,7 @@ function toggleMenuIfOpen(){
 }
 
 window.addEventListener('DOMContentLoaded', async function(){
+    updateTopbarOmikujiBtn();
     if (window.location.hash === '#meow-milk') openGame();
     else if (window.location.hash === '#hit-meow') openGame1();
     const bg=document.getElementById('fxBg');
