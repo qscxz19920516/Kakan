@@ -263,7 +263,7 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
     </div>
 </div>
 
-<script src="menu-sync.js?v=20261123_v8"></script>
+<script src="menu-sync.js?v=20261123_v7"></script>
 <script>
 const MAX_DRAWS = 3;
 let seriesConfig = {};
@@ -295,13 +295,13 @@ const cluesPool = [
 ];
 
 
-// ★ 自動向 GitHub API 查詢各盲盒資料夾的最新 Commit 修改時間（免手動填寫日期）
+// ★ 高效查詢 GitHub 近期 Commit 修改時間（1~數次請求即涵蓋全站系列，避免觸發每小時 60 次限流）
 const GH_OWNER = "qscxz19920516";
 const GH_REPO = "Kakan";
-const GH_COMMIT_CACHE_KEY = "huajian_gh_folder_dates_v1";
-const GH_COMMIT_CACHE_TTL_MS = 6 * 60 * 60 * 1000; // 6 小時快取，按右上角 🔄 可強制重抓
+const GH_COMMIT_CACHE_KEY = "huajian_gh_folder_dates_v3";
+const GH_COMMIT_CACHE_TTL_MS = 15 * 60 * 1000;
 
-const githubFolderDates = {}; // { [jobName]: timestampMs }
+const githubFolderDates = {};
 
 function loadCachedGithubDates() {
     try {
@@ -324,60 +324,89 @@ function saveCachedGithubDates(datesMap) {
     } catch (e) {}
 }
 
-async function fetchFolderLastCommitTime(folderPath, force = false) {
-    const cleanPath = String(folderPath || "").replace(/^\/+|\/+$/g, "");
-    if (!cleanPath || cleanPath === ".") return null;
-    const url = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/commits?path=${encodeURIComponent(cleanPath)}&per_page=1`;
-    const fetchOpts = force ? { cache: "no-store" } : {};
-    const res = await fetch(url, fetchOpts);
-    if (!res.ok) throw new Error("GitHub API status " + res.status);
-    const arr = await res.json();
-    if (!Array.isArray(arr) || arr.length === 0) return null;
-    const c = arr[0].commit || {};
-    const dateStr = (c.committer && c.committer.date) || (c.author && c.author.date);
-    if (!dateStr) return null;
-    const ts = new Date(dateStr).getTime();
-    return isNaN(ts) ? null : ts;
+function matchFolderToSeriesName(filePath, configObj) {
+    const cleanFile = String(filePath || "").replace(/^\/+/, "");
+    let bestJob = "";
+    let bestFolderLen = -1;
+    for (const [jobName, cfg] of Object.entries(configObj)) {
+        const folder = String((cfg && cfg.folder) || "").replace(/^\/+|\/+$/g, "");
+        if (!folder) continue;
+        if (cleanFile === folder || cleanFile.startsWith(folder + "/")) {
+            if (folder.length > bestFolderLen) {
+                bestFolderLen = folder.length;
+                bestJob = jobName;
+            }
+        }
+    }
+    return bestJob;
 }
 
 async function hydrateGithubSeriesDates(configObj, force = false) {
     if (!configObj || typeof configObj !== "object") return;
     const cached = !force ? loadCachedGithubDates() : null;
-    const nextCache = {};
-
-    const entries = Object.entries(configObj);
-    // 分批並行查詢，避免一次送出太多請求被 GitHub 限流
-    const batchSize = 6;
-    for (let i = 0; i < entries.length; i += batchSize) {
-        const batch = entries.slice(i, i + batchSize);
-        await Promise.all(batch.map(async ([jobName, cfg]) => {
-            const folder = (cfg && cfg.folder) ? cfg.folder : jobName;
-            if (cached && typeof cached[folder] === "number") {
+    if (cached) {
+        for (const [jobName, cfg] of Object.entries(configObj)) {
+            const folder = String((cfg && cfg.folder) || jobName).replace(/^\/+|\/+$/g, "");
+            if (typeof cached[folder] === "number") {
                 githubFolderDates[jobName] = cached[folder];
-                nextCache[folder] = cached[folder];
-                return;
             }
-            try {
-                const ts = await fetchFolderLastCommitTime(folder, force);
-                if (typeof ts === "number") {
-                    githubFolderDates[jobName] = ts;
-                    nextCache[folder] = ts;
-                } else if (cfg && cfg.uploadedAt) {
-                    const fallbackTs = new Date(String(cfg.uploadedAt).replace(/-/g, "/")).getTime();
-                    if (!isNaN(fallbackTs)) githubFolderDates[jobName] = fallbackTs;
-                }
-            } catch (err) {
-                if (cfg && cfg.uploadedAt) {
-                    const fallbackTs = new Date(String(cfg.uploadedAt).replace(/-/g, "/")).getTime();
-                    if (!isNaN(fallbackTs)) githubFolderDates[jobName] = fallbackTs;
-                }
-            }
-        }));
+        }
     }
 
-    if (Object.keys(nextCache).length > 0) {
-        saveCachedGithubDates(nextCache);
-    }
+    try {
+        const listUrl = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/commits?per_page=30${force ? "&_=" + Date.now() : ""}`;
+        const res = await fetch(listUrl, force ? { cache: "no-store" } : {});
+        if (res.ok) {
+            const commits = await res.json();
+            if (Array.isArray(commits) && commits.length > 0) {
+                const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+                const recentCommits = commits.filter(c => {
+                    const ds = (c.commit && c.commit.committer && c.commit.committer.date) ||
+                               (c.commit && c.commit.author && c.commit.author.date);
+                    const ts = ds ? new Date(ds).getTime() : 0;
+                    return ts >= sevenDaysAgo;
+                });
+
+                const detailCommits = recentCommits.slice(0, 15);
+                const folderLatestTs = cached ? Object.assign({}, cached) : {};
+
+                await Promise.all(detailCommits.map(async (c) => {
+                    if (!c || !c.sha) return;
+                    const ds = (c.commit && c.commit.committer && c.commit.committer.date) ||
+                               (c.commit && c.commit.author && c.commit.author.date);
+                    const ts = ds ? new Date(ds).getTime() : NaN;
+                    if (isNaN(ts)) return;
+                    try {
+                        const detRes = await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/commits/${c.sha}`);
+                        if (!detRes.ok) return;
+                        const det = await detRes.json();
+                        const files = Array.isArray(det.files) ? det.files : [];
+                        files.forEach(f => {
+                            const matchedJob = matchFolderToSeriesName(f.filename, configObj);
+                            if (matchedJob) {
+                                const cfg = configObj[matchedJob];
+                                const folderKey = String((cfg && cfg.folder) || matchedJob).replace(/^\/+|\/+$/g, "");
+                                if (!folderLatestTs[folderKey] || ts > folderLatestTs[folderKey]) {
+                                    folderLatestTs[folderKey] = ts;
+                                }
+                                if (!githubFolderDates[matchedJob] || ts > githubFolderDates[matchedJob]) {
+                                    githubFolderDates[matchedJob] = ts;
+                                }
+                            }
+                        });
+                    } catch (e) {}
+                }));
+
+                for (const [jobName, cfg] of Object.entries(configObj)) {
+                    const folderKey = String((cfg && cfg.folder) || jobName).replace(/^\/+|\/+$/g, "");
+                    if (typeof folderLatestTs[folderKey] === "number") {
+                        githubFolderDates[jobName] = folderLatestTs[folderKey];
+                    }
+                }
+                saveCachedGithubDates(folderLatestTs);
+            }
+        }
+    } catch (err) {}
 
     Object.entries(configObj).forEach(([jobName, cfg]) => {
         if (cfg) {
@@ -416,7 +445,7 @@ function sortSeriesConfigByUploadDesc(rawConfig) {
         if (timeA === timeB) return 0;
         if (!isFinite(timeA)) return 1;
         if (!isFinite(timeB)) return -1;
-        return timeB - timeA; // GitHub 修改時間越接近現在（越大）越往上排
+        return timeB - timeA;
     });
     const sorted = {};
     entries.forEach(([k, v]) => { sorted[k] = v; });
