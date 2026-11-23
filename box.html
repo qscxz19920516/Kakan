@@ -710,18 +710,12 @@ function openDex() {
 
         if (drawn.length > 0) {
             anyCollected = true;
-            groupsHtml.push(
-                `<div class="dex-series-group-hd" style="--g-color:${cfg.color}">` +
-                `<span>${displayLabel}</span>` +
-                `<span class="dex-series-count" style="color:${cfg.color};border-color:${cfg.color}">已獲得 ${progressText}</span>` +
-                `</div>`
-            );
             drawn.forEach(name => {
                 groupsHtml.push(
                     `<div class="dex-item">` +
                     `<img src="${cfg.folder}/${name}.jpg" alt="${name}" title="點擊放大檢視" onclick="openZoom('${cfg.folder}','${name}','${job}')" onerror="if(!this.dataset.step){this.dataset.step=1;this.src='${cfg.folder}/${name}.JPG';}else if(this.dataset.step==1){this.dataset.step=2;this.src='${cfg.folder}/${name}.png';}else{this.onerror=null;this.src='${cfg.folder}/${name}.PNG';}">` +
                     `<div class="dex-item-name">${name}</div>` +
-                    `<span class="dex-item-tag" style="background:${cfg.color}">${job}・${progressText}</span>` +
+                    `<span class="dex-item-tag" style="background:${cfg.color}">${displayLabel}・${progressText}</span>` +
                     `</div>`
                 );
             });
@@ -729,7 +723,7 @@ function openDex() {
     });
 
     const summaryBar = chips.length > 0
-        ? `<div class="dex-summary-hint">💡 點擊下方任一「系列徽章」可直接切換到該盲盒系列</div><div class="dex-series-summary">${chips.join('')}</div>`
+        ? `<div class="dex-series-summary">${chips.join('')}</div>`
         : '';
 
     body.innerHTML = anyCollected
