@@ -4,7 +4,7 @@
     const GITHUB_OWNER = "qscxz19920516";
     const GITHUB_REPO = "Kakan";
     const CACHE_KEY = "huajian_kakan_series_v4_" + GITHUB_OWNER + "_" + GITHUB_REPO;
-    const EXCLUDED_FOLDERS = new Set([".github", "assets", "css", "js", "images", "img", "fonts", "職業", "職業介紹", "小卡", "小卡圖鑑", "card", "cards", "御神籤"]);
+    const EXCLUDED_FOLDERS = new Set([".github", "assets", "css", "js", "images", "img", "fonts", "職業", "職業介紹", "小卡", "小卡圖鑑", "card", "cards"]);
 
     // ▼ 全站主選單總表（全站每一頁都會同步讀取這份清單）
     const SITE_NAV_ITEMS = [
