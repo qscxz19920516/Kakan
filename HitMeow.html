@@ -53,6 +53,34 @@
     display: block;
     touch-action: none;
   }
+
+  #hm-top-lb-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 36;
+    background: linear-gradient(180deg, #ffeaa7, #fdcb6e);
+    color: #3a2a1d;
+    border: 3px solid #4d3b2c;
+    border-radius: 999px;
+    padding: 5px 12px;
+    font-weight: 900;
+    font-size: clamp(13px, 3.2vw, 16px);
+    cursor: pointer;
+    box-shadow: 0 3px 0 #4d3b2c;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+  }
+  #hm-top-lb-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #4d3b2c;
+  }
+  #hud {
+    right: 108px !important;
+  }
+
   #hud {
     position: absolute;
     top: 12px;
@@ -233,6 +261,37 @@
     font-weight: 700;
   }
 
+
+  .btn-lb-start {
+    display: inline-block;
+    width: 100%;
+    max-width: 300px;
+    margin-top: 10px;
+    background: linear-gradient(180deg, #ffeaa7, #fdcb6e);
+    color: #3a2a1d;
+    border: 3px solid #4d3b2c;
+    border-radius: 999px;
+    padding: 10px 20px;
+    font-size: clamp(15px, 4vw, 17px);
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #4d3b2c;
+  }
+  .btn-lb-start:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #4d3b2c;
+  }
+  #hm-start-lb-modal {
+    display: none;
+    position: absolute;
+    inset: 0;
+    background: rgba(26, 35, 24, 0.84);
+    z-index: 45;
+    justify-content: center;
+    align-items: center;
+    padding: 14px;
+  }
+
   .lb-box {
     background: #f5efe2;
     border: 2px solid #4d3b2c;
@@ -339,7 +398,21 @@
     <div class="hud-pill">⏱️ <span class="val" id="time-el">45</span>s</div>
   </div>
 
+  <button id="hm-top-lb-btn" type="button" title="查看排行榜">🏆 排行</button>
   <button id="sound-btn" type="button" title="切換音效">🔊</button>
+
+
+  <div id="hm-start-lb-modal">
+    <div class="card" style="max-width: 430px;">
+      <div class="title-tag" style="background:#f39c12;">🏆 公會榮譽榜</div>
+      <h1 style="font-size: clamp(20px, 5vw, 26px); margin-bottom: 4px;">花間藍白拖・即時排行榜</h1>
+      <div id="hm-start-lb-status" style="font-size: 12.5px; font-weight: 800; color: #b45309; margin-bottom: 10px;">讀取中...</div>
+      <div id="hm-start-lb-list" class="lb-list" style="max-height: 240px; margin-bottom: 14px;">
+        <div style="padding:14px;text-align:center;color:#7f8c8d;">載入排行榜中...</div>
+      </div>
+      <button class="btn" id="hm-close-start-lb" type="button" style="font-size: 16px; padding: 10px 20px;">關閉排行榜</button>
+    </div>
+  </div>
 
   <div id="overlay">
     <div class="card">
@@ -378,6 +451,8 @@
         </div>
       </div>
       <button class="btn" id="start-btn" type="button">抄起藍白拖開打！</button>
+      <br>
+      <button class="btn-lb-start" id="hm-open-start-lb" type="button">🏆 查看花間藍白拖排行榜</button>
     </div>
   </div>
 </div>
@@ -977,6 +1052,56 @@
         statusEl.textContent = '連線錯誤';
       });
     };
+  }
+
+  var hmOpenStartLbBtn = document.getElementById('hm-open-start-lb');
+  var hmStartLbModal = document.getElementById('hm-start-lb-modal');
+  var hmCloseStartLbBtn = document.getElementById('hm-close-start-lb');
+
+  function openHmStartLeaderboard(e) {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    var lb = window.HUAJIAN_LEADERBOARD;
+    var statusEl = document.getElementById('hm-start-lb-status');
+    var listEl = document.getElementById('hm-start-lb-list');
+    hmStartLbModal.style.display = 'flex';
+
+    if (!lb || !lb.isConfigured()) {
+      statusEl.textContent = '尚未綁定試算表';
+      listEl.innerHTML = '<div style="padding:14px;text-align:center;color:#b45309;">⚙️ 請先在 leaderboard-config.js 填入 Apps Script 網址！</div>';
+      return;
+    }
+    statusEl.textContent = '同步中...';
+    listEl.innerHTML = '<div style="padding:14px;text-align:center;color:#7f8c8d;">載入排行榜中...</div>';
+    lb.fetchTop('HitMeow').then(function (data) {
+      if (data && data.ok) {
+        statusEl.textContent = '即時前 10 名（每人保留最高分）';
+        renderHmLeaderboard(listEl, data.top);
+      } else {
+        statusEl.textContent = '讀取失敗';
+        listEl.innerHTML = '<div style="padding:14px;text-align:center;color:#c0392b;">讀取失敗，請稍後再試</div>';
+      }
+    }).catch(function () {
+      statusEl.textContent = '連線異常';
+      listEl.innerHTML = '<div style="padding:14px;text-align:center;color:#c0392b;">連線異常，請檢查網路狀態</div>';
+    });
+  }
+
+  function closeHmStartLeaderboard(e) {
+    if (e) e.stopPropagation();
+    hmStartLbModal.style.display = 'none';
+  }
+
+  var hmTopLbBtn = document.getElementById('hm-top-lb-btn');
+  if (hmTopLbBtn) hmTopLbBtn.addEventListener('click', openHmStartLeaderboard);
+  if (hmOpenStartLbBtn) hmOpenStartLbBtn.addEventListener('click', openHmStartLeaderboard);
+  if (hmCloseStartLbBtn) hmCloseStartLbBtn.addEventListener('click', closeHmStartLeaderboard);
+  if (hmStartLbModal) {
+    hmStartLbModal.addEventListener('click', function (e) {
+      if (e.target === hmStartLbModal) closeHmStartLeaderboard(e);
+    });
   }
 
   startBtn.addEventListener('click', startGame);
