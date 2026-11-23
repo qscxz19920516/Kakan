@@ -121,12 +121,24 @@ body.game-mode-active .topbar-omikuji-btn{display:none}
 </style>
 <link rel="stylesheet" href="site-menu.css?v=20261121_v1">
 <script>
-const SITE_VERSION = "20261123_v4";
+const SITE_VERSION = "20261123_v5";
 (function(){
     const url = new URL(window.location.href);
-    if (url.searchParams.get("v") !== SITE_VERSION) {
+    const verKey = "huajian_site_ver_checked";
+    const lastVer = sessionStorage.getItem(verKey);
+
+    if (url.searchParams.get("v") !== SITE_VERSION && lastVer !== SITE_VERSION) {
+        sessionStorage.setItem(verKey, SITE_VERSION);
         url.searchParams.set("v", SITE_VERSION);
         window.location.replace(url.toString());
+        return;
+    }
+
+    if (url.searchParams.has("v")) {
+        sessionStorage.setItem(verKey, SITE_VERSION);
+        url.searchParams.delete("v");
+        const cleanUrl = url.pathname + (url.searchParams.toString() ? "?" + url.searchParams.toString() : "") + url.hash;
+        window.history.replaceState(null, "", cleanUrl);
     }
 })();
 </script>
@@ -422,10 +434,10 @@ function closeZoom(){
     document.getElementById('zoomModal').classList.remove('open');
 }
 function openGame(event){
-    openEmbeddedGame(event, 'MeowMilk.html?v=20261123_v4', '#meow-milk', '🥛 喵喵乳糖挑戰');
+    openEmbeddedGame(event, 'MeowMilk.html?v=20261123_v5', '#meow-milk', '🥛 喵喵乳糖挑戰');
 }
 function openGame1(event){
-    openEmbeddedGame(event, 'HitMeow.html?v=20261123_v4', '#hit-meow', '🩴 暴打小菜雞');
+    openEmbeddedGame(event, 'HitMeow.html?v=20261123_v5', '#hit-meow', '🩴 暴打小菜雞');
 }
 let cachedSeriesConfig = null;
 
