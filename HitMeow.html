@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>暴打小菜雞：我就菜！</title>
+<script src="leaderboard-config.js?v=20261123_v1"></script>
 <script>
   if (window.self === window.top) window.location.replace('index.html#hit-meow');
 </script>
@@ -231,6 +232,76 @@
     color: #5e4b3b;
     font-weight: 700;
   }
+
+  .lb-box {
+    background: #f5efe2;
+    border: 2px solid #4d3b2c;
+    border-radius: 14px;
+    padding: 10px;
+    margin-top: 10px;
+    text-align: left;
+  }
+  .lb-hd {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    font-weight: 900;
+    color: #3a2a1d;
+    margin-bottom: 7px;
+  }
+  .lb-form {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+  .lb-select {
+    flex: 1;
+    min-width: 0;
+    background: #fff;
+    border: 2px solid #4d3b2c;
+    border-radius: 10px;
+    padding: 6px 8px;
+    font-size: 13px;
+    font-weight: 900;
+    color: #3a2a1d;
+  }
+  .lb-submit {
+    background: #2f855a;
+    color: #fff;
+    border: 2px solid #4d3b2c;
+    border-radius: 10px;
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 0 2px 0 #4d3b2c;
+    white-space: nowrap;
+  }
+  .lb-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  .lb-list {
+    background: #fff;
+    border: 2px solid #4d3b2c;
+    border-radius: 10px;
+    max-height: 135px;
+    overflow-y: auto;
+    font-size: 12.5px;
+  }
+  .lb-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 9px;
+    border-bottom: 1px dashed #e2d6c3;
+    font-weight: 800;
+    color: #3a2a1d;
+  }
+  .lb-row:last-child { border-bottom: none; }
+  .lb-row.top1 { background: #fef9c3; }
+
   #sound-btn {
     position: absolute;
     bottom: 14px;
@@ -284,11 +355,26 @@
         • <b>小心路人</b>：場上會經過 <b>4 位路人與小熊貓</b>，誤傷會 <b>-200 分</b> 並被路人怒瞪開罵，小菜雞還會狂笑你！
       </div>
       <div id="result-stats">
-        <div style="font-size: 17px; font-weight: 900; color: #3a2a1d;" id="rank-title">稱號：拖鞋神射手</div>
+        <div style="font-size: 16px; font-weight: 900; color: #3a2a1d;" id="rank-title">稱號：拖鞋神射手</div>
         <div class="stat-grid">
           <div class="stat-item"><div class="num" id="final-score">0</div><div class="lbl">總教訓分</div></div>
           <div class="stat-item"><div class="num" id="final-hits">0</div><div class="lbl">命中次數</div></div>
           <div class="stat-item"><div class="num" id="final-ff">0</div><div class="lbl">誤傷路人</div></div>
+        </div>
+        <div class="lb-box">
+          <div class="lb-hd">
+            <span>🏆 花間藍白拖・即時排行榜</span>
+            <span id="hm-lb-status" style="font-size:11px;color:#b45309;">讀取中...</span>
+          </div>
+          <div class="lb-form">
+            <select id="hm-lb-select" class="lb-select">
+              <option value="">-- 選擇公會成員 --</option>
+            </select>
+            <button type="button" id="hm-lb-submit" class="lb-submit">登錄最高分</button>
+          </div>
+          <div id="hm-lb-list" class="lb-list">
+            <div style="padding:10px;text-align:center;color:#7f8c8d;">載入排行榜中...</div>
+          </div>
         </div>
       </div>
       <button class="btn" id="start-btn" type="button">抄起藍白拖開打！</button>
@@ -798,6 +884,99 @@
     rankTitleEl.textContent = rank;
 
     startBtn.textContent = '再教訓他一次！';
+    initHitMeowLeaderboard(score);
+  }
+
+  var hmSubmittedThisRound = false;
+  function renderHmLeaderboard(listEl, rows) {
+    if (!rows || rows.length === 0) {
+      listEl.innerHTML = '<div style="padding:10px;text-align:center;color:#7f8c8d;">🌸 目前尚無紀錄，快搶下第一名吧！</div>';
+      return;
+    }
+    var medals = ['🥇', '🥈', '🥉'];
+    var html = '';
+    for (var i = 0; i < rows.length; i++) {
+      var r = rows[i];
+      var badge = medals[i] || ((i + 1) + '.');
+      var cls = i === 0 ? 'lb-row top1' : 'lb-row';
+      html += '<div class="' + cls + '"><span>' + badge + ' ' + r.name + '</span><span style="color:#e64833;">' + r.score + ' 分</span></div>';
+    }
+    listEl.innerHTML = html;
+  }
+
+  function initHitMeowLeaderboard(finalScore) {
+    hmSubmittedThisRound = false;
+    var lb = window.HUAJIAN_LEADERBOARD;
+    var sel = document.getElementById('hm-lb-select');
+    var btn = document.getElementById('hm-lb-submit');
+    var statusEl = document.getElementById('hm-lb-status');
+    var listEl = document.getElementById('hm-lb-list');
+    if (!lb || !sel) return;
+
+    if (sel.options.length <= 1) {
+      for (var i = 0; i < lb.MEMBERS.length; i++) {
+        var opt = document.createElement('option');
+        opt.value = lb.MEMBERS[i];
+        opt.textContent = lb.MEMBERS[i];
+        sel.appendChild(opt);
+      }
+    }
+    var savedName = localStorage.getItem(lb.STORAGE_PLAYER_KEY) || '';
+    if (savedName) sel.value = savedName;
+
+    btn.disabled = false;
+    btn.textContent = '登錄最高分';
+
+    if (!lb.isConfigured()) {
+      statusEl.textContent = '尚未綁定試算表';
+      listEl.innerHTML = '<div style="padding:10px;text-align:center;color:#b45309;">⚙️ 請先在 leaderboard-config.js 填入 Apps Script 網址即可啟用！</div>';
+      return;
+    }
+
+    statusEl.textContent = '同步中...';
+    lb.fetchTop('HitMeow').then(function (data) {
+      if (data && data.ok) {
+        statusEl.textContent = '即時前 10 名';
+        renderHmLeaderboard(listEl, data.top);
+      } else {
+        statusEl.textContent = '讀取失敗';
+      }
+    }).catch(function () {
+      statusEl.textContent = '連線異常';
+    });
+
+    btn.onclick = function () {
+      if (hmSubmittedThisRound) return;
+      var memberName = sel.value;
+      if (!memberName) {
+        alert('請先從下拉選單選擇你的公會成員名字喔！');
+        return;
+      }
+      localStorage.setItem(lb.STORAGE_PLAYER_KEY, memberName);
+      hmSubmittedThisRound = true;
+      btn.disabled = true;
+      btn.textContent = '傳送中...';
+      statusEl.textContent = '寫入中...';
+
+      var detail = '命中' + totalHits + '次・誤傷' + friendlyFireCount + '次';
+      lb.submitScore('HitMeow', memberName, finalScore, detail).then(function (res) {
+        if (res && res.ok) {
+          btn.textContent = res.isNewBest ? '🎉 破紀錄已登錄！' : '✅ 已完成（保留最高）';
+          statusEl.textContent = res.isNewBest ? '刷新個人最高分！' : '未超過個人最高紀錄';
+          renderHmLeaderboard(listEl, res.top);
+        } else {
+          hmSubmittedThisRound = false;
+          btn.disabled = false;
+          btn.textContent = '重試登錄';
+          statusEl.textContent = '送出失敗';
+        }
+      }).catch(function () {
+        hmSubmittedThisRound = false;
+        btn.disabled = false;
+        btn.textContent = '重試登錄';
+        statusEl.textContent = '連線錯誤';
+      });
+    };
   }
 
   startBtn.addEventListener('click', startGame);

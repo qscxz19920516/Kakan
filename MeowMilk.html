@@ -8,6 +8,7 @@
     if (window.self === window.top) window.location.replace('index.html#meow-milk');
   </script>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="leaderboard-config.js?v=20261123_v1"></script>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;700;900&display=swap" rel="stylesheet">
   <style>
     * {
@@ -218,53 +219,72 @@
     </div>
   </div>
 
-  <!-- 遊戲結束結算面板 (最高層級 z-50) -->
-  <div id="gameover-screen" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/65 backdrop-blur-sm">
-    <div class="glass-panel rounded-3xl max-w-md w-full p-6 text-center relative overflow-hidden">
-      <div class="absolute top-0 inset-x-0 h-3 bg-gradient-to-r from-sky-400 via-purple-500 to-amber-400"></div>
+  <!-- 遊戲結束結算面板 (含花間公會即時排行榜) -->
+  <div id="gameover-screen" class="fixed inset-0 z-50 hidden items-center justify-center p-3 sm:p-4 bg-slate-950/65 backdrop-blur-sm">
+    <div class="glass-panel rounded-3xl max-w-md w-full p-4 sm:p-5 text-center relative overflow-y-auto max-h-[94vh]">
+      <div class="absolute top-0 inset-x-0 h-2.5 bg-gradient-to-r from-sky-400 via-purple-500 to-amber-400"></div>
 
-      <div class="inline-block bg-slate-800 text-amber-300 text-xs font-black px-3 py-1 rounded-full mb-2">
+      <div class="inline-block bg-slate-800 text-amber-300 text-xs font-black px-3 py-0.5 rounded-full mb-1.5">
         🌸 花間公會・大亂鬥結算戰報
       </div>
 
-      <h2 id="res-title" class="text-2xl sm:text-3xl font-black text-slate-900 mb-1">
+      <h2 id="res-title" class="text-xl sm:text-2xl font-black text-slate-900 mb-0.5">
         花間芋頭奶皇
       </h2>
-      <p id="res-desc" class="text-xs sm:text-sm text-slate-600 font-medium mb-4">
+      <p id="res-desc" class="text-xs text-slate-600 font-medium mb-3">
         在一劍呦的虛空魔導法陣助攻下，喵喵創下了驚人的飲奶傳說！
       </p>
 
       <!-- 4格戰績統計 -->
-      <div class="grid grid-cols-2 gap-2.5 bg-white p-3.5 rounded-2xl border border-slate-200 mb-4">
-        <div class="bg-sky-50 p-2.5 rounded-xl border border-sky-100">
-          <div class="text-[11px] font-bold text-sky-700">🥛 總飲奶量</div>
-          <div id="res-score" class="text-xl sm:text-2xl font-black text-sky-600">0 ml</div>
+      <div class="grid grid-cols-4 gap-1.5 bg-white p-2.5 rounded-2xl border border-slate-200 mb-3">
+        <div class="bg-sky-50 p-1.5 rounded-xl border border-sky-100">
+          <div class="text-[10px] font-bold text-sky-700">🥛 飲奶量</div>
+          <div id="res-score" class="text-sm sm:text-base font-black text-sky-600">0 ml</div>
         </div>
-        <div class="bg-rose-50 p-2.5 rounded-xl border border-rose-100">
-          <div class="text-[11px] font-bold text-rose-700">🚀 火箭衝廁</div>
-          <div id="res-wc" class="text-xl sm:text-2xl font-black text-rose-600">0 次</div>
+        <div class="bg-rose-50 p-1.5 rounded-xl border border-rose-100">
+          <div class="text-[10px] font-bold text-rose-700">🚀 衝廁</div>
+          <div id="res-wc" class="text-sm sm:text-base font-black text-rose-600">0 次</div>
         </div>
-        <div class="bg-emerald-50 p-2.5 rounded-xl border border-emerald-100">
-          <div class="text-[11px] font-bold text-emerald-700">🔥 極限忍耐</div>
-          <div id="res-clutch" class="text-lg sm:text-xl font-black text-emerald-600">0 次</div>
+        <div class="bg-emerald-50 p-1.5 rounded-xl border border-emerald-100">
+          <div class="text-[10px] font-bold text-emerald-700">🔥 忍耐</div>
+          <div id="res-clutch" class="text-sm sm:text-base font-black text-emerald-600">0 次</div>
         </div>
-        <div class="bg-purple-50 p-2.5 rounded-xl border border-purple-100">
-          <div class="text-[11px] font-bold text-purple-700">⚔️ 一劍助攻</div>
-          <div id="res-yijian" class="text-lg sm:text-xl font-black text-purple-600">0 次</div>
+        <div class="bg-purple-50 p-1.5 rounded-xl border border-purple-100">
+          <div class="text-[10px] font-bold text-purple-700">⚔️ 助攻</div>
+          <div id="res-yijian" class="text-sm sm:text-base font-black text-purple-600">0 次</div>
         </div>
       </div>
 
-      <div id="copy-toast" class="hidden mb-3 bg-emerald-500 text-white text-xs sm:text-sm font-black py-2 px-3 rounded-xl shadow">
+      <!-- 公會即時排行榜登錄與前10名 -->
+      <div class="bg-purple-50/90 border-2 border-purple-200 rounded-2xl p-3 mb-3 text-left">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs sm:text-sm font-black text-purple-900">🏆 花間飲奶王・即時排行榜</span>
+          <span id="lb-status" class="text-[11px] font-bold text-purple-600">讀取中...</span>
+        </div>
+        <div class="flex gap-1.5 mb-2">
+          <select id="lb-member-select" class="flex-1 bg-white border border-purple-300 rounded-xl px-2.5 py-1.5 text-xs sm:text-sm font-black text-slate-800 outline-none">
+            <option value="">-- 選擇公會成員 --</option>
+          </select>
+          <button id="lb-submit-btn" type="button" class="cursor-pointer bg-purple-600 hover:bg-purple-700 active:scale-95 transition text-white text-xs sm:text-sm font-black px-3.5 py-1.5 rounded-xl shadow shrink-0">
+            登錄最高分
+          </button>
+        </div>
+        <div id="lb-list" class="bg-white rounded-xl border border-purple-100 divide-y divide-slate-100 max-h-36 overflow-y-auto text-xs">
+          <div class="p-3 text-center text-slate-400 font-bold">載入排行榜中...</div>
+        </div>
+      </div>
+
+      <div id="copy-toast" class="hidden mb-2.5 bg-emerald-500 text-white text-xs font-black py-1.5 px-3 rounded-xl shadow">
         ✅ 花間公會戰報已複製！快貼到群組分享吧！
       </div>
 
-      <div class="flex flex-col sm:flex-row gap-2.5">
-        <button id="share-btn" type="button" class="cursor-pointer flex-1 bg-slate-800 hover:bg-slate-700 active:scale-95 transition text-white font-black text-sm sm:text-base py-3 px-4 rounded-2xl shadow flex items-center justify-center gap-1.5">
+      <div class="flex gap-2">
+        <button id="share-btn" type="button" class="cursor-pointer flex-1 bg-slate-800 hover:bg-slate-700 active:scale-95 transition text-white font-black text-xs sm:text-sm py-2.5 px-3 rounded-2xl shadow flex items-center justify-center gap-1">
           <span>📋</span>
-          <span>複製花間公會戰報</span>
+          <span>複製戰報</span>
         </button>
 
-        <button id="restart-btn" type="button" class="btn-action flex-1 bg-gradient-to-r from-amber-400 to-purple-500 text-white font-black text-sm sm:text-base py-3 px-4 rounded-2xl flex items-center justify-center gap-1.5">
+        <button id="restart-btn" type="button" class="btn-action flex-1 bg-gradient-to-r from-amber-400 to-purple-500 text-white font-black text-xs sm:text-sm py-2.5 px-3 rounded-2xl flex items-center justify-center gap-1">
           <span>🔄</span>
           <span>再玩一局</span>
         </button>
@@ -879,6 +899,104 @@
       copyToast.classList.add('hidden');
       gameoverScreen.classList.remove('hidden');
       gameoverScreen.classList.add('flex');
+      initMeowMilkLeaderboard(finalScore);
+    }
+
+    let mmSubmittedThisRound = false;
+    function renderLeaderboardRows(listEl, rows, unit) {
+      if (!rows || rows.length === 0) {
+        listEl.innerHTML = '<div class="p-3 text-center text-slate-400 font-bold">🌸 目前尚無紀錄，快搶下第一名吧！</div>';
+        return;
+      }
+      const medals = ['🥇', '🥈', '🥉'];
+      listEl.innerHTML = rows.map((r, idx) => {
+        const badge = medals[idx] || `<span class="inline-block w-4 text-center text-slate-400">${idx + 1}</span>`;
+        const hi = idx === 0 ? 'bg-amber-50/70' : '';
+        return `<div class="flex items-center justify-between px-2.5 py-1.5 ${hi}">
+          <div class="flex items-center gap-1.5 min-w-0">
+            <span class="shrink-0">${badge}</span>
+            <span class="font-black text-slate-800 truncate">${r.name}</span>
+            <span class="text-[10px] text-slate-400 truncate hidden sm:inline">${r.detail || ''}</span>
+          </div>
+          <span class="font-black text-purple-700 shrink-0 ml-2">${r.score} ${unit}</span>
+        </div>`;
+      }).join('');
+    }
+
+    async function initMeowMilkLeaderboard(finalScore) {
+      mmSubmittedThisRound = false;
+      const lb = window.HUAJIAN_LEADERBOARD;
+      const sel = document.getElementById('lb-member-select');
+      const btn = document.getElementById('lb-submit-btn');
+      const statusEl = document.getElementById('lb-status');
+      const listEl = document.getElementById('lb-list');
+      if (!lb || !sel) return;
+
+      if (sel.options.length <= 1) {
+        lb.MEMBERS.forEach(m => {
+          const opt = document.createElement('option');
+          opt.value = m;
+          opt.textContent = m;
+          sel.appendChild(opt);
+        });
+      }
+      const savedName = localStorage.getItem(lb.STORAGE_PLAYER_KEY) || '';
+      if (savedName) sel.value = savedName;
+
+      btn.disabled = false;
+      btn.textContent = '登錄最高分';
+
+      if (!lb.isConfigured()) {
+        statusEl.textContent = '尚未綁定試算表';
+        listEl.innerHTML = '<div class="p-3 text-center text-amber-700 font-bold">⚙️ 請先在 leaderboard-config.js 填入 Apps Script 網址即可啟用即時排行！</div>';
+        return;
+      }
+
+      statusEl.textContent = '同步中...';
+      try {
+        const data = await lb.fetchTop('MeowMilk');
+        if (data && data.ok) {
+          statusEl.textContent = '即時前 10 名';
+          renderLeaderboardRows(listEl, data.top, 'ml');
+        } else {
+          statusEl.textContent = '讀取失敗';
+        }
+      } catch (e) {
+        statusEl.textContent = '連線異常';
+      }
+
+      btn.onclick = async function() {
+        if (mmSubmittedThisRound) return;
+        const memberName = sel.value;
+        if (!memberName) {
+          alert('請先從下拉選單選擇你的公會成員名字喔！');
+          return;
+        }
+        localStorage.setItem(lb.STORAGE_PLAYER_KEY, memberName);
+        mmSubmittedThisRound = true;
+        btn.disabled = true;
+        btn.textContent = '傳送中...';
+        statusEl.textContent = '寫入中...';
+        try {
+          const detail = `忍耐${state.clutchCount}次・一劍${state.yijianCount}次`;
+          const res = await lb.submitScore('MeowMilk', memberName, finalScore, detail);
+          if (res && res.ok) {
+            btn.textContent = res.isNewBest ? '🎉 破紀錄已登錄！' : '✅ 已完成（保留最高）';
+            statusEl.textContent = res.isNewBest ? '刷新個人最高分！' : '未超過個人最高紀錄';
+            renderLeaderboardRows(listEl, res.top, 'ml');
+          } else {
+            mmSubmittedThisRound = false;
+            btn.disabled = false;
+            btn.textContent = '重試登錄';
+            statusEl.textContent = '送出失敗';
+          }
+        } catch (err) {
+          mmSubmittedThisRound = false;
+          btn.disabled = false;
+          btn.textContent = '重試登錄';
+          statusEl.textContent = '連線錯誤';
+        }
+      };
     }
 
     startBtn.addEventListener('click', (e) => {
