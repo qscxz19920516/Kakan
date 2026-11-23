@@ -39,6 +39,55 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 .wrap{position:relative;z-index:1;max-width:680px;margin:20px auto;padding:0 16px}
 
 /* 當前盲盒系列大橫幅 */
+
+.new-badge{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    background:linear-gradient(135deg,#ff4757,#ff6b81);
+    color:#fff;
+    font-size:.68rem;
+    font-weight:900;
+    padding:1px 7px;
+    border-radius:999px;
+    letter-spacing:.6px;
+    margin-left:6px;
+    box-shadow:0 2px 6px rgba(255,71,87,.35);
+    vertical-align:middle;
+}
+.asb-title-row{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    flex-wrap:nowrap;
+}
+.asb-collect-pill{
+    display:inline-flex;
+    align-items:center;
+    gap:4px;
+    background:#fff0f3;
+    border:1.5px solid #f2bec7;
+    color:#c76272;
+    font-size:.76rem;
+    font-weight:900;
+    padding:2px 9px;
+    border-radius:12px;
+    margin-top:4px;
+}
+.stage-collect-status{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    background:#fff8f9;
+    border:1.5px solid #f7d7dc;
+    color:#7a5c61;
+    font-size:.82rem;
+    font-weight:800;
+    padding:4px 12px;
+    border-radius:14px;
+    margin-bottom:10px;
+}
+
 .active-series-banner{background:rgba(255,255,255,.95);backdrop-filter:blur(6px);border-radius:24px;padding:14px 18px;margin-bottom:14px;box-shadow:0 6px 18px rgba(226,158,168,.14);border:2px solid #f39c12;display:flex;align-items:center;justify-content:space-between;gap:12px}
 .asb-info{text-align:left;min-width:0}
 .asb-sub{font-size:.74rem;font-weight:800;letter-spacing:1px;color:#f39c12;margin-bottom:2px}
@@ -174,7 +223,11 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
     <div class="active-series-banner" id="activeSeriesBanner">
         <div class="asb-info">
             <div class="asb-sub" id="asbSub">載入盲盒系列中...</div>
-            <div class="asb-title" id="asbTitle">驚喜盲盒</div>
+            <div class="asb-title-row">
+                <div class="asb-title" id="asbTitle">驚喜盲盒</div>
+                <span id="asbNewBadge"></span>
+            </div>
+            <div class="asb-collect-pill" id="asbCollectPill">📦 已獲得 0 / 0 款</div>
         </div>
         <div class="asb-actions">
             <button class="asb-sync-btn" title="重新掃描 GitHub 盲盒資料夾" onclick="forceRefreshSeries()">🔄</button>
@@ -241,6 +294,75 @@ const cluesPool = [
     { sound: "咚咚～", text: "✨ 神秘線索：感受到一股強大的公會夥伴氣息，伸手一抓準沒錯！" }
 ];
 
+
+// ★ 若系列本身未帶 uploadedAt，可在此補充各系列上傳日期（YYYY-MM-DD），未填寫者預設排在較舊位置
+const SERIES_UPLOAD_DATES = {
+    // 範例：
+    // "袋裝零食": "2026-11-20",
+    // "飲品": "2026-11-18"
+};
+
+function getSeriesUploadDateStr(jobName, cfg) {
+    if (cfg && cfg.uploadedAt) return String(cfg.uploadedAt).trim();
+    if (SERIES_UPLOAD_DATES[jobName]) return String(SERIES_UPLOAD_DATES[jobName]).trim();
+    return "";
+}
+
+function isUploadedWithinDays(dateStr, days = 7) {
+    if (!dateStr) return false;
+    const parsed = new Date(dateStr.replace(/-/g, "/") + " 00:00:00");
+    if (isNaN(parsed.getTime())) return false;
+    const now = new Date();
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    const uploadStart = new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate()).getTime();
+    const diffDays = (todayStart - uploadStart) / (1000 * 60 * 60 * 24);
+    return diffDays >= 0 && diffDays <= days;
+}
+
+function sortSeriesConfigByUploadDesc(rawConfig) {
+    if (!rawConfig || typeof rawConfig !== "object") return {};
+    const entries = Object.entries(rawConfig);
+    entries.sort((a, b) => {
+        const [nameA, cfgA] = a;
+        const [nameB, cfgB] = b;
+        const dateAStr = getSeriesUploadDateStr(nameA, cfgA);
+        const dateBStr = getSeriesUploadDateStr(nameB, cfgB);
+        const timeA = dateAStr ? new Date(dateAStr.replace(/-/g, "/")).getTime() : -Infinity;
+        const timeB = dateBStr ? new Date(dateBStr.replace(/-/g, "/")).getTime() : -Infinity;
+        if (timeA === timeB) return 0;
+        if (isNaN(timeA)) return 1;
+        if (isNaN(timeB)) return -1;
+        return timeB - timeA; // 上傳時間越接近現在（越大）越往上排
+    });
+    const sorted = {};
+    entries.forEach(([k, v]) => { sorted[k] = v; });
+    return sorted;
+}
+
+function getSeriesCollectionStats(job = curJob) {
+    const cfg = seriesConfig[job];
+    const members = (cfg && Array.isArray(cfg.members)) ? cfg.members : [];
+    const totalCount = members.length;
+    const drawnSet = new Set(getDrawnList(job));
+    const ownedCount = members.filter(m => drawnSet.has(m)).length;
+    return { ownedCount, totalCount };
+}
+
+function renderSeriesNewBadgesOnMenu() {
+    renderSeriesNewBadgesOnMenu();
+    document.querySelectorAll('#subMenu a').forEach(a => {
+        const sName = a.dataset.series;
+        if (!sName) return;
+        const oldNew = a.querySelector('.new-badge');
+        if (oldNew) oldNew.remove();
+        const cfg = seriesConfig[sName];
+        if (isUploadedWithinDays(getSeriesUploadDateStr(sName, cfg), 7)) {
+            const labelSpan = a.querySelector('span:not(.active-pill):not(.arrow)') || a;
+            labelSpan.insertAdjacentHTML('afterend', '<span class="new-badge">NEW</span>');
+        }
+    });
+}
+
 let curJob = "袋裝零食";
 let curSkinIdx = Math.floor(Math.random() * BOX_SKINS.length);
 let shakeCount = 0;
@@ -248,6 +370,7 @@ let isDrawing = false;
 
 function highlightActiveMenu() {
     const cfg = seriesConfig[curJob];
+    renderSeriesNewBadgesOnMenu();
     document.querySelectorAll('#subMenu a').forEach(a => {
         const isCurrent = a.dataset.series === curJob;
         a.classList.toggle('active-series', isCurrent);
@@ -270,7 +393,7 @@ function highlightActiveMenu() {
 async function forceRefreshSeries() {
     const btn = document.querySelector('.asb-sync-btn');
     if (btn) btn.innerText = '⏳';
-    seriesConfig = await window.HuajianMenu.fetchAllSeries(true);
+    seriesConfig = sortSeriesConfigByUploadDesc(await window.HuajianMenu.fetchAllSeries(true));
     window.HuajianMenu.renderSharedSubMenu(seriesConfig, { onRendered: highlightActiveMenu });
     selectSeries(curJob);
     if (btn) btn.innerText = '🔄';
@@ -395,6 +518,11 @@ function updateQuotaUI(){
             ? `🎟️ 【${curJob}盲盒】剩餘抽選次數：${left} / ${MAX_DRAWS} 次` 
             : `🔒 【${curJob}盲盒】抽選次數已用完（${MAX_DRAWS} / ${MAX_DRAWS} 次）`;
     }
+    const stats = getSeriesCollectionStats(curJob);
+    const pillEl = document.getElementById('asbCollectPill');
+    if (pillEl) {
+        pillEl.innerText = `📦 已獲得 ${stats.ownedCount} / ${stats.totalCount} 款`;
+    }
     updateOmikujiTicketUI();
 }
 
@@ -413,6 +541,17 @@ function selectSeries(job){
         sub.style.color = cfg.color;
         sub.innerText = cfg.seriesNo;
         title.innerText = `${curJob}盲盒`;
+        const newBadgeEl = document.getElementById('asbNewBadge');
+        if (newBadgeEl) {
+            newBadgeEl.innerHTML = isUploadedWithinDays(getSeriesUploadDateStr(curJob, cfg), 7)
+                ? '<span class="new-badge">NEW</span>'
+                : '';
+        }
+        const stats = getSeriesCollectionStats(curJob);
+        const pillEl = document.getElementById('asbCollectPill');
+        if (pillEl) {
+            pillEl.innerText = `📦 已獲得 ${stats.ownedCount} / ${stats.totalCount} 款`;
+        }
     }
     highlightActiveMenu();
     updateQuotaUI();
@@ -437,6 +576,7 @@ function renderLotteryBox(snd = "", clue = "💡 提示：點擊「搖一搖抽�
     document.getElementById('stageCard').innerHTML = `
         <div class="series-tag" style="color:${cfg.color}">${cfg.seriesNo}</div>
         <div class="stage-title">${canDraw ? '搖一搖抽獎箱，抽出你的專屬盲盒！' : '本系列抽選已完成'}</div>
+        <div class="stage-collect-status">📦 本系列收集進度：已獲得 <b>${getSeriesCollectionStats(curJob).ownedCount}</b> / <b>${getSeriesCollectionStats(curJob).totalCount}</b> 款</div>
         <div class="lottery-stage">
             <div class="lottery-box-wrap" id="lotteryBoxWrap" onclick="${canDraw ? 'drawFromLotteryBox()' : ''}" title="${canDraw ? '點擊抽獎箱直接抽出盲盒' : ''}">
                 <div id="comicBubbleSlot">${snd ? `<div class="sound-comic">🎵 ${snd}</div>` : ''}</div>
@@ -521,6 +661,7 @@ function revealDrawnResult(drawnMember) {
     document.getElementById('stageCard').innerHTML = `
         <div id="confettiBox"></div>
         <div class="rarity-pill" style="background:${cfg.color}">🌸 花間小憩・${curJob}系列 🌸</div>
+        <div class="stage-collect-status">📦 本系列收集進度：已獲得 <b>${getSeriesCollectionStats(curJob).ownedCount}</b> / <b>${getSeriesCollectionStats(curJob).totalCount}</b> 款</div>
         <div class="result-img-box">
             <img src="${cfg.folder}/${drawnMember}.jpg" alt="${drawnMember}" title="點擊放大檢視"
                 onclick="openZoom('${cfg.folder}','${drawnMember}','${curJob}')"
@@ -614,7 +755,7 @@ window.addEventListener('DOMContentLoaded', async function() {
         for(let i=0;i<45;i++){ const p=document.createElement('div');p.className='petal'; const s=9+Math.random()*13;p.style.width=s+'px';p.style.height=(s*.75)+'px'; p.style.left=(Math.random()*100)+'vw';p.style.animationDuration=(6+Math.random()*8)+'s'; p.style.animationDelay=(-Math.random()*10)+'s';bg.appendChild(p); }
         for(let i=0;i<25;i++){ const b=document.createElement('div');b.className='bubble'; const s=20+Math.random()*45;b.style.width=s+'px';b.style.height=s+'px'; b.style.left=(Math.random()*100)+'vw';b.style.animationDuration=(10+Math.random()*10)+'s'; b.style.animationDelay=(-Math.random()*8)+'s';bg.appendChild(b); }
     }
-    seriesConfig = await window.HuajianMenu.fetchAllSeries();
+    seriesConfig = sortSeriesConfigByUploadDesc(await window.HuajianMenu.fetchAllSeries());
     window.HuajianMenu.renderSharedSubMenu(seriesConfig);
     const u = new URLSearchParams(window.location.search).get('job');
     selectSeries(normalizeJobName(u));
