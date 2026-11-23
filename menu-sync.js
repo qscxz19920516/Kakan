@@ -227,9 +227,11 @@
             const clickAttr = isBoxPage
                 ? `onclick="goBox(event, '${key.replace(/'/g, "\\'")}')"`
                 : '';
+            const showNew = (typeof options.isNewFn === 'function') ? Boolean(options.isNewFn(key, cfg)) : Boolean(cfg && cfg.isNew);
+            const newTagHtml = showNew ? '<span class="new-badge">NEW</span>' : '';
             itemsHtml += `<li class="series-menu-item" data-label="${label.toLowerCase()}">
                 <a href="box.html?job=${encodeURIComponent(label)}" data-series="${key}" ${clickAttr}>
-                    <span>${label}</span>
+                    <span>${label}${newTagHtml}</span>
                     <span class="arrow">&gt;</span>
                 </a>
             </li>`;
