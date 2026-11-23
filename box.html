@@ -931,17 +931,50 @@ window.addEventListener('DOMContentLoaded', async function() {
         for(let i=0;i<45;i++){ const p=document.createElement('div');p.className='petal'; const s=9+Math.random()*13;p.style.width=s+'px';p.style.height=(s*.75)+'px'; p.style.left=(Math.random()*100)+'vw';p.style.animationDuration=(6+Math.random()*8)+'s'; p.style.animationDelay=(-Math.random()*10)+'s';bg.appendChild(p); }
         for(let i=0;i<25;i++){ const b=document.createElement('div');b.className='bubble'; const s=20+Math.random()*45;b.style.width=s+'px';b.style.height=s+'px'; b.style.left=(Math.random()*100)+'vw';b.style.animationDuration=(10+Math.random()*10)+'s'; b.style.animationDelay=(-Math.random()*8)+'s';bg.appendChild(b); }
     }
-    const rawSeries = await window.HuajianMenu.fetchAllSeries();
-    await hydrateGithubSeriesDates(rawSeries, false);
-    seriesConfig = sortSeriesConfigByUploadDesc(rawSeries);
-    installSubMenuObserver();
-    window.HuajianMenu.renderSharedSubMenu(seriesConfig, { onRendered: highlightActiveMenu, isNewFn: (k, c) => Boolean(c && c.isNew) });
-    const u = new URLSearchParams(window.location.search).get('job');
-    selectSeries(normalizeJobName(u || getNewestSeriesName(seriesConfig)));
-    updateQuotaUI();
-    updateDexCount();
-    setTimeout(() => renderSeriesNewBadgesOnMenu(), 400);
-    setTimeout(() => renderSeriesNewBadgesOnMenu(), 1200);
+
+    try {
+        installSubMenuObserver();
+        let rawSeries = {};
+        if (window.HuajianMenu && typeof window.HuajianMenu.fetchAllSeries === 'function') {
+            rawSeries = await window.HuajianMenu.fetchAllSeries();
+        }
+        if (!rawSeries || Object.keys(rawSeries).length === 0) {
+            rawSeries = {
+                "袋裝零食": { folder: "花間 × 袋裝零食", displayFolder: "花間 × 袋裝零食", color: "#c76272", softBg: "#fff0f3", seriesNo: "SERIES 01・花間 × 袋裝零食", members: ["爆米花", "奶油曲奇", "棉花糖", "糖果球", "洋芋片", "巧克力"] }
+            };
+        }
+
+        // 先立即渲染可用盲盒畫面，避免等待外部 API 時畫面空白或卡住
+        seriesConfig = rawSeries;
+        const u = new URLSearchParams(window.location.search).get('job');
+        selectSeries(normalizeJobName(u || getNewestSeriesName(seriesConfig)));
+        updateQuotaUI();
+        updateDexCount();
+
+        // 再背景查詢 GitHub Commit 時間並重新排序 + 補上 NEW 徽章
+        await hydrateGithubSeriesDates(rawSeries, false);
+        seriesConfig = sortSeriesConfigByUploadDesc(rawSeries);
+        if (window.HuajianMenu && typeof window.HuajianMenu.renderSharedSubMenu === 'function') {
+            window.HuajianMenu.renderSharedSubMenu(seriesConfig, {
+                onRendered: highlightActiveMenu,
+                isNewFn: (k, c) => Boolean(c && c.isNew)
+            });
+        }
+        selectSeries(normalizeJobName(u || getNewestSeriesName(seriesConfig)));
+        updateQuotaUI();
+        updateDexCount();
+        setTimeout(() => renderSeriesNewBadgesOnMenu(), 300);
+        setTimeout(() => renderSeriesNewBadgesOnMenu(), 1000);
+    } catch (err) {
+        if (!seriesConfig || Object.keys(seriesConfig).length === 0) {
+            seriesConfig = {
+                "袋裝零食": { folder: "花間 × 袋裝零食", displayFolder: "花間 × 袋裝零食", color: "#c76272", softBg: "#fff0f3", seriesNo: "SERIES 01・花間 × 袋裝零食", members: ["爆米花", "奶油曲奇", "棉花糖", "糖果球", "洋芋片", "巧克力"] }
+            };
+        }
+        selectSeries(curJob);
+        updateQuotaUI();
+        updateDexCount();
+    }
 });
 </script>
 </body>
