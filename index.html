@@ -95,6 +95,13 @@ body.game-mode-active .topbar-omikuji-btn{display:none}
 .omikuji-slip-box{max-width:240px;width:70vw;margin:0 auto;border-radius:18px;overflow:hidden;border:2.5px solid #f7d7dc;background:#fff9fa;box-shadow:0 8px 22px rgba(226,158,168,.24)}
 .omikuji-slip-img{width:100%;height:auto;display:block;object-fit:contain;cursor:zoom-in;transition:transform .2s}
 .omikuji-slip-img:hover{transform:scale(1.02)}
+
+.omikuji-reward-box{margin-top:12px;background:linear-gradient(135deg,#fffbeb,#fef3c7);border:2px solid #f59e0b;border-radius:16px;padding:10px 12px;text-align:center;box-shadow:0 4px 12px rgba(245,158,11,.18)}
+.omikuji-reward-title{font-size:.86rem;font-weight:900;color:#b45309;margin-bottom:4px}
+.omikuji-reward-desc{font-size:.76rem;color:#78350f;font-weight:700;margin-bottom:8px;line-height:1.4}
+.omikuji-go-box-btn{display:inline-flex;align-items:center;justify-content:center;gap:4px;text-decoration:none;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;padding:8px 16px;border-radius:16px;font-size:.82rem;font-weight:900;box-shadow:0 3px 10px rgba(217,119,6,.3);transition:.2s}
+.omikuji-go-box-btn:hover{transform:translateY(-1px);filter:brightness(1.05)}
+
 .omikuji-done-note{margin-top:12px;background:#fff8f9;border:1.5px dashed #f2bec7;color:#8c7075;padding:7px 12px;border-radius:14px;font-size:.78rem;font-weight:700}
 
 @media(max-width:520px){
@@ -114,7 +121,7 @@ body.game-mode-active .topbar-omikuji-btn{display:none}
 </style>
 <link rel="stylesheet" href="site-menu.css?v=20261121_v1">
 <script>
-const SITE_VERSION = "20261123_v3";
+const SITE_VERSION = "20261123_v4";
 (function(){
     const url = new URL(window.location.href);
     if (url.searchParams.get("v") !== SITE_VERSION) {
@@ -215,15 +222,30 @@ function openZoom(customSrc){
 
 // ★ 每日御神籤系統（右上角迷你膠囊按鈕 + 置中彈窗，完全不佔首頁主版面）
 const OMIKUJI_SLIPS = [
-    { key: "大吉", file: "御神籤_大吉", color: "#e11d48", weight: 14 },
-    { key: "吉",   file: "御神籤_吉",   color: "#16a34a", weight: 16 },
-    { key: "中吉", file: "御神籤_中吉", color: "#9333ea", weight: 18 },
-    { key: "小吉", file: "御神籤_小吉", color: "#d97706", weight: 18 },
-    { key: "末吉", file: "御神籤_末吉", color: "#0284c7", weight: 12 },
-    { key: "末小吉", file: "御神籤_末小吉", color: "#ec4899", weight: 10 },
-    { key: "平",   file: "御神籤_平",   color: "#64748b", weight: 7 },
-    { key: "小兇", file: "御神籤_小兇", color: "#ea580c", weight: 5 }
+    { key: "大吉", file: "御神籤_大吉", color: "#e11d48", weight: 14, hasReward: true },
+    { key: "吉",   file: "御神籤_吉",   color: "#16a34a", weight: 16, hasReward: true },
+    { key: "中吉", file: "御神籤_中吉", color: "#9333ea", weight: 18, hasReward: true },
+    { key: "小吉", file: "御神籤_小吉", color: "#d97706", weight: 18, hasReward: true },
+    { key: "末吉", file: "御神籤_末吉", color: "#0284c7", weight: 12, hasReward: false },
+    { key: "末小吉", file: "御神籤_末小吉", color: "#ec4899", weight: 10, hasReward: false },
+    { key: "平",   file: "御神籤_平",   color: "#64748b", weight: 7,  hasReward: false },
+    { key: "小兇", file: "御神籤_小兇", color: "#ea580c", weight: 5,  hasReward: false }
 ];
+
+const REWARD_TICKET_KEY = 'huajian_omikuji_box_tickets_v1';
+const REWARD_GRANTED_DATE_KEY = 'huajian_omikuji_reward_granted_date_v1';
+
+function getBoxResetTickets() {
+    return Math.max(0, parseInt(localStorage.getItem(REWARD_TICKET_KEY) || '0', 10));
+}
+
+function grantDailyOmikujiRewardIfEligible(slip) {
+    if (!slip || !slip.hasReward) return;
+    const today = getTodayDateKey();
+    if (localStorage.getItem(REWARD_GRANTED_DATE_KEY) === today) return;
+    localStorage.setItem(REWARD_GRANTED_DATE_KEY, today);
+    localStorage.setItem(REWARD_TICKET_KEY, String(getBoxResetTickets() + 1));
+}
 
 function getTodayDateKey() {
     const now = new Date();
@@ -251,6 +273,7 @@ function saveTodayOmikujiRecord(slip) {
             date: getTodayDateKey(),
             slip: slip
         }));
+        grantDailyOmikujiRewardIfEligible(slip);
     } catch (e) {}
 }
 
@@ -315,6 +338,27 @@ function renderOmikujiSection() {
 
     const todaySlip = getTodayOmikujiRecord();
     if (todaySlip) {
+        const tickets = getBoxResetTickets();
+        const isLucky = ["大吉", "中吉", "小吉", "吉"].includes(todaySlip.key);
+        let rewardHtml = '';
+        if (isLucky) {
+            if (tickets > 0) {
+                rewardHtml = `
+                    <div class="omikuji-reward-box">
+                        <div class="omikuji-reward-title">🎉 恭喜抽中【${todaySlip.key}】吉籤獎勵！</div>
+                        <div class="omikuji-reward-desc">獲得「🎟️ 盲盒次數重置券 × ${tickets} 張」<br>可前往驚喜盲盒選擇任一系列增加 1 次抽取機會！</div>
+                        <a href="box.html" class="omikuji-go-box-btn">🎁 前往驚喜盲盒使用 ＞</a>
+                    </div>
+                `;
+            } else {
+                rewardHtml = `
+                    <div class="omikuji-reward-box" style="background:#f8fafc;border-color:#cbd5e1">
+                        <div class="omikuji-reward-title" style="color:#475569">✅ 今日【${todaySlip.key}】吉籤獎勵已使用完畢</div>
+                        <div class="omikuji-reward-desc" style="color:#64748b;margin-bottom:0">明天再來抽御神籤拿更多盲盒加抽機會吧！</div>
+                    </div>
+                `;
+            }
+        }
         sub.innerText = `✨ 今日（${getTodayDateKey()}）已求得神籤，點擊籤紙可放大 ✨`;
         const imgPath = `御神籤/${todaySlip.file}.jpg`;
         stage.innerHTML = `
@@ -325,6 +369,7 @@ function renderOmikujiSection() {
                         onclick="openZoom(this.src)"
                         onerror="if(!this.dataset.step){this.dataset.step=1;this.src='御神籤/${todaySlip.file}.JPG?v=20261123';}else if(this.dataset.step==1){this.dataset.step=2;this.src='御神籤/${todaySlip.file}.png?v=20261123';}else{this.onerror=null;this.src='御神籤/${todaySlip.file}.PNG?v=20261123';}">
                 </div>
+                ${rewardHtml}
                 <div class="omikuji-done-note">🌙 今日抽籤已使用（1/1次），明天 00:00 自動重置</div>
             </div>
         `;
@@ -377,10 +422,10 @@ function closeZoom(){
     document.getElementById('zoomModal').classList.remove('open');
 }
 function openGame(event){
-    openEmbeddedGame(event, 'MeowMilk.html?v=20261123_v3', '#meow-milk', '🥛 喵喵乳糖挑戰');
+    openEmbeddedGame(event, 'MeowMilk.html?v=20261123_v4', '#meow-milk', '🥛 喵喵乳糖挑戰');
 }
 function openGame1(event){
-    openEmbeddedGame(event, 'HitMeow.html?v=20261123_v3', '#hit-meow', '🩴 暴打小菜雞');
+    openEmbeddedGame(event, 'HitMeow.html?v=20261123_v4', '#hit-meow', '🩴 暴打小菜雞');
 }
 let cachedSeriesConfig = null;
 

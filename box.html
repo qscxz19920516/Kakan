@@ -49,6 +49,14 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 .asb-sync-btn{background:#fff;border:1.5px solid #e6c5ca;color:#8c7075;width:36px;height:36px;border-radius:50%;font-size:.95rem;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:.2s}
 .asb-sync-btn:hover{border-color:#c76272;color:#c76272;transform:rotate(90deg)}
 
+
+/* 御神籤吉籤獎勵：盲盒單次重置券橫幅 */
+.omikuji-ticket-bar{display:none;background:linear-gradient(135deg,#fffbeb,#fef3c7);border:2px solid #f59e0b;border-radius:20px;padding:10px 14px;margin-bottom:14px;box-shadow:0 4px 12px rgba(245,158,11,.16);align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.omikuji-ticket-bar.show{display:flex}
+.otb-text{font-size:.86rem;font-weight:800;color:#92400e;text-align:left;line-height:1.4}
+.otb-btn{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border:none;padding:8px 14px;border-radius:16px;font-size:.82rem;font-weight:900;cursor:pointer;box-shadow:0 3px 8px rgba(217,119,6,.28);transition:.2s;white-space:nowrap}
+.otb-btn:hover{transform:translateY(-1px);filter:brightness(1.06)}
+
 .quota-bar{background:#fff8f9;border:2px dashed #f2bec7;color:#c76272;padding:8px 18px;border-radius:20px;font-weight:800;font-size:.92rem;margin-bottom:16px;text-align:center;box-shadow:0 3px 8px rgba(226,158,168,.1)}
 
 .stage-card{background:rgba(255,255,255,.96);backdrop-filter:blur(6px);border-radius:28px;padding:24px 18px;box-shadow:0 8px 25px rgba(226,158,168,.16);border:2px solid #f9dfe3;text-align:center;position:relative;overflow:hidden}
@@ -160,7 +168,7 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 <body>
 <div class="fx-bg" id="fxBg"></div>
 <div id="siteMenu"></div>
-<script src="site-menu.js?v=20261122_v2"></script>
+<script src="site-menu.js?v=20261123_v1"></script>
 
 <div class="wrap">
     <div class="active-series-banner" id="activeSeriesBanner">
@@ -175,6 +183,10 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
     </div>
 
     <div class="quota-bar" id="quotaBar">🎟️ 剩餘抽選次數：3 / 3 次</div>
+    <div class="omikuji-ticket-bar" id="omikujiTicketBar">
+        <div class="otb-text" id="omikujiTicketText">⛩️ 御神籤吉籤獎勵：持有 <b>1 張</b> 盲盒次數重置券</div>
+        <button type="button" class="otb-btn" onclick="useOmikujiResetTicket()">✨ 重置本系列次數 +1</button>
+    </div>
     <div class="stage-card" id="stageCard"></div>
 </div>
 
@@ -198,7 +210,7 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
     </div>
 </div>
 
-<script src="menu-sync.js?v=20261122_v6"></script>
+<script src="menu-sync.js?v=20261123_v7"></script>
 <script>
 const MAX_DRAWS = 3;
 let seriesConfig = {};
@@ -335,6 +347,45 @@ function openSeriesDrawer(){
 }
 function goBox(e, job){ e.preventDefault(); selectSeries(normalizeJobName(job)); toggleMenu(); }
 
+const REWARD_TICKET_KEY = 'huajian_omikuji_box_tickets_v1';
+
+function getBoxResetTickets() {
+    return Math.max(0, parseInt(localStorage.getItem(REWARD_TICKET_KEY) || '0', 10));
+}
+
+function updateOmikujiTicketUI() {
+    const tickets = getBoxResetTickets();
+    const bar = document.getElementById('omikujiTicketBar');
+    const txt = document.getElementById('omikujiTicketText');
+    if (!bar || !txt) return;
+    if (tickets > 0) {
+        bar.classList.add('show');
+        txt.innerHTML = `⛩️ 御神籤吉籤獎勵：持有 <b>${tickets} 張</b> 次數重置券（可選任一系列 +1 次）`;
+    } else {
+        bar.classList.remove('show');
+    }
+}
+
+function useOmikujiResetTicket() {
+    const tickets = getBoxResetTickets();
+    if (tickets <= 0) {
+        alert("目前沒有可用的御神籤重置券喔！每天都可以回首頁搖御神籤試手氣～");
+        return;
+    }
+    const used = getUsedDraws(curJob);
+    if (used <= 0) {
+        alert(`【${curJob}盲盒】目前還是滿額（${MAX_DRAWS} / ${MAX_DRAWS} 次），尚未消耗次數喔！\n\n請先抽過或切換到已消耗次數的盲盒系列再使用重置券～`);
+        return;
+    }
+    if (!confirm(`確定要消耗 1 張「⛩️ 御神籤重置券」，將【${curJob}盲盒】的抽取次數恢復 +1 次嗎？\n\n（註：原本已獲得的小卡圖鑑會完整保留）`)) {
+        return;
+    }
+    localStorage.setItem(REWARD_TICKET_KEY, String(tickets - 1));
+    localStorage.setItem('huajian_draws_' + curJob, String(Math.max(0, used - 1)));
+    updateQuotaUI();
+    renderLotteryBox('', `🎉 已使用御神籤吉籤獎勵！【${curJob}盲盒】抽取次數 +1 次，快來抽吧！`);
+}
+
 function updateQuotaUI(){
     const used = getUsedDraws(curJob);
     const left = Math.max(0, MAX_DRAWS - used);
@@ -344,6 +395,7 @@ function updateQuotaUI(){
             ? `🎟️ 【${curJob}盲盒】剩餘抽選次數：${left} / ${MAX_DRAWS} 次` 
             : `🔒 【${curJob}盲盒】抽選次數已用完（${MAX_DRAWS} / ${MAX_DRAWS} 次）`;
     }
+    updateOmikujiTicketUI();
 }
 
 function selectSeries(job){
