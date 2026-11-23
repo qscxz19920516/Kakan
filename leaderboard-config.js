@@ -1,7 +1,7 @@
 // ★ 花間小憩・公會小遊戲排行榜設定與 57 位成員總表
 // 【部署完 Google Apps Script 後，只需把網址貼進下方 LEADERBOARD_API_URL 即可！】
 window.HUAJIAN_LEADERBOARD = {
-    API_URL: "https://script.google.com/macros/library/d/1oEAWMKwhLaZzt4f3rwm40CH78Z-hWmNvJpOQ6hTH3Wlc9ArWd9Buhx1t/1",
+    API_URL: "https://script.google.com/macros/s/AKfycbzwTkb2na_1mfW8_jYIVqjgj6dsk7QeC67lHjLwJXgHvSvlu9T3J5nOIO7sFs5PSlsJ3A/exec",
     MEMBERS: [
         "壞壞呦", "薇糖", "47", "空弦", "阿燁", "一劍", "星星", "布布", "鯤鯤", "花龍",
         "蕭蕭", "牙牙", "小杯", "小雨", "阿瀾", "MO", "雷雷", "笙笙", "咕咕", "毒乃",
