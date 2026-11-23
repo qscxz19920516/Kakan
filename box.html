@@ -431,18 +431,65 @@ function getSeriesCollectionStats(job = curJob) {
     return { ownedCount, totalCount };
 }
 
+function resolveSeriesNameFromAnchor(a) {
+    if (!a) return "";
+    if (a.dataset && a.dataset.series && seriesConfig[a.dataset.series]) {
+        return a.dataset.series;
+    }
+    try {
+        const href = a.getAttribute("href") || "";
+        if (href.includes("job=")) {
+            const qJob = decodeURIComponent(href.split("job=")[1].split("&")[0].split("#")[0]);
+            if (seriesConfig[qJob]) return qJob;
+            const cleaned = window.HuajianMenu && window.HuajianMenu.extractShortSeriesName
+                ? window.HuajianMenu.extractShortSeriesName(qJob)
+                : qJob;
+            if (seriesConfig[cleaned]) return cleaned;
+        }
+    } catch (e) {}
+
+    const rawText = (a.textContent || "").replace(/使用中/g, "").replace(/NEW/gi, "").trim();
+    if (!rawText) return "";
+    const keys = Object.keys(seriesConfig || {});
+    if (seriesConfig[rawText]) return rawText;
+    const cleanedText = window.HuajianMenu && window.HuajianMenu.extractShortSeriesName
+        ? window.HuajianMenu.extractShortSeriesName(rawText)
+        : rawText;
+    if (seriesConfig[cleanedText]) return cleanedText;
+    return keys.find(k => rawText.includes(k) || cleanedText.includes(k)) || "";
+}
+
 function renderSeriesNewBadgesOnMenu() {
-    document.querySelectorAll('#subMenu a').forEach(a => {
-        const sName = a.dataset.series;
-        if (!sName) return;
+    const anchors = document.querySelectorAll('#subMenu a, .submenu a');
+    anchors.forEach(a => {
         const oldNew = a.querySelector('.new-badge');
         if (oldNew) oldNew.remove();
+
+        const sName = resolveSeriesNameFromAnchor(a);
+        if (!sName) return;
         const cfg = seriesConfig[sName];
         if (isUploadedWithinDays(sName, cfg, 7)) {
-            const labelSpan = a.querySelector('span:not(.active-pill):not(.arrow)') || a;
-            labelSpan.insertAdjacentHTML('afterend', '<span class="new-badge">NEW</span>');
+            const badgeHtml = '<span class="new-badge">NEW</span>';
+            const anchorTarget = a.querySelector('.active-pill') || a.querySelector('.arrow');
+            if (anchorTarget) {
+                anchorTarget.insertAdjacentHTML('beforebegin', badgeHtml);
+            } else {
+                a.insertAdjacentHTML('beforeend', badgeHtml);
+            }
         }
     });
+}
+
+function installSubMenuObserver() {
+    const target = document.getElementById('drawer') || document.body;
+    if (!target || window.__huajianNewBadgeObserverInstalled) return;
+    window.__huajianNewBadgeObserverInstalled = true;
+    const obs = new MutationObserver(() => {
+        if (Object.keys(seriesConfig || {}).length > 0) {
+            renderSeriesNewBadgesOnMenu();
+        }
+    });
+    obs.observe(target, { childList: true, subtree: true });
 }
 
 let curJob = "袋裝零食";
@@ -545,6 +592,7 @@ function addDrawnMember(name, job = curJob) {
 }
 
 function openSeriesDrawer(){
+    renderSeriesNewBadgesOnMenu();
     document.getElementById('drawer').classList.add('open');
     document.getElementById('mask').classList.add('open');
     document.getElementById('subMenu').classList.add('open');
@@ -839,7 +887,7 @@ function normalizeJobName(rawName) {
     const cleaned = window.HuajianMenu ? window.HuajianMenu.extractShortSeriesName(rawName) : rawName;
     if (seriesConfig[cleaned]) return cleaned;
     const matched = Object.keys(seriesConfig).find(k => rawName.includes(k) || k.includes(cleaned));
-    return matched || firstKey;
+    return matched || newestKey;
 }
 
 window.addEventListener('DOMContentLoaded', async function() {
@@ -851,11 +899,14 @@ window.addEventListener('DOMContentLoaded', async function() {
     const rawSeries = await window.HuajianMenu.fetchAllSeries();
     await hydrateGithubSeriesDates(rawSeries, false);
     seriesConfig = sortSeriesConfigByUploadDesc(rawSeries);
-    window.HuajianMenu.renderSharedSubMenu(seriesConfig);
+    installSubMenuObserver();
+    window.HuajianMenu.renderSharedSubMenu(seriesConfig, { onRendered: highlightActiveMenu });
     const u = new URLSearchParams(window.location.search).get('job');
     selectSeries(normalizeJobName(u || getNewestSeriesName(seriesConfig)));
     updateQuotaUI();
     updateDexCount();
+    setTimeout(() => renderSeriesNewBadgesOnMenu(), 400);
+    setTimeout(() => renderSeriesNewBadgesOnMenu(), 1200);
 });
 </script>
 </body>
