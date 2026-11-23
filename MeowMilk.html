@@ -79,22 +79,26 @@
 </head>
 <body class="relative w-full h-full overflow-hidden">
 
+  <!-- 全螢幕遊戲畫布 -->
   <canvas id="game-canvas"></canvas>
 
+  <!-- 頂部 HUD 狀態列 -->
   <header class="fixed top-0 inset-x-0 z-[55] pointer-events-none p-2 sm:p-3.5 flex flex-col items-center gap-1.5">
     <div class="w-full max-w-2xl flex items-center justify-between gap-2">
+      <!-- 公會標題徽章 -->
       <div class="flex items-center gap-1.5 bg-slate-900/85 backdrop-blur-md text-white px-3 py-1.5 rounded-2xl border border-purple-300/40 shadow-md">
         <span class="text-sm sm:text-base">🌸</span>
         <span class="text-xs sm:text-sm font-black text-amber-300">花間大亂鬥</span>
         <span class="hidden sm:inline text-xs text-purple-200 font-bold">| 喵喵 × 一劍呦</span>
       </div>
 
+      <!-- 最高紀錄、排行榜與靜音按鈕 -->
       <div class="flex items-center gap-1.5 sm:gap-2 pointer-events-auto">
         <div class="bg-white/95 backdrop-blur-md px-2.5 sm:px-3 py-1 rounded-2xl border border-white shadow text-right">
           <div class="text-[10px] font-bold text-slate-500">公會最高紀錄</div>
           <div id="hud-best" class="text-xs sm:text-sm font-black text-purple-700">0 ml</div>
         </div>
-        <button id="top-lb-btn" type="button" aria-label="查看排行榜" class="cursor-pointer bg-amber-100/95 hover:bg-amber-200 active:scale-95 transition h-10 px-2.5 sm:px-3 rounded-2xl shadow border border-amber-300 flex items-center justify-center gap-1 text-xs sm:text-sm font-black text-amber-900">
+        <button id="top-lb-btn" type="button" onclick="if(window.openMeowMilkStartLeaderboard)window.openMeowMilkStartLeaderboard(event)" aria-label="查看排行榜" class="cursor-pointer bg-amber-100/95 hover:bg-amber-200 active:scale-95 transition h-10 px-2.5 sm:px-3 rounded-2xl shadow border border-amber-300 flex items-center justify-center gap-1 text-xs sm:text-sm font-black text-amber-900">
           <span>🏆</span>
           <span>排行</span>
         </button>
@@ -104,29 +108,35 @@
       </div>
     </div>
 
+    <!-- 4格數據儀表板 + 腹鳴壓力計量條 (遊戲開始後顯示，避免遮擋開始說明面板) -->
     <div id="hud-stats-panel" class="hidden w-full max-w-2xl bg-white/95 backdrop-blur-md p-2 sm:p-3 rounded-3xl shadow-lg border-2 border-white flex-col gap-2">
       <div class="grid grid-cols-4 gap-1.5 sm:gap-2 text-center">
+        <!-- 總飲奶量 -->
         <div class="bg-sky-50 rounded-2xl py-1 px-1.5 border border-sky-200">
           <div class="text-[10px] sm:text-[11px] font-bold text-sky-700">🥛 總飲奶量</div>
           <div id="hud-score" class="text-base sm:text-xl font-black text-sky-900">0 <span class="text-[11px]">ml</span></div>
         </div>
 
+        <!-- 剩餘時間 -->
         <div id="hud-time-box" class="bg-amber-50 rounded-2xl py-1 px-1.5 border border-amber-200 transition-colors">
           <div class="text-[10px] sm:text-[11px] font-bold text-amber-700">⏱️ 剩餘時間</div>
           <div id="hud-time" class="text-base sm:text-xl font-black text-amber-900">45.0s</div>
         </div>
 
+        <!-- 飲奶速度倍率 -->
         <div id="hud-mult-box" class="bg-purple-50 rounded-2xl py-1 px-1.5 border border-purple-200 transition-colors">
           <div class="text-[10px] sm:text-[11px] font-bold text-purple-700">⚡ 飲奶倍率</div>
           <div id="hud-mult" class="text-base sm:text-xl font-black text-purple-900">1.0x</div>
         </div>
 
+        <!-- 極限忍耐次數 -->
         <div class="bg-emerald-50 rounded-2xl py-1 px-1.5 border border-emerald-200">
           <div class="text-[10px] sm:text-[11px] font-bold text-emerald-700">🔥 極限忍耐</div>
           <div id="hud-clutch" class="text-base sm:text-xl font-black text-emerald-700">0 次</div>
         </div>
       </div>
 
+      <!-- 腹鳴壓力計量條 -->
       <div id="rumble-wrap" class="flex flex-col gap-1 px-1">
         <div class="flex items-center justify-between text-xs font-black">
           <span id="rumble-label" class="text-slate-700">🐱 喵喵腸胃平穩中</span>
@@ -142,6 +152,7 @@
         </div>
 
         <div class="relative w-full h-4 sm:h-5 bg-slate-200 rounded-full overflow-hidden border border-slate-300 shadow-inner">
+          <!-- 85% ~ 99% 極限忍耐紅區提示 -->
           <div class="absolute top-0 bottom-0 right-0 w-[15%] bg-rose-500/20 border-l-2 border-dashed border-rose-500 z-10 pointer-events-none"></div>
           <div id="rumble-bar" class="h-full bg-gradient-to-r from-sky-400 via-amber-400 to-rose-500 transition-all duration-75 rounded-full" style="width: 0%"></div>
         </div>
@@ -149,6 +160,7 @@
     </div>
   </header>
 
+  <!-- 底部操作按鈕區 -->
   <div id="bottom-controls" class="fixed bottom-3 sm:bottom-5 inset-x-0 z-30 hidden flex-col items-center px-4 pointer-events-none">
     <div id="hint-pill" class="mb-2 bg-slate-900/75 backdrop-blur-sm text-white text-xs sm:text-sm font-bold px-3.5 py-1 rounded-full border border-white/20 shadow text-center">
       點擊空中飄過的 <b>一劍 / 芋頭 / 沙漏 / 藥丸</b>！按住下方狂飲（85%紅區放開賺 +300ml）
@@ -163,6 +175,7 @@
     </button>
   </div>
 
+  <!-- 開始畫面懸浮面板 (最高層級 z-50，確保點擊即開玩) -->
   <div id="start-screen" class="fixed inset-0 z-50 flex items-center justify-center pt-16 pb-3 px-3 sm:pt-20 sm:pb-4 sm:px-4 bg-slate-900/40 backdrop-blur-[3px]">
     <div class="glass-panel rounded-3xl max-w-lg w-full p-5 sm:p-6 text-center relative overflow-hidden max-h-[95vh] overflow-y-auto">
       <div class="absolute top-0 inset-x-0 h-2.5 bg-gradient-to-r from-sky-400 via-purple-500 to-amber-400"></div>
@@ -179,6 +192,7 @@
         ✨ 一劍友情灌奶版 ✨
       </div>
 
+      <!-- 雙角色與 5 大道具圖鑑 -->
       <div class="bg-white/90 rounded-2xl p-3 sm:p-3.5 border border-purple-100 text-left space-y-2 mb-4 text-xs sm:text-sm">
         <div class="flex items-start gap-2">
           <span class="text-base shrink-0">🥛</span>
@@ -208,7 +222,7 @@
           <span>開始挑戰（餵喵喵喝牛奶！）</span>
         </button>
 
-        <button id="open-start-lb-btn" type="button" class="cursor-pointer w-full bg-purple-100 hover:bg-purple-200 active:scale-95 transition text-purple-900 border-2 border-purple-300 font-black text-sm sm:text-base py-2.5 rounded-2xl flex items-center justify-center gap-2 shadow-sm">
+        <button id="open-start-lb-btn" type="button" onclick="if(window.openMeowMilkStartLeaderboard)window.openMeowMilkStartLeaderboard(event)" class="cursor-pointer w-full bg-purple-100 hover:bg-purple-200 active:scale-95 transition text-purple-900 border-2 border-purple-300 font-black text-sm sm:text-base py-2.5 rounded-2xl flex items-center justify-center gap-2 shadow-sm">
           <span>🏆</span>
           <span>查看花間飲奶王排行榜</span>
         </button>
@@ -216,7 +230,9 @@
     </div>
   </div>
 
-  <div id="start-lb-modal" class="fixed inset-0 z-[60] hidden items-center justify-center p-4 bg-slate-950/65 backdrop-blur-sm">
+
+  <!-- 開始前查看排行榜彈窗 -->
+  <div id="start-lb-modal" style="z-index:9999" class="fixed inset-0 hidden items-center justify-center p-4 bg-slate-950/65 backdrop-blur-sm">
     <div class="glass-panel rounded-3xl max-w-md w-full p-5 text-center relative overflow-hidden">
       <div class="absolute top-0 inset-x-0 h-2.5 bg-gradient-to-r from-purple-500 via-pink-500 to-amber-400"></div>
       <div class="flex items-center justify-between mb-3">
@@ -224,17 +240,18 @@
           <div class="text-base sm:text-lg font-black text-purple-900">🏆 花間飲奶王・即時排行榜</div>
           <div id="start-lb-status" class="text-xs font-bold text-purple-600">讀取中...</div>
         </div>
-        <button id="close-start-lb-btn" type="button" class="cursor-pointer w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-black text-base flex items-center justify-center">✕</button>
+        <button id="close-start-lb-btn" type="button" onclick="if(window.closeMeowMilkStartLeaderboard)window.closeMeowMilkStartLeaderboard()" class="cursor-pointer w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-black text-base flex items-center justify-center">✕</button>
       </div>
       <div id="start-lb-list" class="bg-white rounded-2xl border-2 border-purple-100 divide-y divide-slate-100 max-h-72 overflow-y-auto text-xs sm:text-sm text-left mb-3.5">
         <div class="p-4 text-center text-slate-400 font-bold">載入排行榜中...</div>
       </div>
-      <button id="close-start-lb-bottom-btn" type="button" class="cursor-pointer w-full bg-slate-800 hover:bg-slate-700 text-white font-black text-sm py-2.5 rounded-2xl shadow">
+      <button id="close-start-lb-bottom-btn" type="button" onclick="if(window.closeMeowMilkStartLeaderboard)window.closeMeowMilkStartLeaderboard()" class="cursor-pointer w-full bg-slate-800 hover:bg-slate-700 text-white font-black text-sm py-2.5 rounded-2xl shadow">
         關閉排行榜
       </button>
     </div>
   </div>
 
+  <!-- 遊戲結束結算面板 (含花間公會即時排行榜) -->
   <div id="gameover-screen" class="fixed inset-0 z-50 hidden items-center justify-center p-3 sm:p-4 bg-slate-950/65 backdrop-blur-sm">
     <div class="glass-panel rounded-3xl max-w-md w-full p-4 sm:p-5 text-center relative overflow-y-auto max-h-[94vh]">
       <div class="absolute top-0 inset-x-0 h-2.5 bg-gradient-to-r from-sky-400 via-purple-500 to-amber-400"></div>
@@ -250,6 +267,7 @@
         在一劍呦的虛空魔導法陣助攻下，喵喵創下了驚人的飲奶傳說！
       </p>
 
+      <!-- 4格戰績統計 -->
       <div class="grid grid-cols-4 gap-1.5 bg-white p-2.5 rounded-2xl border border-slate-200 mb-3">
         <div class="bg-sky-50 p-1.5 rounded-xl border border-sky-100">
           <div class="text-[10px] font-bold text-sky-700">🥛 飲奶量</div>
@@ -269,6 +287,7 @@
         </div>
       </div>
 
+      <!-- 公會即時排行榜登錄與前10名 -->
       <div class="bg-purple-50/90 border-2 border-purple-200 rounded-2xl p-3 mb-3 text-left">
         <div class="flex items-center justify-between mb-2">
           <span class="text-xs sm:text-sm font-black text-purple-900">🏆 花間飲奶王・即時排行榜</span>
@@ -306,6 +325,11 @@
   </div>
 
   <script>
+    /**
+     * ============================================================================
+     * 1. Web Audio API 即時合成音效引擎 (無任何外部音檔依賴)
+     * ============================================================================
+     */
     class BattleSoundFX {
       constructor() {
         this.ctx = null;
@@ -324,6 +348,7 @@
         } catch (e) {}
       }
 
+      // 喝牛奶「咕嘟」水泡聲
       playGulp(rumbleRatio = 0, isVoidBoost = false) {
         if (!this.enabled) return;
         this.init();
@@ -346,6 +371,7 @@
         osc.stop(now + 0.09);
       }
 
+      // 召喚「一劍呦」虛空魔導法陣降臨音效
       playVoidSummon() {
         if (!this.enabled) return;
         this.init();
@@ -370,6 +396,7 @@
         });
       }
 
+      // 道具獲得閃亮音效 (芋頭 / 沙漏 / 藥丸 / 極限忍耐)
       playPowerup(highPitch = false) {
         if (!this.enabled) return;
         this.init();
@@ -391,6 +418,7 @@
         });
       }
 
+      // 誤點地獄辣起司陷阱音效
       playTrap() {
         if (!this.enabled) return;
         this.init();
@@ -412,6 +440,7 @@
         osc.stop(now + 0.3);
       }
 
+      // 100% 腹鳴爆表：卡通蒸氣火箭一飛沖天音效
       playRocketWC() {
         if (!this.enabled) return;
         this.init();
@@ -446,42 +475,53 @@
 
     const sfx = new BattleSoundFX();
 
+    /**
+     * ============================================================================
+     * 2. 遊戲核心狀態與平衡參數設計
+     *    - 基礎時間 45.0 秒，延時沙漏最多觸發 3 次（最多延長 15 秒），確保節奏緊湊能順利結束
+     *    - 動態生成權重：依據當前狀態調整道具出現機率，保證爽度與高分上限
+     * ============================================================================
+     */
     const canvas = document.getElementById('game-canvas');
     const ctx = canvas.getContext('2d');
     const BEST_SCORE_KEY = 'huajian_miaomiao_yijian_best_v1';
 
     const state = {
-      mode: 'START',
+      mode: 'START', // 'START' | 'PLAYING' | 'GAMEOVER'
       width: window.innerWidth,
       height: window.innerHeight,
       dpr: 1,
 
-      score: 0,
+      score: 0, // 總飲奶量 (ml)
       bestScore: parseInt(localStorage.getItem(BEST_SCORE_KEY) || '0', 10),
       timeLeft: 45.0,
-      rumble: 0,
+      rumble: 0, // 腹鳴壓力值 0 ~ 100
 
       isDrinking: false,
       activeKeys: new Set(),
 
+      // 統計數據
       reachedDangerZone: false,
       clutchCount: 0,
       wcCount: 0,
       yijianCount: 0,
       hourglassUsedCount: 0,
-      maxHourglassPerGame: 3,
+      maxHourglassPerGame: 3, // 單局最多觸發 3 次時間延時，避免無限拖延
 
-      yijianTimer: 0,
-      ironStomachTimer: 0,
-      rocketTimer: 0,
+      // 增益計時器
+      yijianTimer: 0,      // 一劍來灌奶持續時間 (5.0秒)
+      ironStomachTimer: 0, // 乳糖酶鐵胃護盾時間 (3.0秒)
+      rocketTimer: 0,      // 火箭衝廁動畫時間 (1.35秒)
       rocketStartY: 0,
 
       gulpSoundTimer: 0,
       elapsed: 0,
 
+      // 場上道具氣泡
       items: [],
       itemSpawnTimer: 1.2,
 
+      // 特效粒子
       particles: [],
       steamPuffs: [],
       floatingTexts: [],
@@ -491,6 +531,7 @@
       shakeIntensity: 0
     };
 
+    // DOM 元素綁定
     const hudStatsPanel = document.getElementById('hud-stats-panel');
     const hudBest = document.getElementById('hud-best');
     const hudScore = document.getElementById('hud-score');
@@ -546,6 +587,11 @@
 
     window.addEventListener('resize', resizeCanvas);
 
+    /**
+     * ============================================================================
+     * 3. 互動控制：按住狂飲、空白鍵、點擊空中道具氣泡
+     * ============================================================================
+     */
     function setDrinking(active) {
       if (state.mode !== 'PLAYING' || state.rocketTimer > 0) {
         state.isDrinking = false;
@@ -562,6 +608,7 @@
       }
     }
 
+    // 狂飲大按鈕觸控/滑鼠按住
     drinkBtn.addEventListener('pointerdown', (e) => {
       e.preventDefault();
       e.stopPropagation();
@@ -577,6 +624,7 @@
       setDrinking(false);
     });
 
+    // 鍵盤空白鍵按住喝奶
     window.addEventListener('keydown', (e) => {
       if (state.mode !== 'PLAYING') return;
       if (e.code === 'Space' || e.code === 'ArrowDown') {
@@ -595,6 +643,7 @@
       }
     });
 
+    // 點擊畫布上的道具氣泡 (具備大點擊判定區) 或直接按住畫布空白處喝奶
     canvas.addEventListener('pointerdown', (e) => {
       if (state.mode !== 'PLAYING') return;
       sfx.init();
@@ -602,6 +651,7 @@
       const px = e.clientX - rect.left;
       const py = e.clientY - rect.top;
 
+      // 優先檢查是否點中空中飄過的道具氣泡
       for (let i = state.items.length - 1; i >= 0; i--) {
         const item = state.items[i];
         const dist = Math.hypot(px - item.x, py - item.y);
@@ -614,6 +664,7 @@
         }
       }
 
+      // 若沒點到道具，按住畫布空白處同樣可以讓喵喵喝奶！
       e.preventDefault();
       setDrinking(true);
     });
@@ -624,6 +675,11 @@
       soundBtn.textContent = sfx.enabled ? '🔊' : '🔇';
     });
 
+    /**
+     * ============================================================================
+     * 4. 平衡道具生成權重與 5 大道具效果
+     * ============================================================================
+     */
     function spawnBalancedItem() {
       const marginX = Math.max(64, state.width * 0.14);
       const x = marginX + Math.random() * (state.width - marginX * 2);
@@ -631,18 +687,20 @@
       const maxY = Math.max(minY + 60, state.height * 0.56);
       const y = minY + Math.random() * (maxY - minY);
 
+      // 避免與現有道具重疊
       for (const existing of state.items) {
         if (Math.hypot(x - existing.x, y - existing.y) < 75) {
           return;
         }
       }
 
+      // 動態計算各道具權重（確保節奏平衡、高分爽快且不會無限拖延）
       const weights = [
-        { type: 'yijian', w: state.yijianTimer > 0 ? 6 : 22 },
-        { type: 'taro',   w: 28 },
-        { type: 'pill',   w: state.rumble >= 60 ? 32 : 20 },
-        { type: 'clock',  w: state.hourglassUsedCount < state.maxHourglassPerGame ? 18 : 0 },
-        { type: 'chili',  w: 14 }
+        { type: 'yijian', w: state.yijianTimer > 0 ? 6 : 22 }, // 一劍來灌奶
+        { type: 'taro',   w: 28 },                             // 香濃芋頭塊 (+450ml)
+        { type: 'pill',   w: state.rumble >= 60 ? 32 : 20 },   // 乳糖酶小藥丸
+        { type: 'clock',  w: state.hourglassUsedCount < state.maxHourglassPerGame ? 18 : 0 }, // 時間延時沙漏 (最多3次)
+        { type: 'chili',  w: 14 }                              // 地獄辣起司陷阱
       ];
 
       const totalWeight = weights.reduce((sum, item) => sum + item.w, 0);
@@ -673,6 +731,7 @@
       const cy = state.height * 0.64;
 
       if (item.type === 'yijian') {
+        // ⚔️ 一劍來灌奶：召喚虛空魔導「一劍呦」登場 5 秒，飲奶速度 3x 且壓力上升減半！
         state.yijianTimer = 5.0;
         state.yijianCount += 1;
         sfx.playVoidSummon();
@@ -681,6 +740,7 @@
         spawnParticles(cx - 75, cy - 20, '#c084fc', 22);
         spawnFloatingText(item.x, item.y - 16, '⚔️ 一劍來灌奶！速度 3x & 壓力減半！', '#7e22ce');
       } else if (item.type === 'taro') {
+        // 🍠 香濃芋頭塊：加進鮮奶變成極品芋頭牛奶，瞬間 +450 ml 並舒緩 10% 壓力
         state.score += 450;
         state.rumble = Math.max(0, state.rumble - 10);
         sfx.playPowerup(true);
@@ -688,6 +748,7 @@
         spawnParticles(cx, cy - 25, '#e0e7ff', 12);
         spawnFloatingText(item.x, item.y - 16, '🍠 香濃芋頭牛奶！+450 ml & 壓力-10%', '#4338ca');
       } else if (item.type === 'clock') {
+        // ⏳ 時間延時沙漏：+5.0 秒（單局上限 3 次）
         if (state.hourglassUsedCount < state.maxHourglassPerGame) {
           state.hourglassUsedCount += 1;
           state.timeLeft += 5.0;
@@ -697,12 +758,14 @@
           spawnFloatingText(item.x, item.y - 16, `⏳ 時間延長 +5.0s！（剩餘 ${remain} 次）`, '#b45309');
         }
       } else if (item.type === 'pill') {
+        // 💊 乳糖酶小藥丸：立即降壓 35% 並開啟 3 秒「鐵胃護盾」
         state.rumble = Math.max(0, state.rumble - 35);
         state.ironStomachTimer = 3.0;
         sfx.playPowerup(false);
         spawnParticles(item.x, item.y, '#38bdf8', 18);
         spawnFloatingText(item.x, item.y - 16, '💊 乳糖酶藥丸！壓力-35% & 3秒鐵胃！', '#0284c7');
       } else if (item.type === 'chili') {
+        // 🌶️ 地獄辣起司陷阱：壓力 +25% 並扣 100 ml
         state.rumble = Math.min(100, state.rumble + 25);
         state.score = Math.max(0, state.score - 100);
         sfx.playTrap();
@@ -715,6 +778,7 @@
       }
     }
 
+    // 觸發 100% 腹鳴爆表：喵喵化身卡通蒸氣小火箭飛向遠方 WC 廁所！
     function triggerRocketToWC() {
       state.rumble = 100;
       state.isDrinking = false;
@@ -780,6 +844,11 @@
       state.shakeTimer = duration;
     }
 
+    /**
+     * ============================================================================
+     * 5. 遊戲流程控制 (開始、主更新迴圈、結算面板)
+     * ============================================================================
+     */
     function startGame() {
       sfx.init();
       state.mode = 'PLAYING';
@@ -816,6 +885,7 @@
       bottomControls.classList.remove('hidden');
       bottomControls.classList.add('flex');
 
+      // 開局先刷出一顆道具氣泡讓玩家立刻有互動目標
       spawnBalancedItem();
       syncHUD();
     }
@@ -836,6 +906,7 @@
         hudBest.textContent = `${finalScore} ml`;
       }
 
+      // 依據成績頒發搞笑花間公會稱號
       let title = '乳糖不耐見習沙包 🥛';
       let desc = '喝得還不夠過癮！記得多點擊空中道具並挑戰 85% 紅區極限忍耐！';
       if (finalScore >= 7500) {
@@ -979,7 +1050,8 @@
     const closeStartLbBtn = document.getElementById('close-start-lb-btn');
     const closeStartLbBottomBtn = document.getElementById('close-start-lb-bottom-btn');
 
-    async function openMeowMilkStartLeaderboard() {
+    window.openMeowMilkStartLeaderboard = async function openMeowMilkStartLeaderboard(e) {
+      if (e && e.stopPropagation) e.stopPropagation();
       const lb = window.HUAJIAN_LEADERBOARD;
       const statusEl = document.getElementById('start-lb-status');
       const listEl = document.getElementById('start-lb-list');
@@ -1008,24 +1080,12 @@
       }
     }
 
-    function closeMeowMilkStartLeaderboard() {
+    window.closeMeowMilkStartLeaderboard = function closeMeowMilkStartLeaderboard() {
       startLbModal.classList.add('hidden');
       startLbModal.classList.remove('flex');
     }
 
-    const topLbBtn = document.getElementById('top-lb-btn');
-    if (topLbBtn) {
-      topLbBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        openMeowMilkStartLeaderboard();
-      });
-    }
-    if (openStartLbBtn) {
-      openStartLbBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        openMeowMilkStartLeaderboard();
-      });
-    }
+    // 排行榜按鈕已直接綁定 onclick="window.openMeowMilkStartLeaderboard(event)"
     if (closeStartLbBtn) closeStartLbBtn.addEventListener('click', closeMeowMilkStartLeaderboard);
     if (closeStartLbBottomBtn) closeStartLbBottomBtn.addEventListener('click', closeMeowMilkStartLeaderboard);
     if (startLbModal) {
@@ -1044,6 +1104,7 @@
       startGame();
     });
 
+    // 複製花間公會戰報
     shareBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       const finalScore = Math.floor(state.score);
@@ -1083,6 +1144,7 @@
 
       if (state.mode !== 'PLAYING') return;
 
+      // 倒數計時
       state.timeLeft -= dt;
       if (state.timeLeft <= 0) {
         state.timeLeft = 0;
@@ -1095,6 +1157,7 @@
       if (state.yijianTimer > 0) state.yijianTimer = Math.max(0, state.yijianTimer - dt);
       if (state.ironStomachTimer > 0) state.ironStomachTimer = Math.max(0, state.ironStomachTimer - dt);
 
+      // 處理火箭衝廁動畫
       if (state.rocketTimer > 0) {
         state.rocketTimer -= dt;
         if (Math.random() < 0.75) {
@@ -1118,6 +1181,8 @@
       } else {
         const hasYijian = state.yijianTimer > 0;
         const hasIron = state.ironStomachTimer > 0;
+
+        // 當「一劍來灌奶」啟動時，即使玩家沒按住，一劍也會自動用魔法灌奶（按住更全力狂灌！）
         const activeDrinking = state.isDrinking || hasYijian;
 
         if (activeDrinking) {
@@ -1126,6 +1191,7 @@
           state.score += baseRate * mult * dt;
 
           if (!hasIron) {
+            // 一劍在場時，腹鳴壓力上升減半！
             const rawGain = 25 + (state.rumble / 100) * 14;
             const actualGain = hasYijian ? rawGain * 0.5 : rawGain;
             state.rumble = Math.min(100, state.rumble + actualGain * dt);
@@ -1151,9 +1217,11 @@
             triggerRocketToWC();
           }
         } else {
+          // 放開喘氣消化
           const reliefRate = hasIron ? 38 : 24;
           state.rumble = Math.max(0, state.rumble - reliefRate * dt);
 
+          // 85%~99% 紅區及時放開並冷卻回 50% 以下 -> 極限忍耐獎勵 +300 ml
           if (state.reachedDangerZone && state.rumble <= 50) {
             state.reachedDangerZone = false;
             state.clutchCount += 1;
@@ -1165,6 +1233,7 @@
         }
       }
 
+      // 道具生成計時器
       state.itemSpawnTimer -= dt;
       if (state.itemSpawnTimer <= 0) {
         if (state.items.length < 3) {
@@ -1173,6 +1242,7 @@
         state.itemSpawnTimer = 1.7 + Math.random() * 0.9;
       }
 
+      // 更新道具氣泡漂浮與生命週期
       for (let i = state.items.length - 1; i >= 0; i--) {
         const it = state.items[i];
         it.life -= dt;
@@ -1183,4 +1253,893 @@
         }
       }
 
-      for (
+      // 更新特效粒子與飄字
+      for (let i = state.steamPuffs.length - 1; i >= 0; i--) {
+        const sp = state.steamPuffs[i];
+        sp.x += sp.vx * dt;
+        sp.y += sp.vy * dt;
+        sp.radius += 14 * dt;
+        sp.life -= dt;
+        if (sp.life <= 0) state.steamPuffs.splice(i, 1);
+      }
+
+      for (let i = state.particles.length - 1; i >= 0; i--) {
+        const pt = state.particles[i];
+        pt.x += pt.vx * dt;
+        pt.y += pt.vy * dt;
+        pt.life -= dt;
+        if (pt.life <= 0) state.particles.splice(i, 1);
+      }
+
+      for (let i = state.floatingTexts.length - 1; i >= 0; i--) {
+        const ft = state.floatingTexts[i];
+        ft.y -= 44 * dt;
+        ft.life -= dt;
+        if (ft.life <= 0) state.floatingTexts.splice(i, 1);
+      }
+
+      syncHUD();
+    }
+
+    function syncHUD() {
+      hudScore.innerHTML = `${Math.floor(state.score)} <span class="text-[11px]">ml</span>`;
+      hudTime.textContent = `${state.timeLeft.toFixed(1)}s`;
+      hudClutch.textContent = `${state.clutchCount} 次`;
+
+      const hasYijian = state.yijianTimer > 0;
+      const hasIron = state.ironStomachTimer > 0;
+
+      if (hasYijian) {
+        hudMult.textContent = '3.0x';
+        hudMultBox.classList.remove('bg-purple-50', 'border-purple-200');
+        hudMultBox.classList.add('bg-purple-600', 'border-purple-300', 'text-white');
+        hudMult.classList.remove('text-purple-900');
+        hudMult.classList.add('text-yellow-300');
+
+        badgeYijian.classList.remove('hidden');
+        badgeYijian.textContent = `⚔️ 一劍灌奶 3x (${state.yijianTimer.toFixed(1)}s)`;
+
+        drinkBtn.classList.add('void-mode');
+        drinkBtnIcon.textContent = '⚔️';
+        drinkBtnTitle.textContent = `一劍法陣狂灌中 3x！`;
+        drinkBtnSub.textContent = '虛空魔導光束灌奶（壓力上升減半）';
+      } else {
+        hudMult.textContent = '1.0x';
+        hudMultBox.classList.add('bg-purple-50', 'border-purple-200');
+        hudMultBox.classList.remove('bg-purple-600', 'border-purple-300', 'text-white');
+        hudMult.classList.add('text-purple-900');
+        hudMult.classList.remove('text-yellow-300');
+
+        badgeYijian.classList.add('hidden');
+        drinkBtn.classList.remove('void-mode');
+        drinkBtnIcon.textContent = '🥛';
+        if (state.rocketTimer <= 0) {
+          drinkBtnTitle.textContent = state.isDrinking ? '咕嘟咕嘟狂飲中...！' : '按住狂飲牛奶';
+          drinkBtnSub.textContent = '放開喘氣消化（支援按住空白鍵）';
+        }
+      }
+
+      if (hasIron) {
+        badgeIron.classList.remove('hidden');
+        badgeIron.textContent = `💊 鐵胃護盾 (${state.ironStomachTimer.toFixed(1)}s)`;
+      } else {
+        badgeIron.classList.add('hidden');
+      }
+
+      if (state.timeLeft <= 8.0 && state.mode === 'PLAYING') {
+        hudTimeBox.classList.remove('bg-amber-50', 'border-amber-200');
+        hudTimeBox.classList.add('bg-rose-100', 'border-rose-400');
+      } else {
+        hudTimeBox.classList.add('bg-amber-50', 'border-amber-200');
+        hudTimeBox.classList.remove('bg-rose-100', 'border-rose-400');
+      }
+
+      const pct = Math.round(state.rumble);
+      rumblePct.textContent = `${pct}%`;
+      rumbleBar.style.width = `${pct}%`;
+
+      if (state.rocketTimer > 0) {
+        rumbleLabel.innerHTML = `<span class="text-rose-600">🚀 噗噗蒸氣火箭衝向 WC 廁所！</span>`;
+        rumbleWrap.classList.add('danger-pulse');
+      } else if (pct >= 85) {
+        rumbleLabel.innerHTML = `<span class="text-rose-600">😱 危險紅區！快放開喘氣賺 +300ml！</span>`;
+        rumbleWrap.classList.add('danger-pulse');
+      } else if (pct >= 55) {
+        rumbleLabel.innerHTML = `<span class="text-amber-600">💦 肚子咕嚕嚕作響中...</span>`;
+        rumbleWrap.classList.remove('danger-pulse');
+      } else {
+        rumbleLabel.innerHTML = `<span class="text-slate-700">🐱 喵喵腸胃平穩中</span>`;
+        rumbleWrap.classList.remove('danger-pulse');
+      }
+    }
+
+    /**
+     * ============================================================================
+     * 6. HTML5 Canvas 畫面與雙角色（「喵喵」與「一劍呦」）精細繪製
+     * ============================================================================
+     */
+    function drawBackground() {
+      const w = state.width;
+      const h = state.height;
+      const hasYijian = state.yijianTimer > 0;
+
+      // 藍天漸層 (一劍登場時天空轉為夢幻星光紫霞)
+      const skyGrad = ctx.createLinearGradient(0, 0, 0, h * 0.6);
+      if (hasYijian) {
+        skyGrad.addColorStop(0, '#6366f1');
+        skyGrad.addColorStop(0.55, '#c084fc');
+        skyGrad.addColorStop(1, '#bae6fd');
+      } else {
+        skyGrad.addColorStop(0, '#60a5fa');
+        skyGrad.addColorStop(1, '#bae6fd');
+      }
+      ctx.fillStyle = skyGrad;
+      ctx.fillRect(0, 0, w, h);
+
+      // 蓬鬆白雲
+      state.clouds.forEach(c => {
+        ctx.save();
+        ctx.translate(c.x, c.y);
+        ctx.scale(c.scale, c.scale);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+        ctx.beginPath();
+        ctx.arc(0, 0, 30, 0, Math.PI * 2);
+        ctx.arc(28, -10, 36, 0, Math.PI * 2);
+        ctx.arc(60, 0, 28, 0, Math.PI * 2);
+        ctx.arc(-24, 6, 22, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      });
+
+      // 遠山與草原地平線
+      const horizonY = h * 0.56;
+      ctx.fillStyle = '#a3d468';
+      ctx.beginPath();
+      ctx.moveTo(0, h);
+      ctx.lineTo(0, horizonY);
+      ctx.quadraticCurveTo(w * 0.3, horizonY - 34, w * 0.65, horizonY - 8);
+      ctx.quadraticCurveTo(w * 0.85, horizonY + 8, w, horizonY - 22);
+      ctx.lineTo(w, h);
+      ctx.closePath();
+      ctx.fill();
+
+      const grassGrad = ctx.createLinearGradient(0, horizonY, 0, h);
+      grassGrad.addColorStop(0, '#b5e063');
+      grassGrad.addColorStop(1, '#84cc16');
+      ctx.fillStyle = grassGrad;
+      ctx.fillRect(0, horizonY + 12, w, h - horizonY);
+
+      // 右後方「WC 廁所小屋」路標
+      const wcX = Math.min(w - 52, w * 0.86);
+      const wcY = horizonY + 14;
+      ctx.save();
+      ctx.translate(wcX, wcY);
+      ctx.fillStyle = '#fef3c7';
+      ctx.strokeStyle = '#78350f';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.roundRect(-24, -44, 48, 46, 8);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#f43f5e';
+      ctx.beginPath();
+      ctx.moveTo(-30, -42);
+      ctx.lineTo(0, -64);
+      ctx.lineTo(30, -42);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#0284c7';
+      ctx.font = '900 13px "Noto Sans TC", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('WC', 0, -20);
+      ctx.restore();
+    }
+
+    // 繪製主角「喵喵」（界域沙包團欺：頭頂香蕉皮、灰狼耳、水手服、大咸魚武器）
+    function drawMiaomiao() {
+      const hasYijian = state.yijianTimer > 0;
+      // 當一劍登場時，喵喵稍微往右側讓出雙人站位空間
+      const cx = hasYijian ? state.width * 0.57 : state.width * 0.5;
+      let cy = state.height * 0.65;
+      const pct = state.rumble;
+      const isRocket = state.rocketTimer > 0;
+      const isIron = state.ironStomachTimer > 0;
+      const activeDrink = state.isDrinking || hasYijian;
+
+      let scaleX = 1;
+      let scaleY = 1;
+      let rot = 0;
+
+      if (isRocket) {
+        const progress = 1 - state.rocketTimer / 1.35;
+        cy = state.rocketStartY - Math.pow(progress, 1.5) * (state.height * 0.95);
+        scaleX = 0.84;
+        scaleY = 1.24;
+        rot = Math.sin(progress * 28) * 0.12;
+      } else if (activeDrink) {
+        const speed = hasYijian ? 34 : 24;
+        cy += Math.sin(state.elapsed * speed) * 3.5;
+        scaleX = 1 + Math.sin(state.elapsed * speed) * 0.035;
+        scaleY = 1 - Math.sin(state.elapsed * speed) * 0.035;
+      } else if (pct >= 75) {
+        rot = Math.sin(state.elapsed * 45) * 0.06;
+      }
+
+      // 腳下陰影
+      if (!isRocket) {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.18)';
+        ctx.beginPath();
+        ctx.ellipse(cx, state.height * 0.65 + 72, 56, 13, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // 身旁斜靠著的招牌「大咸魚武器」
+      if (!isRocket) {
+        ctx.save();
+        ctx.translate(cx + 54, state.height * 0.65 + 46);
+        ctx.rotate(-0.42);
+        ctx.strokeStyle = '#6d4c3d';
+        ctx.lineWidth = 8;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(46, 0);
+        ctx.lineTo(-14, 0);
+        ctx.stroke();
+
+        ctx.fillStyle = '#ffffff';
+        ctx.strokeStyle = '#1f2937';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.ellipse(-36, 0, 34, 14, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = '#57606f';
+        ctx.beginPath();
+        ctx.ellipse(-36, -4, 32, 8.5, 0, Math.PI, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(-58, -3, 3.6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = '#111827';
+        ctx.beginPath();
+        ctx.arc(-59, -3, 1.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(rot);
+      ctx.scale(scaleX, scaleY);
+
+      // 鐵胃無敵金光護盾
+      if (isIron && !isRocket) {
+        ctx.save();
+        ctx.strokeStyle = '#facc15';
+        ctx.lineWidth = 4;
+        ctx.fillStyle = 'rgba(253, 224, 71, 0.2)';
+        ctx.beginPath();
+        ctx.arc(0, 0, 84 + Math.sin(state.elapsed * 12) * 4, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // 1. 雙腿 (75%以上紅區夾緊雙腿忍耐)
+      ctx.strokeStyle = '#1f2937';
+      ctx.lineWidth = 3.2;
+      ctx.fillStyle = '#ffe8d6';
+      if (pct >= 75 || isRocket) {
+        ctx.beginPath();
+        ctx.roundRect(-16, 40, 12, 30, 5);
+        ctx.roundRect(4, 40, 12, 30, 5);
+        ctx.fill();
+        ctx.stroke();
+      } else {
+        ctx.beginPath();
+        ctx.roundRect(-20, 40, 12, 30, 5);
+        ctx.roundRect(8, 40, 12, 30, 5);
+        ctx.fill();
+        ctx.stroke();
+      }
+
+      // 深藍短褲
+      ctx.fillStyle = '#334155';
+      ctx.beginPath();
+      ctx.roundRect(-24, 26, 48, 19, 6);
+      ctx.fill();
+      ctx.stroke();
+
+      // 2. 白色水手服上衣 (隨腹鳴值圓鼓鼓膨脹)
+      const bellyBulge = (pct / 100) * 14;
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.moveTo(-24 - bellyBulge * 0.4, -4);
+      ctx.lineTo(24 + bellyBulge * 0.4, -4);
+      ctx.lineTo(30 + bellyBulge, 31);
+      ctx.lineTo(-30 - bellyBulge, 31);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      // 藍色水手領結
+      ctx.fillStyle = '#3b82f6';
+      ctx.beginPath();
+      ctx.moveTo(-20, -4);
+      ctx.lineTo(0, 14);
+      ctx.lineTo(20, -4);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#60a5fa';
+      ctx.beginPath();
+      ctx.moveTo(0, 8);
+      ctx.lineTo(-7, 22);
+      ctx.lineTo(0, 26);
+      ctx.lineTo(7, 22);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      // 3. 頭部、灰狼耳與頭頂香蕉皮
+      ctx.fillStyle = '#6b7280';
+      ctx.beginPath();
+      ctx.arc(0, -34, 41, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#9ca3af';
+      ctx.beginPath();
+      ctx.moveTo(-33, -52);
+      ctx.lineTo(-39, -88);
+      ctx.lineTo(-12, -65);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(33, -52);
+      ctx.lineTo(39, -88);
+      ctx.lineTo(12, -65);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      // 臉蛋顏色隨壓力變化
+      if (isRocket || pct >= 88) {
+        ctx.fillStyle = '#fecdd3';
+      } else if (pct >= 65) {
+        ctx.fillStyle = '#e0f2fe';
+      } else {
+        ctx.fillStyle = '#ffe8d6';
+      }
+      ctx.beginPath();
+      ctx.arc(0, -32, 35, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      // 喝奶時鼓鼓的倉鼠臉頰
+      if (activeDrink) {
+        ctx.fillStyle = '#fda4af';
+        ctx.beginPath();
+        ctx.ellipse(-23, -22, 10.5, 7.5, 0, 0, Math.PI * 2);
+        ctx.ellipse(23, -22, 10.5, 7.5, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // 灰髮瀏海
+      ctx.fillStyle = '#9ca3af';
+      ctx.beginPath();
+      ctx.arc(0, -36, 36, Math.PI, Math.PI * 2);
+      ctx.lineTo(34, -28);
+      ctx.lineTo(22, -41);
+      ctx.lineTo(10, -28);
+      ctx.lineTo(0, -43);
+      ctx.lineTo(-10, -28);
+      ctx.lineTo(-22, -41);
+      ctx.lineTo(-34, -28);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      // 頭頂黃色剝皮香蕉
+      ctx.save();
+      ctx.translate(0, -70);
+      ctx.fillStyle = '#78350f';
+      ctx.fillRect(-4, -10, 8, 7);
+      ctx.fillStyle = '#facc15';
+      ctx.beginPath();
+      ctx.moveTo(0, -4);
+      ctx.quadraticCurveTo(-23, 0, -25, 15);
+      ctx.quadraticCurveTo(-12, 13, -4, 4);
+      ctx.moveTo(0, -4);
+      ctx.quadraticCurveTo(23, 0, 25, 15);
+      ctx.quadraticCurveTo(12, 13, 4, 4);
+      ctx.moveTo(0, -4);
+      ctx.quadraticCurveTo(-9, 10, -7, 19);
+      ctx.quadraticCurveTo(0, 15, 0, 4);
+      ctx.moveTo(0, -4);
+      ctx.quadraticCurveTo(9, 10, 7, 19);
+      ctx.quadraticCurveTo(0, 15, 0, 4);
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+
+      // 4. 表情系統
+      if (isRocket) {
+        ctx.strokeStyle = '#1f2937';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(-21, -36); ctx.lineTo(-10, -24);
+        ctx.moveTo(-10, -36); ctx.lineTo(-21, -24);
+        ctx.moveTo(10, -36); ctx.lineTo(21, -24);
+        ctx.moveTo(21, -36); ctx.lineTo(10, -24);
+        ctx.stroke();
+      } else if (pct >= 80) {
+        // 危險紅區 ＞﹏＜ 忍耐表情 + 冷汗
+        ctx.strokeStyle = '#1f2937';
+        ctx.lineWidth = 3.2;
+        ctx.beginPath();
+        ctx.moveTo(-21, -36); ctx.lineTo(-10, -30); ctx.lineTo(-21, -24);
+        ctx.moveTo(21, -36); ctx.lineTo(10, -30); ctx.lineTo(21, -24);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(-10, -15);
+        ctx.lineTo(-5, -18);
+        ctx.lineTo(0, -15);
+        ctx.lineTo(5, -18);
+        ctx.lineTo(10, -15);
+        ctx.stroke();
+
+        ctx.fillStyle = '#38bdf8';
+        ctx.beginPath();
+        ctx.arc(31, -42 + (state.elapsed * 20) % 10, 4.5, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (activeDrink) {
+        // 幸福狂飲 ＞ω＜
+        ctx.strokeStyle = '#1f2937';
+        ctx.lineWidth = 3.2;
+        ctx.beginPath();
+        ctx.moveTo(-21, -36); ctx.lineTo(-10, -30); ctx.lineTo(-21, -24);
+        ctx.moveTo(21, -36); ctx.lineTo(10, -30); ctx.lineTo(21, -24);
+        ctx.stroke();
+      } else {
+        // 驚恐圓圈白眼
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(-14, -30, 8, 0, Math.PI * 2);
+        ctx.arc(14, -30, 8, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = '#1f2937';
+        ctx.beginPath();
+        ctx.arc(-13, -30, 2.1, 0, Math.PI * 2);
+        ctx.arc(13, -30, 2.1, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#fda4af';
+        ctx.beginPath();
+        ctx.arc(0, -15, 6, 0, Math.PI);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+      }
+
+      // 5. 手持大瓶鮮奶
+      if (!isRocket) {
+        if (activeDrink) {
+          ctx.save();
+          ctx.translate(-14, -12);
+          ctx.rotate(0.62);
+          ctx.fillStyle = '#ffffff';
+          ctx.strokeStyle = '#0284c7';
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.roundRect(-13, -22, 26, 42, 5);
+          ctx.fill();
+          ctx.stroke();
+          ctx.fillStyle = '#38bdf8';
+          ctx.fillRect(-11, -7, 22, 15);
+          ctx.restore();
+        } else {
+          ctx.save();
+          ctx.translate(-32, 14);
+          ctx.rotate(-0.2);
+          ctx.fillStyle = '#ffffff';
+          ctx.strokeStyle = '#0284c7';
+          ctx.lineWidth = 2.8;
+          ctx.beginPath();
+          ctx.roundRect(-11, -18, 22, 34, 4);
+          ctx.fill();
+          ctx.stroke();
+          ctx.fillStyle = '#38bdf8';
+          ctx.fillRect(-9, -6, 18, 12);
+          ctx.restore();
+        }
+      }
+
+      // 角色名牌標籤
+      if (!isRocket) {
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.78)';
+        ctx.beginPath();
+        ctx.roundRect(-34, 78, 68, 20, 10);
+        ctx.fill();
+        ctx.fillStyle = '#fde047';
+        ctx.font = '900 11px "Noto Sans TC", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('喵喵 (團欺)', 0, 92);
+      }
+
+      ctx.restore();
+    }
+
+    /**
+     * 繪製友情助陣「一劍呦」（虛空魔導，ID: 600081202783）：
+     * - 棕色微捲髮、金色光環與羽翼頭飾
+     * - 背後展開白羽天使翼、棕色外套
+     * - 身旁漂浮紫色小飛書、手持星光紫藍法杖並施放虛空灌奶光束！
+     */
+    function drawYijianHelper() {
+      if (state.yijianTimer <= 0) return;
+
+      const targetX = state.width * 0.57;
+      const targetY = state.height * 0.65 - 12;
+      const yx = Math.max(76, targetX - 115);
+      const yy = targetY + Math.sin(state.elapsed * 6) * 8;
+
+      ctx.save();
+
+      // 1. 腳下旋轉的「虛空魔導紫色魔法陣」
+      ctx.save();
+      ctx.translate(yx, yy + 68);
+      ctx.scale(1, 0.34);
+      ctx.rotate(state.elapsed * 3.5);
+      ctx.strokeStyle = '#a855f7';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.arc(0, 0, 62, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      for (let i = 0; i < 6; i++) {
+        const a = (i / 6) * Math.PI * 2;
+        const nx = Math.cos(a) * 56;
+        const ny = Math.sin(a) * 56;
+        if (i === 0) ctx.moveTo(nx, ny);
+        else ctx.lineTo(nx, ny);
+      }
+      ctx.closePath();
+      ctx.stroke();
+      ctx.restore();
+
+      // 2. 從星光法杖射向喵喵嘴邊的「虛空魔導灌奶光束 & 飛舞鮮奶瓶」！
+      const staffTipX = yx + 48;
+      const staffTipY = yy - 16;
+      const mouthX = targetX - 16;
+      const mouthY = targetY - 16;
+
+      ctx.save();
+      const beamGrad = ctx.createLinearGradient(staffTipX, staffTipY, mouthX, mouthY);
+      beamGrad.addColorStop(0, 'rgba(168, 85, 247, 0.85)');
+      beamGrad.addColorStop(0.5, 'rgba(56, 189, 248, 0.75)');
+      beamGrad.addColorStop(1, 'rgba(255, 255, 255, 0.95)');
+
+      ctx.strokeStyle = beamGrad;
+      ctx.lineWidth = 14 + Math.sin(state.elapsed * 30) * 4;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(staffTipX, staffTipY);
+      ctx.lineTo(mouthX, mouthY);
+      ctx.stroke();
+
+      // 光束中高速飛向喵喵的魔法鮮奶瓶
+      for (let m = 0; m < 3; m++) {
+        const t = ((state.elapsed * 2.6 + m * 0.33) % 1);
+        const mx = staffTipX + (mouthX - staffTipX) * t;
+        const my = staffTipY + (mouthY - staffTipY) * t - Math.sin(t * Math.PI) * 18;
+        ctx.save();
+        ctx.translate(mx, my);
+        ctx.rotate(t * Math.PI * 2);
+        ctx.fillStyle = '#ffffff';
+        ctx.strokeStyle = '#7e22ce';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.roundRect(-7, -11, 14, 22, 3);
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+      }
+      ctx.restore();
+
+      // 3. 繪製「一劍呦」角色本體
+      ctx.translate(yx, yy);
+      ctx.strokeStyle = '#1f2937';
+      ctx.lineWidth = 3;
+
+      // 背後展開的白羽天使翼 (帶紫金翼飾)
+      const wingFlap = Math.sin(state.elapsed * 10) * 0.08;
+      ctx.save();
+      ctx.rotate(wingFlap);
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.moveTo(-12, -6);
+      ctx.quadraticCurveTo(-56, -34, -52, 8);
+      ctx.quadraticCurveTo(-36, 26, -12, 14);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(12, -6);
+      ctx.quadraticCurveTo(56, -34, 52, 8);
+      ctx.quadraticCurveTo(36, 26, 12, 14);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+
+      // 雙腿與深色長褲
+      ctx.fillStyle = '#1e293b';
+      ctx.beginPath();
+      ctx.roundRect(-16, 32, 11, 28, 4);
+      ctx.roundRect(5, 32, 11, 28, 4);
+      ctx.fill();
+      ctx.stroke();
+
+      // 棕色外套與黑色內搭
+      ctx.fillStyle = '#5c4033';
+      ctx.beginPath();
+      ctx.roundRect(-22, -4, 44, 38, 7);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#1f2937';
+      ctx.fillRect(-8, -2, 16, 34);
+
+      // 金色齒輪光環頭飾
+      ctx.save();
+      ctx.translate(0, -56);
+      ctx.strokeStyle = '#d97706';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.arc(0, 12, 26, Math.PI, Math.PI * 2);
+      ctx.stroke();
+      // 頭側小羽翼裝飾
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.moveTo(-24, 14); ctx.lineTo(-38, 2); ctx.lineTo(-22, 22); ctx.closePath();
+      ctx.moveTo(24, 14); ctx.lineTo(38, 2); ctx.lineTo(22, 22); ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+
+      // 臉蛋與自信微笑
+      ctx.fillStyle = '#ffe8d6';
+      ctx.beginPath();
+      ctx.arc(0, -30, 32, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      // 棕色微捲短髮
+      ctx.fillStyle = '#78350f';
+      ctx.beginPath();
+      ctx.arc(0, -34, 34, Math.PI * 0.92, Math.PI * 2.08);
+      ctx.lineTo(30, -24);
+      ctx.lineTo(18, -38);
+      ctx.lineTo(6, -24);
+      ctx.lineTo(-6, -38);
+      ctx.lineTo(-18, -24);
+      ctx.lineTo(-30, -24);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      // 帥氣紅棕色雙眼與得意微笑
+      ctx.fillStyle = '#991b1b';
+      ctx.beginPath();
+      ctx.ellipse(-12, -28, 4.5, 5.5, 0, 0, Math.PI * 2);
+      ctx.ellipse(12, -28, 4.5, 5.5, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.strokeStyle = '#1f2937';
+      ctx.lineWidth = 2.6;
+      ctx.beginPath();
+      ctx.arc(2, -16, 6, 0.15 * Math.PI, 0.85 * Math.PI);
+      ctx.stroke();
+
+      // 手持星光紫藍魔導法杖
+      ctx.save();
+      ctx.translate(32, 0);
+      ctx.rotate(0.45);
+      ctx.strokeStyle = '#312e81';
+      ctx.lineWidth = 6;
+      ctx.beginPath();
+      ctx.moveTo(-18, 24);
+      ctx.lineTo(22, -24);
+      ctx.stroke();
+
+      // 法杖頂端星光水晶
+      ctx.fillStyle = '#c084fc';
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.arc(24, -26, 12, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+
+      // 身旁漂浮的紫色羽翼小飛書
+      ctx.save();
+      ctx.translate(42, -52 + Math.sin(state.elapsed * 9) * 5);
+      ctx.fillStyle = '#7e22ce';
+      ctx.strokeStyle = '#1f2937';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.roundRect(-10, -8, 20, 15, 3);
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.ellipse(-15, -3, 7, 3.5, -0.3, 0, Math.PI * 2);
+      ctx.ellipse(15, -3, 7, 3.5, 0.3, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      // 名牌標籤
+      ctx.fillStyle = 'rgba(88, 28, 135, 0.88)';
+      ctx.beginPath();
+      ctx.roundRect(-42, 66, 84, 20, 10);
+      ctx.fill();
+      ctx.fillStyle = '#e9d5ff';
+      ctx.font = '900 11px "Noto Sans TC", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('⚔️ 一劍呦 (助陣)', 0, 80);
+
+      ctx.restore();
+    }
+
+    // 繪製空中飄過的 5 大可點擊道具氣泡
+    function drawItems() {
+      const configMap = {
+        yijian: { icon: '⚔️', label: '一劍來灌奶', border: '#9333ea', bg: 'rgba(243, 232, 255, 0.96)', glow: '#c084fc' },
+        taro:   { icon: '🍠', label: '芋頭 +450',  border: '#4f46e5', bg: 'rgba(238, 242, 255, 0.96)', glow: '#818cf8' },
+        clock:  { icon: '⏳', label: '延時 +5s',   border: '#d97706', bg: 'rgba(254, 243, 199, 0.96)', glow: '#fbbf24' },
+        pill:   { icon: '💊', label: '降壓 35%',   border: '#0284c7', bg: 'rgba(224, 242, 254, 0.96)', glow: '#38bdf8' },
+        chili:  { icon: '🌶️', label: '辣起司陷阱', border: '#e11d48', bg: 'rgba(255, 228, 230, 0.96)', glow: '#fb7185' }
+      };
+
+      state.items.forEach(item => {
+        const cfg = configMap[item.type];
+        const fade = item.life < 1.0 ? Math.max(0.25, item.life) : 1.0;
+
+        ctx.save();
+        ctx.translate(item.x, item.y);
+        ctx.globalAlpha = fade;
+
+        // 醒目發光外環
+        ctx.shadowColor = cfg.glow;
+        ctx.shadowBlur = 14;
+        ctx.fillStyle = cfg.bg;
+        ctx.strokeStyle = cfg.border;
+        ctx.lineWidth = 3.5;
+        ctx.beginPath();
+        ctx.arc(0, 0, item.radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+
+        // 道具圖示
+        ctx.font = '26px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(cfg.icon, 0, -2);
+
+        // 底部標籤底框
+        ctx.fillStyle = cfg.border;
+        ctx.beginPath();
+        ctx.roundRect(-36, item.radius - 2, 72, 18, 9);
+        ctx.fill();
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '900 10px "Noto Sans TC", sans-serif';
+        ctx.fillText(cfg.label, 0, item.radius + 7);
+
+        ctx.restore();
+      });
+    }
+
+    function drawEffects() {
+      // 卡通白雲蒸氣
+      state.steamPuffs.forEach(sp => {
+        const alpha = Math.max(0, sp.life / sp.maxLife);
+        ctx.save();
+        ctx.globalAlpha = alpha * 0.9;
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(sp.x, sp.y, sp.radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      });
+
+      // 彩帶粒子
+      state.particles.forEach(pt => {
+        const alpha = Math.max(0, pt.life / pt.maxLife);
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = pt.color;
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, pt.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      });
+
+      // 飄浮提示文字
+      state.floatingTexts.forEach(ft => {
+        const alpha = Math.max(0, ft.life / ft.maxLife);
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.font = '900 16px "Noto Sans TC", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 4;
+        ctx.strokeText(ft.text, ft.x, ft.y);
+        ctx.fillStyle = ft.color;
+        ctx.fillText(ft.text, ft.x, ft.y);
+        ctx.restore();
+      });
+    }
+
+    function render() {
+      ctx.save();
+      if (state.shakeTimer > 0) {
+        const sx = (Math.random() - 0.5) * state.shakeIntensity * 2;
+        const sy = (Math.random() - 0.5) * state.shakeIntensity * 2;
+        ctx.translate(sx, sy);
+      }
+
+      drawBackground();
+      drawYijianHelper();
+      drawMiaomiao();
+      drawItems();
+      drawEffects();
+
+      ctx.restore();
+    }
+
+    let lastTimestamp = 0;
+    function loop(ts) {
+      if (!lastTimestamp) lastTimestamp = ts;
+      const dt = Math.min((ts - lastTimestamp) / 1000, 0.05);
+      lastTimestamp = ts;
+
+      update(dt);
+      render();
+
+      requestAnimationFrame(loop);
+    }
+
+    window.onload = function () {
+      resizeCanvas();
+      initClouds();
+      requestAnimationFrame(loop);
+      if (window.HUAJIAN_LEADERBOARD && window.HUAJIAN_LEADERBOARD.isConfigured()) {
+        window.HUAJIAN_LEADERBOARD.fetchTop('MeowMilk').then(data => {
+          if (data && data.ok) syncCloudBestToHUD(data.top);
+        }).catch(() => {});
+      }
+    };
+  </script>
+</body>
+</html>
