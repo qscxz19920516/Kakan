@@ -295,27 +295,107 @@ const cluesPool = [
 ];
 
 
-// ★ 若系列本身未帶 uploadedAt，可在此補充各系列上傳日期（YYYY-MM-DD），未填寫者預設排在較舊位置
-const SERIES_UPLOAD_DATES = {
-    // 範例：
-    // "袋裝零食": "2026-11-20",
-    // "飲品": "2026-11-18"
-};
+// ★ 自動向 GitHub API 查詢各盲盒資料夾的最新 Commit 修改時間（免手動填寫日期）
+const GH_OWNER = "qscxz19920516";
+const GH_REPO = "Kakan";
+const GH_COMMIT_CACHE_KEY = "huajian_gh_folder_dates_v1";
+const GH_COMMIT_CACHE_TTL_MS = 6 * 60 * 60 * 1000; // 6 小時快取，按右上角 🔄 可強制重抓
 
-function getSeriesUploadDateStr(jobName, cfg) {
-    if (cfg && cfg.uploadedAt) return String(cfg.uploadedAt).trim();
-    if (SERIES_UPLOAD_DATES[jobName]) return String(SERIES_UPLOAD_DATES[jobName]).trim();
-    return "";
+const githubFolderDates = {}; // { [jobName]: timestampMs }
+
+function loadCachedGithubDates() {
+    try {
+        const raw = localStorage.getItem(GH_COMMIT_CACHE_KEY);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        if (parsed && parsed.savedAt && (Date.now() - parsed.savedAt < GH_COMMIT_CACHE_TTL_MS) && parsed.dates) {
+            return parsed.dates;
+        }
+    } catch (e) {}
+    return null;
 }
 
-function isUploadedWithinDays(dateStr, days = 7) {
-    if (!dateStr) return false;
-    const parsed = new Date(dateStr.replace(/-/g, "/") + " 00:00:00");
-    if (isNaN(parsed.getTime())) return false;
-    const now = new Date();
-    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-    const uploadStart = new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate()).getTime();
-    const diffDays = (todayStart - uploadStart) / (1000 * 60 * 60 * 24);
+function saveCachedGithubDates(datesMap) {
+    try {
+        localStorage.setItem(GH_COMMIT_CACHE_KEY, JSON.stringify({
+            savedAt: Date.now(),
+            dates: datesMap
+        }));
+    } catch (e) {}
+}
+
+async function fetchFolderLastCommitTime(folderPath, force = false) {
+    const cleanPath = String(folderPath || "").replace(/^\/+|\/+$/g, "");
+    if (!cleanPath || cleanPath === ".") return null;
+    const url = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/commits?path=${encodeURIComponent(cleanPath)}&per_page=1`;
+    const fetchOpts = force ? { cache: "no-store" } : {};
+    const res = await fetch(url, fetchOpts);
+    if (!res.ok) throw new Error("GitHub API status " + res.status);
+    const arr = await res.json();
+    if (!Array.isArray(arr) || arr.length === 0) return null;
+    const c = arr[0].commit || {};
+    const dateStr = (c.committer && c.committer.date) || (c.author && c.author.date);
+    if (!dateStr) return null;
+    const ts = new Date(dateStr).getTime();
+    return isNaN(ts) ? null : ts;
+}
+
+async function hydrateGithubSeriesDates(configObj, force = false) {
+    if (!configObj || typeof configObj !== "object") return;
+    const cached = !force ? loadCachedGithubDates() : null;
+    const nextCache = {};
+
+    const entries = Object.entries(configObj);
+    // 分批並行查詢，避免一次送出太多請求被 GitHub 限流
+    const batchSize = 6;
+    for (let i = 0; i < entries.length; i += batchSize) {
+        const batch = entries.slice(i, i + batchSize);
+        await Promise.all(batch.map(async ([jobName, cfg]) => {
+            const folder = (cfg && cfg.folder) ? cfg.folder : jobName;
+            if (cached && typeof cached[folder] === "number") {
+                githubFolderDates[jobName] = cached[folder];
+                nextCache[folder] = cached[folder];
+                return;
+            }
+            try {
+                const ts = await fetchFolderLastCommitTime(folder, force);
+                if (typeof ts === "number") {
+                    githubFolderDates[jobName] = ts;
+                    nextCache[folder] = ts;
+                } else if (cfg && cfg.uploadedAt) {
+                    const fallbackTs = new Date(String(cfg.uploadedAt).replace(/-/g, "/")).getTime();
+                    if (!isNaN(fallbackTs)) githubFolderDates[jobName] = fallbackTs;
+                }
+            } catch (err) {
+                if (cfg && cfg.uploadedAt) {
+                    const fallbackTs = new Date(String(cfg.uploadedAt).replace(/-/g, "/")).getTime();
+                    if (!isNaN(fallbackTs)) githubFolderDates[jobName] = fallbackTs;
+                }
+            }
+        }));
+    }
+
+    if (Object.keys(nextCache).length > 0) {
+        saveCachedGithubDates(nextCache);
+    }
+}
+
+function getSeriesTimestamp(jobName, cfg) {
+    if (typeof githubFolderDates[jobName] === "number") {
+        return githubFolderDates[jobName];
+    }
+    if (cfg && cfg.uploadedAt) {
+        const ts = new Date(String(cfg.uploadedAt).replace(/-/g, "/")).getTime();
+        if (!isNaN(ts)) return ts;
+    }
+    return -Infinity;
+}
+
+function isUploadedWithinDays(jobName, cfg, days = 7) {
+    const ts = getSeriesTimestamp(jobName, cfg);
+    if (!isFinite(ts)) return false;
+    const now = Date.now();
+    const diffDays = (now - ts) / (1000 * 60 * 60 * 24);
     return diffDays >= 0 && diffDays <= days;
 }
 
@@ -325,18 +405,21 @@ function sortSeriesConfigByUploadDesc(rawConfig) {
     entries.sort((a, b) => {
         const [nameA, cfgA] = a;
         const [nameB, cfgB] = b;
-        const dateAStr = getSeriesUploadDateStr(nameA, cfgA);
-        const dateBStr = getSeriesUploadDateStr(nameB, cfgB);
-        const timeA = dateAStr ? new Date(dateAStr.replace(/-/g, "/")).getTime() : -Infinity;
-        const timeB = dateBStr ? new Date(dateBStr.replace(/-/g, "/")).getTime() : -Infinity;
+        const timeA = getSeriesTimestamp(nameA, cfgA);
+        const timeB = getSeriesTimestamp(nameB, cfgB);
         if (timeA === timeB) return 0;
-        if (isNaN(timeA)) return 1;
-        if (isNaN(timeB)) return -1;
-        return timeB - timeA; // 上傳時間越接近現在（越大）越往上排
+        if (!isFinite(timeA)) return 1;
+        if (!isFinite(timeB)) return -1;
+        return timeB - timeA; // GitHub 修改時間越接近現在（越大）越往上排
     });
     const sorted = {};
     entries.forEach(([k, v]) => { sorted[k] = v; });
     return sorted;
+}
+
+function getNewestSeriesName(configObj = seriesConfig) {
+    const keys = Object.keys(configObj || {});
+    return keys[0] || "袋裝零食";
 }
 
 function getSeriesCollectionStats(job = curJob) {
@@ -355,7 +438,7 @@ function renderSeriesNewBadgesOnMenu() {
         const oldNew = a.querySelector('.new-badge');
         if (oldNew) oldNew.remove();
         const cfg = seriesConfig[sName];
-        if (isUploadedWithinDays(getSeriesUploadDateStr(sName, cfg), 7)) {
+        if (isUploadedWithinDays(sName, cfg, 7)) {
             const labelSpan = a.querySelector('span:not(.active-pill):not(.arrow)') || a;
             labelSpan.insertAdjacentHTML('afterend', '<span class="new-badge">NEW</span>');
         }
@@ -392,7 +475,9 @@ function highlightActiveMenu() {
 async function forceRefreshSeries() {
     const btn = document.querySelector('.asb-sync-btn');
     if (btn) btn.innerText = '⏳';
-    seriesConfig = sortSeriesConfigByUploadDesc(await window.HuajianMenu.fetchAllSeries(true));
+    const raw = await window.HuajianMenu.fetchAllSeries(true);
+    await hydrateGithubSeriesDates(raw, true);
+    seriesConfig = sortSeriesConfigByUploadDesc(raw);
     window.HuajianMenu.renderSharedSubMenu(seriesConfig, { onRendered: highlightActiveMenu });
     selectSeries(curJob);
     if (btn) btn.innerText = '🔄';
@@ -542,7 +627,7 @@ function selectSeries(job){
         title.innerText = `${curJob}盲盒`;
         const newBadgeEl = document.getElementById('asbNewBadge');
         if (newBadgeEl) {
-            newBadgeEl.innerHTML = isUploadedWithinDays(getSeriesUploadDateStr(curJob, cfg), 7)
+            newBadgeEl.innerHTML = isUploadedWithinDays(curJob, cfg, 7)
                 ? '<span class="new-badge">NEW</span>'
                 : '';
         }
@@ -748,8 +833,8 @@ function closeZoom() {
 }
 
 function normalizeJobName(rawName) {
-    const firstKey = Object.keys(seriesConfig)[0] || "袋裝零食";
-    if (!rawName) return firstKey;
+    const newestKey = getNewestSeriesName(seriesConfig);
+    if (!rawName) return newestKey;
     if (seriesConfig[rawName]) return rawName;
     const cleaned = window.HuajianMenu ? window.HuajianMenu.extractShortSeriesName(rawName) : rawName;
     if (seriesConfig[cleaned]) return cleaned;
@@ -763,10 +848,12 @@ window.addEventListener('DOMContentLoaded', async function() {
         for(let i=0;i<45;i++){ const p=document.createElement('div');p.className='petal'; const s=9+Math.random()*13;p.style.width=s+'px';p.style.height=(s*.75)+'px'; p.style.left=(Math.random()*100)+'vw';p.style.animationDuration=(6+Math.random()*8)+'s'; p.style.animationDelay=(-Math.random()*10)+'s';bg.appendChild(p); }
         for(let i=0;i<25;i++){ const b=document.createElement('div');b.className='bubble'; const s=20+Math.random()*45;b.style.width=s+'px';b.style.height=s+'px'; b.style.left=(Math.random()*100)+'vw';b.style.animationDuration=(10+Math.random()*10)+'s'; b.style.animationDelay=(-Math.random()*8)+'s';bg.appendChild(b); }
     }
-    seriesConfig = sortSeriesConfigByUploadDesc(await window.HuajianMenu.fetchAllSeries());
+    const rawSeries = await window.HuajianMenu.fetchAllSeries();
+    await hydrateGithubSeriesDates(rawSeries, false);
+    seriesConfig = sortSeriesConfigByUploadDesc(rawSeries);
     window.HuajianMenu.renderSharedSubMenu(seriesConfig);
     const u = new URLSearchParams(window.location.search).get('job');
-    selectSeries(normalizeJobName(u));
+    selectSeries(normalizeJobName(u || getNewestSeriesName(seriesConfig)));
     updateQuotaUI();
     updateDexCount();
 });
