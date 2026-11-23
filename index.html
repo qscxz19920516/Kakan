@@ -49,7 +49,8 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 .zoom-card{position:relative;background:#fff;padding:10px;border-radius:22px;border:3px solid #f9dfe3;max-width:95vw;max-height:92vh;box-shadow:0 15px 35px rgba(0,0,0,.35)}
 .zoom-card img{max-width:90vw;max-height:86vh;object-fit:contain;border-radius:14px;display:block}
 
-/* 頂部導覽列右側「每日一籤」迷你膠囊按鈕 */
+
+/* 頂部導覽列右側「每日一籤」迷你膠囊按鈕（嵌在 topbar 內部右側，捲動時不懸空遮擋） */
 .topbar .spacer{width:auto !important;min-width:42px;display:flex;align-items:center;justify-content:flex-end}
 .topbar-omikuji-btn{position:relative;background:linear-gradient(135deg,#fff8f9,#ffe6eb);border:2px solid #f0a8b4;color:#c76272;height:38px;padding:0 11px;border-radius:19px;font-size:.8rem;font-weight:900;cursor:pointer;display:inline-flex;align-items:center;gap:4px;box-shadow:0 2px 8px rgba(226,158,168,.2);transition:.2s;white-space:nowrap}
 body.game-mode-active .topbar-omikuji-btn{display:none}
@@ -103,6 +104,36 @@ body.game-mode-active .topbar-omikuji-btn{display:none}
 
 .omikuji-done-note{margin-top:12px;background:#fff8f9;border:1.5px dashed #f2bec7;color:#8c7075;padding:7px 12px;border-radius:14px;font-size:.78rem;font-weight:700}
 
+
+/* 首頁總排行榜入口橫幅卡片 */
+.lb-portal-banner{display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:640px;margin:14px auto 0;background:linear-gradient(135deg,#fffbeb 0%,#fff1f2 100%);border:2px dashed #f59e0b;border-radius:22px;padding:14px 18px;cursor:pointer;transition:.25s;text-align:left}
+.lb-portal-banner:hover{transform:translateY(-3px);background:#fff;border-style:solid;box-shadow:0 8px 20px rgba(245,158,11,.22)}
+.lb-portal-left{display:flex;align-items:center;gap:12px}
+.lb-portal-icon{font-size:2.1rem;flex-shrink:0}
+.lb-portal-title{font-size:1.05rem;font-weight:900;color:#b45309}
+.lb-portal-desc{font-size:.8rem;color:#78350f;font-weight:700}
+.lb-portal-arrow{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;font-size:.82rem;font-weight:900;padding:7px 14px;border-radius:16px;white-space:nowrap;box-shadow:0 3px 8px rgba(217,119,6,.25)}
+
+/* 首頁總排行榜置中彈窗 */
+.global-lb-modal{display:none;position:fixed;inset:0;background:rgba(55,38,42,.58);backdrop-filter:blur(3px);z-index:165;align-items:center;justify-content:center;padding:16px}
+.global-lb-modal.open{display:flex}
+.global-lb-dialog{position:relative;background:linear-gradient(180deg,#fff 0%,#fff9fa 100%);width:100%;max-width:440px;max-height:88vh;border-radius:28px;border:3px solid #f9dfe3;box-shadow:0 14px 36px rgba(45,25,30,.28);padding:22px 18px 20px;text-align:center;display:flex;flex-direction:column;animation:omikujiModalPop .26s cubic-bezier(.22,1,.36,1)}
+.global-lb-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0 10px;background:#fff0f3;padding:5px;border-radius:18px;border:1.5px solid #f7d7dc}
+.global-lb-tab{border:none;background:transparent;color:#8c7075;font-size:.88rem;font-weight:900;padding:9px 8px;border-radius:14px;cursor:pointer;transition:.2s}
+.global-lb-tab.active{background:linear-gradient(135deg,#ff8fa3,#f4728c);color:#fff;box-shadow:0 3px 10px rgba(244,114,140,.3)}
+.global-lb-status{font-size:.78rem;color:#8c7075;font-weight:700;margin-bottom:8px}
+.global-lb-list{background:#fff;border:2px solid #f7d7dc;border-radius:18px;overflow-y:auto;max-height:46vh;text-align:left}
+.global-lb-row{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;border-bottom:1px dashed #f7d7dc;font-size:.88rem}
+.global-lb-row:last-child{border-bottom:none}
+.global-lb-row.top1{background:linear-gradient(90deg,#fffbeb,#fff)}
+.global-lb-rank{width:26px;font-weight:900;color:#8c7075;flex-shrink:0}
+.global-lb-name{font-weight:900;color:#5a4649;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.global-lb-detail{font-size:.72rem;color:#947479;margin-left:6px;font-weight:700}
+.global-lb-score{font-weight:900;color:#c76272;margin-left:8px;flex-shrink:0}
+.global-lb-actions{display:flex;gap:8px;margin-top:12px}
+.global-lb-play-btn{flex:1;border:none;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;padding:10px 12px;border-radius:16px;font-size:.86rem;font-weight:900;cursor:pointer;box-shadow:0 4px 12px rgba(217,119,6,.28)}
+.global-lb-close-btn{border:1.5px solid #f0a8b4;background:#fff8f9;color:#c76272;padding:10px 16px;border-radius:16px;font-size:.86rem;font-weight:900;cursor:pointer}
+
 @media(max-width:520px){
     .topbar-omikuji-btn{padding:0 9px;font-size:.74rem;height:36px}
     .wrap.game-active{width:calc(100% - 16px)}
@@ -120,7 +151,7 @@ body.game-mode-active .topbar-omikuji-btn{display:none}
 </style>
 <link rel="stylesheet" href="site-menu.css?v=20261121_v1">
 <script>
-const SITE_VERSION = "20261123_v10";
+const SITE_VERSION = "20261123_v12";
 (function(){
     const url = new URL(window.location.href);
     const verKey = "huajian_site_ver_checked";
@@ -146,6 +177,7 @@ const SITE_VERSION = "20261123_v10";
 <div class="fx-bg" id="fxBg"></div>
 <div id="siteMenu"></div>
 <script src="site-menu.js?v=20261123_v1"></script>
+<script src="leaderboard-config.js?v=20261123_v1"></script>
 
 <div class="wrap" id="mainWrap">
     <div class="home-view" id="homeView">
@@ -173,6 +205,16 @@ const SITE_VERSION = "20261123_v10";
                 <div class="portal-title">暴打小菜雞</div>
                 <div class="portal-desc">抄起藍白拖，挑戰你的瞄準手感</div>
             </a>
+        </div>
+        <div class="lb-portal-banner" onclick="openGlobalLeaderboardModal('MeowMilk')" role="button" tabindex="0">
+            <div class="lb-portal-left">
+                <span class="lb-portal-icon">🏆</span>
+                <div>
+                    <div class="lb-portal-title">花間小遊戲・公會總排行榜</div>
+                    <div class="lb-portal-desc">一鍵切換查看《喵喵乳糖挑戰》與《暴打小菜雞》即時前 10 名</div>
+                </div>
+            </div>
+            <span class="lb-portal-arrow">查看排行 ＞</span>
         </div>
     </div>
 
@@ -205,6 +247,26 @@ const SITE_VERSION = "20261123_v10";
     </div>
 </div>
 
+
+<div class="global-lb-modal" id="globalLbModal" onclick="if(event.target===this) closeGlobalLeaderboardModal()">
+    <div class="global-lb-dialog">
+        <button type="button" class="omikuji-close" onclick="closeGlobalLeaderboardModal()" aria-label="關閉總排行榜">✕</button>
+        <div class="omikuji-hd">🏆 花間公會・小遊戲總排行榜 🏆</div>
+        <div class="global-lb-tabs">
+            <button type="button" class="global-lb-tab active" id="tabMeowMilk" onclick="switchGlobalLbTab('MeowMilk')">🥛 喵喵乳糖挑戰</button>
+            <button type="button" class="global-lb-tab" id="tabHitMeow" onclick="switchGlobalLbTab('HitMeow')">🩴 暴打小菜雞</button>
+        </div>
+        <div class="global-lb-status" id="globalLbStatus">讀取中...</div>
+        <div class="global-lb-list" id="globalLbList">
+            <div style="padding:20px;text-align:center;color:#947479;font-weight:700">載入排行榜中...</div>
+        </div>
+        <div class="global-lb-actions">
+            <button type="button" class="global-lb-play-btn" id="globalLbPlayBtn" onclick="playCurrentGlobalLbGame()">🚀 立即挑戰這款遊戲</button>
+            <button type="button" class="global-lb-close-btn" onclick="closeGlobalLeaderboardModal()">關閉</button>
+        </div>
+    </div>
+</div>
+
 <div class="zoom-modal" id="zoomModal" onclick="if(event.target===this) closeZoom()">
     <div class="zoom-card">
         <button class="close-btn" onclick="closeZoom()" style="position:absolute;top:-14px;right:-14px;box-shadow:0 3px 10px rgba(0,0,0,.2)">✕</button>
@@ -212,8 +274,86 @@ const SITE_VERSION = "20261123_v10";
     </div>
 </div>
 
-<script src="menu-sync.js?v=20261123_v10"></script>
+<script src="menu-sync.js?v=20261123_v12"></script>
 <script>
+
+// ★ 首頁公會總排行榜彈窗邏輯
+let currentGlobalLbGame = 'MeowMilk';
+
+function openGlobalLeaderboardModal(defaultGame) {
+    document.getElementById('globalLbModal').classList.add('open');
+    switchGlobalLbTab(defaultGame || currentGlobalLbGame || 'MeowMilk');
+}
+
+function closeGlobalLeaderboardModal() {
+    document.getElementById('globalLbModal').classList.remove('open');
+}
+
+function playCurrentGlobalLbGame() {
+    closeGlobalLeaderboardModal();
+    if (currentGlobalLbGame === 'HitMeow') {
+        openGame1();
+    } else {
+        openGame();
+    }
+}
+
+async function switchGlobalLbTab(gameKey) {
+    currentGlobalLbGame = gameKey;
+    const tabMm = document.getElementById('tabMeowMilk');
+    const tabHm = document.getElementById('tabHitMeow');
+    const playBtn = document.getElementById('globalLbPlayBtn');
+    const statusEl = document.getElementById('globalLbStatus');
+    const listEl = document.getElementById('globalLbList');
+
+    if (tabMm && tabHm) {
+        tabMm.classList.toggle('active', gameKey === 'MeowMilk');
+        tabHm.classList.toggle('active', gameKey === 'HitMeow');
+    }
+    if (playBtn) {
+        playBtn.textContent = gameKey === 'HitMeow' ? '🩴 立即挑戰《暴打小菜雞》' : '🥛 立即挑戰《喵喵乳糖挑戰》';
+    }
+
+    const lb = window.HUAJIAN_LEADERBOARD;
+    if (!lb || !lb.isConfigured()) {
+        statusEl.textContent = '尚未綁定 Google 試算表';
+        listEl.innerHTML = '<div style="padding:18px;text-align:center;color:#b45309;font-weight:700">⚙️ 請先在 leaderboard-config.js 填入 Apps Script 網址！</div>';
+        return;
+    }
+
+    statusEl.textContent = '🔄 同步雲端最新排名中...';
+    listEl.innerHTML = '<div style="padding:20px;text-align:center;color:#947479;font-weight:700">載入排行榜中...</div>';
+
+    try {
+        const data = await lb.fetchTop(gameKey);
+        if (data && data.ok) {
+            const unit = gameKey === 'HitMeow' ? '分' : 'ml';
+            statusEl.textContent = '✨ 即時前 10 名（每人保留最高紀錄）';
+            if (!data.top || data.top.length === 0) {
+                listEl.innerHTML = '<div style="padding:20px;text-align:center;color:#947479;font-weight:700">🌸 目前尚無紀錄，快來搶下第一名吧！</div>';
+                return;
+            }
+            const medals = ['🥇', '🥈', '🥉'];
+            listEl.innerHTML = data.top.map((r, idx) => {
+                const badge = medals[idx] || `${idx + 1}.`;
+                const topCls = idx === 0 ? 'global-lb-row top1' : 'global-lb-row';
+                const detailHtml = r.detail ? `<span class="global-lb-detail">(${r.detail})</span>` : '';
+                return `<div class="${topCls}">
+                    <span class="global-lb-rank">${badge}</span>
+                    <span class="global-lb-name">${r.name}${detailHtml}</span>
+                    <span class="global-lb-score">${r.score} ${unit}</span>
+                </div>`;
+            }).join('');
+        } else {
+            statusEl.textContent = '讀取失敗';
+            listEl.innerHTML = '<div style="padding:18px;text-align:center;color:#e11d48;font-weight:700">讀取失敗，請稍後再試</div>';
+        }
+    } catch (err) {
+        statusEl.textContent = '連線異常';
+        listEl.innerHTML = '<div style="padding:18px;text-align:center;color:#e11d48;font-weight:700">連線異常，請檢查網路狀態</div>';
+    }
+}
+
 function openZoom(customSrc){
     const zImg = document.getElementById('zoomModalImg');
     if (customSrc) {
@@ -231,7 +371,7 @@ function openZoom(customSrc){
     document.getElementById('zoomModal').classList.add('open');
 }
 
-// ★ 每日御神籤系統
+// ★ 每日御神籤系統（右上角迷你膠囊按鈕 + 置中彈窗，完全不佔首頁主版面）
 const OMIKUJI_SLIPS = [
     { key: "大吉", file: "御神籤_大吉", color: "#e11d48", weight: 14, hasReward: true },
     { key: "吉",   file: "御神籤_吉",   color: "#16a34a", weight: 16, hasReward: true },
@@ -402,7 +542,7 @@ function renderOmikujiSection() {
     `;
 }
 
-// ★ 隱藏測試密技
+// ★ 隱藏測試密技：在御神籤彈窗內連續點擊標題「⛩️ 花間小憩・每日御神籤 ⛩️」5 次並輸入通關密語，可重置今日抽籤狀態
 const OMIKUJI_SECRET_CODE = "百百好可愛";
 let omikujiTapCount = 0;
 let omikujiTapTimer = null;
@@ -460,10 +600,10 @@ function closeZoom(){
     document.getElementById('zoomModal').classList.remove('open');
 }
 function openGame(event){
-    openEmbeddedGame(event, 'MeowMilk.html?v=20261123_v10', '#meow-milk', '🥛 喵喵乳糖挑戰');
+    openEmbeddedGame(event, 'MeowMilk.html?v=20261123_v12', '#meow-milk', '🥛 喵喵乳糖挑戰');
 }
 function openGame1(event){
-    openEmbeddedGame(event, 'HitMeow.html?v=20261123_v10', '#hit-meow', '🩴 暴打小菜雞');
+    openEmbeddedGame(event, 'HitMeow.html?v=20261123_v12', '#hit-meow', '🩴 暴打小菜雞');
 }
 let cachedSeriesConfig = null;
 
