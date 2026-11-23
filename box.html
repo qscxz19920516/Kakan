@@ -39,55 +39,6 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 .wrap{position:relative;z-index:1;max-width:680px;margin:20px auto;padding:0 16px}
 
 /* 當前盲盒系列大橫幅 */
-
-.new-badge{
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    background:linear-gradient(135deg,#ff4757,#ff6b81);
-    color:#fff;
-    font-size:.68rem;
-    font-weight:900;
-    padding:1px 7px;
-    border-radius:999px;
-    letter-spacing:.6px;
-    margin-left:6px;
-    box-shadow:0 2px 6px rgba(255,71,87,.35);
-    vertical-align:middle;
-}
-.asb-title-row{
-    display:flex;
-    align-items:center;
-    gap:6px;
-    flex-wrap:nowrap;
-}
-.asb-collect-pill{
-    display:inline-flex;
-    align-items:center;
-    gap:4px;
-    background:#fff0f3;
-    border:1.5px solid #f2bec7;
-    color:#c76272;
-    font-size:.76rem;
-    font-weight:900;
-    padding:2px 9px;
-    border-radius:12px;
-    margin-top:4px;
-}
-.stage-collect-status{
-    display:inline-flex;
-    align-items:center;
-    gap:6px;
-    background:#fff8f9;
-    border:1.5px solid #f7d7dc;
-    color:#7a5c61;
-    font-size:.82rem;
-    font-weight:800;
-    padding:4px 12px;
-    border-radius:14px;
-    margin-bottom:10px;
-}
-
 .active-series-banner{background:rgba(255,255,255,.95);backdrop-filter:blur(6px);border-radius:24px;padding:14px 18px;margin-bottom:14px;box-shadow:0 6px 18px rgba(226,158,168,.14);border:2px solid #f39c12;display:flex;align-items:center;justify-content:space-between;gap:12px}
 .asb-info{text-align:left;min-width:0}
 .asb-sub{font-size:.74rem;font-weight:800;letter-spacing:1px;color:#f39c12;margin-bottom:2px}
@@ -97,14 +48,6 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 .asb-switch-btn:hover{background:#c76272;border-color:#c76272;color:#fff;transform:translateY(-1px)}
 .asb-sync-btn{background:#fff;border:1.5px solid #e6c5ca;color:#8c7075;width:36px;height:36px;border-radius:50%;font-size:.95rem;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:.2s}
 .asb-sync-btn:hover{border-color:#c76272;color:#c76272;transform:rotate(90deg)}
-
-
-/* 御神籤吉籤獎勵：盲盒單次重置券橫幅 */
-.omikuji-ticket-bar{display:none;background:linear-gradient(135deg,#fffbeb,#fef3c7);border:2px solid #f59e0b;border-radius:20px;padding:10px 14px;margin-bottom:14px;box-shadow:0 4px 12px rgba(245,158,11,.16);align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
-.omikuji-ticket-bar.show{display:flex}
-.otb-text{font-size:.86rem;font-weight:800;color:#92400e;text-align:left;line-height:1.4}
-.otb-btn{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border:none;padding:8px 14px;border-radius:16px;font-size:.82rem;font-weight:900;cursor:pointer;box-shadow:0 3px 8px rgba(217,119,6,.28);transition:.2s;white-space:nowrap}
-.otb-btn:hover{transform:translateY(-1px);filter:brightness(1.06)}
 
 .quota-bar{background:#fff8f9;border:2px dashed #f2bec7;color:#c76272;padding:8px 18px;border-radius:20px;font-weight:800;font-size:.92rem;margin-bottom:16px;text-align:center;box-shadow:0 3px 8px rgba(226,158,168,.1)}
 
@@ -217,17 +160,13 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 <body>
 <div class="fx-bg" id="fxBg"></div>
 <div id="siteMenu"></div>
-<script src="site-menu.js?v=20261123_v1"></script>
+<script src="site-menu.js?v=20261122_v1"></script>
 
 <div class="wrap">
     <div class="active-series-banner" id="activeSeriesBanner">
         <div class="asb-info">
             <div class="asb-sub" id="asbSub">載入盲盒系列中...</div>
-            <div class="asb-title-row">
-                <div class="asb-title" id="asbTitle">驚喜盲盒</div>
-                <span id="asbNewBadge"></span>
-            </div>
-            <div class="asb-collect-pill" id="asbCollectPill">📦 已獲得 0 / 0 款</div>
+            <div class="asb-title" id="asbTitle">驚喜盲盒</div>
         </div>
         <div class="asb-actions">
             <button class="asb-sync-btn" title="重新掃描 GitHub 盲盒資料夾" onclick="forceRefreshSeries()">🔄</button>
@@ -236,10 +175,6 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
     </div>
 
     <div class="quota-bar" id="quotaBar">🎟️ 剩餘抽選次數：3 / 3 次</div>
-    <div class="omikuji-ticket-bar" id="omikujiTicketBar">
-        <div class="otb-text" id="omikujiTicketText">⛩️ 御神籤吉籤獎勵：持有 <b>1 張</b> 盲盒次數重置券</div>
-        <button type="button" class="otb-btn" onclick="useOmikujiResetTicket()">✨ 重置本系列次數 +1</button>
-    </div>
     <div class="stage-card" id="stageCard"></div>
 </div>
 
@@ -263,7 +198,7 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
     </div>
 </div>
 
-<script src="menu-sync.js?v=20261123_v7"></script>
+<script src="menu-sync.js?v=20261122_v5"></script>
 <script>
 const MAX_DRAWS = 3;
 let seriesConfig = {};
@@ -294,204 +229,6 @@ const cluesPool = [
     { sound: "咚咚～", text: "✨ 神秘線索：感受到一股強大的公會夥伴氣息，伸手一抓準沒錯！" }
 ];
 
-
-// ★ 自動向 GitHub API 查詢各盲盒資料夾的最新 Commit 修改時間（免手動填寫日期）
-const GH_OWNER = "qscxz19920516";
-const GH_REPO = "Kakan";
-const GH_COMMIT_CACHE_KEY = "huajian_gh_folder_dates_v1";
-const GH_COMMIT_CACHE_TTL_MS = 6 * 60 * 60 * 1000; // 6 小時快取，按右上角 🔄 可強制重抓
-
-const githubFolderDates = {}; // { [jobName]: timestampMs }
-
-function loadCachedGithubDates() {
-    try {
-        const raw = localStorage.getItem(GH_COMMIT_CACHE_KEY);
-        if (!raw) return null;
-        const parsed = JSON.parse(raw);
-        if (parsed && parsed.savedAt && (Date.now() - parsed.savedAt < GH_COMMIT_CACHE_TTL_MS) && parsed.dates) {
-            return parsed.dates;
-        }
-    } catch (e) {}
-    return null;
-}
-
-function saveCachedGithubDates(datesMap) {
-    try {
-        localStorage.setItem(GH_COMMIT_CACHE_KEY, JSON.stringify({
-            savedAt: Date.now(),
-            dates: datesMap
-        }));
-    } catch (e) {}
-}
-
-async function fetchFolderLastCommitTime(folderPath, force = false) {
-    const cleanPath = String(folderPath || "").replace(/^\/+|\/+$/g, "");
-    if (!cleanPath || cleanPath === ".") return null;
-    const url = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/commits?path=${encodeURIComponent(cleanPath)}&per_page=1`;
-    const fetchOpts = force ? { cache: "no-store" } : {};
-    const res = await fetch(url, fetchOpts);
-    if (!res.ok) throw new Error("GitHub API status " + res.status);
-    const arr = await res.json();
-    if (!Array.isArray(arr) || arr.length === 0) return null;
-    const c = arr[0].commit || {};
-    const dateStr = (c.committer && c.committer.date) || (c.author && c.author.date);
-    if (!dateStr) return null;
-    const ts = new Date(dateStr).getTime();
-    return isNaN(ts) ? null : ts;
-}
-
-async function hydrateGithubSeriesDates(configObj, force = false) {
-    if (!configObj || typeof configObj !== "object") return;
-    const cached = !force ? loadCachedGithubDates() : null;
-    const nextCache = {};
-
-    const entries = Object.entries(configObj);
-    // 分批並行查詢，避免一次送出太多請求被 GitHub 限流
-    const batchSize = 6;
-    for (let i = 0; i < entries.length; i += batchSize) {
-        const batch = entries.slice(i, i + batchSize);
-        await Promise.all(batch.map(async ([jobName, cfg]) => {
-            const folder = (cfg && cfg.folder) ? cfg.folder : jobName;
-            if (cached && typeof cached[folder] === "number") {
-                githubFolderDates[jobName] = cached[folder];
-                nextCache[folder] = cached[folder];
-                return;
-            }
-            try {
-                const ts = await fetchFolderLastCommitTime(folder, force);
-                if (typeof ts === "number") {
-                    githubFolderDates[jobName] = ts;
-                    nextCache[folder] = ts;
-                } else if (cfg && cfg.uploadedAt) {
-                    const fallbackTs = new Date(String(cfg.uploadedAt).replace(/-/g, "/")).getTime();
-                    if (!isNaN(fallbackTs)) githubFolderDates[jobName] = fallbackTs;
-                }
-            } catch (err) {
-                if (cfg && cfg.uploadedAt) {
-                    const fallbackTs = new Date(String(cfg.uploadedAt).replace(/-/g, "/")).getTime();
-                    if (!isNaN(fallbackTs)) githubFolderDates[jobName] = fallbackTs;
-                }
-            }
-        }));
-    }
-
-    if (Object.keys(nextCache).length > 0) {
-        saveCachedGithubDates(nextCache);
-    }
-}
-
-function getSeriesTimestamp(jobName, cfg) {
-    if (typeof githubFolderDates[jobName] === "number") {
-        return githubFolderDates[jobName];
-    }
-    if (cfg && cfg.uploadedAt) {
-        const ts = new Date(String(cfg.uploadedAt).replace(/-/g, "/")).getTime();
-        if (!isNaN(ts)) return ts;
-    }
-    return -Infinity;
-}
-
-function isUploadedWithinDays(jobName, cfg, days = 7) {
-    const ts = getSeriesTimestamp(jobName, cfg);
-    if (!isFinite(ts)) return false;
-    const now = Date.now();
-    const diffDays = (now - ts) / (1000 * 60 * 60 * 24);
-    return diffDays >= 0 && diffDays <= days;
-}
-
-function sortSeriesConfigByUploadDesc(rawConfig) {
-    if (!rawConfig || typeof rawConfig !== "object") return {};
-    const entries = Object.entries(rawConfig);
-    entries.sort((a, b) => {
-        const [nameA, cfgA] = a;
-        const [nameB, cfgB] = b;
-        const timeA = getSeriesTimestamp(nameA, cfgA);
-        const timeB = getSeriesTimestamp(nameB, cfgB);
-        if (timeA === timeB) return 0;
-        if (!isFinite(timeA)) return 1;
-        if (!isFinite(timeB)) return -1;
-        return timeB - timeA; // GitHub 修改時間越接近現在（越大）越往上排
-    });
-    const sorted = {};
-    entries.forEach(([k, v]) => { sorted[k] = v; });
-    return sorted;
-}
-
-function getNewestSeriesName(configObj = seriesConfig) {
-    const keys = Object.keys(configObj || {});
-    return keys[0] || "袋裝零食";
-}
-
-function getSeriesCollectionStats(job = curJob) {
-    const cfg = seriesConfig[job];
-    const members = (cfg && Array.isArray(cfg.members)) ? cfg.members : [];
-    const totalCount = members.length;
-    const drawnSet = new Set(getDrawnList(job));
-    const ownedCount = members.filter(m => drawnSet.has(m)).length;
-    return { ownedCount, totalCount };
-}
-
-function resolveSeriesNameFromAnchor(a) {
-    if (!a) return "";
-    if (a.dataset && a.dataset.series && seriesConfig[a.dataset.series]) {
-        return a.dataset.series;
-    }
-    try {
-        const href = a.getAttribute("href") || "";
-        if (href.includes("job=")) {
-            const qJob = decodeURIComponent(href.split("job=")[1].split("&")[0].split("#")[0]);
-            if (seriesConfig[qJob]) return qJob;
-            const cleaned = window.HuajianMenu && window.HuajianMenu.extractShortSeriesName
-                ? window.HuajianMenu.extractShortSeriesName(qJob)
-                : qJob;
-            if (seriesConfig[cleaned]) return cleaned;
-        }
-    } catch (e) {}
-
-    const rawText = (a.textContent || "").replace(/使用中/g, "").replace(/NEW/gi, "").trim();
-    if (!rawText) return "";
-    const keys = Object.keys(seriesConfig || {});
-    if (seriesConfig[rawText]) return rawText;
-    const cleanedText = window.HuajianMenu && window.HuajianMenu.extractShortSeriesName
-        ? window.HuajianMenu.extractShortSeriesName(rawText)
-        : rawText;
-    if (seriesConfig[cleanedText]) return cleanedText;
-    return keys.find(k => rawText.includes(k) || cleanedText.includes(k)) || "";
-}
-
-function renderSeriesNewBadgesOnMenu() {
-    const anchors = document.querySelectorAll('#subMenu a, .submenu a');
-    anchors.forEach(a => {
-        const oldNew = a.querySelector('.new-badge');
-        if (oldNew) oldNew.remove();
-
-        const sName = resolveSeriesNameFromAnchor(a);
-        if (!sName) return;
-        const cfg = seriesConfig[sName];
-        if (isUploadedWithinDays(sName, cfg, 7)) {
-            const badgeHtml = '<span class="new-badge">NEW</span>';
-            const anchorTarget = a.querySelector('.active-pill') || a.querySelector('.arrow');
-            if (anchorTarget) {
-                anchorTarget.insertAdjacentHTML('beforebegin', badgeHtml);
-            } else {
-                a.insertAdjacentHTML('beforeend', badgeHtml);
-            }
-        }
-    });
-}
-
-function installSubMenuObserver() {
-    const target = document.getElementById('drawer') || document.body;
-    if (!target || window.__huajianNewBadgeObserverInstalled) return;
-    window.__huajianNewBadgeObserverInstalled = true;
-    const obs = new MutationObserver(() => {
-        if (Object.keys(seriesConfig || {}).length > 0) {
-            renderSeriesNewBadgesOnMenu();
-        }
-    });
-    obs.observe(target, { childList: true, subtree: true });
-}
-
 let curJob = "袋裝零食";
 let curSkinIdx = Math.floor(Math.random() * BOX_SKINS.length);
 let shakeCount = 0;
@@ -499,7 +236,6 @@ let isDrawing = false;
 
 function highlightActiveMenu() {
     const cfg = seriesConfig[curJob];
-    renderSeriesNewBadgesOnMenu();
     document.querySelectorAll('#subMenu a').forEach(a => {
         const isCurrent = a.dataset.series === curJob;
         a.classList.toggle('active-series', isCurrent);
@@ -522,9 +258,7 @@ function highlightActiveMenu() {
 async function forceRefreshSeries() {
     const btn = document.querySelector('.asb-sync-btn');
     if (btn) btn.innerText = '⏳';
-    const raw = await window.HuajianMenu.fetchAllSeries(true);
-    await hydrateGithubSeriesDates(raw, true);
-    seriesConfig = sortSeriesConfigByUploadDesc(raw);
+    seriesConfig = await window.HuajianMenu.fetchAllSeries(true);
     window.HuajianMenu.renderSharedSubMenu(seriesConfig, { onRendered: highlightActiveMenu });
     selectSeries(curJob);
     if (btn) btn.innerText = '🔄';
@@ -592,7 +326,6 @@ function addDrawnMember(name, job = curJob) {
 }
 
 function openSeriesDrawer(){
-    renderSeriesNewBadgesOnMenu();
     document.getElementById('drawer').classList.add('open');
     document.getElementById('mask').classList.add('open');
     document.getElementById('subMenu').classList.add('open');
@@ -601,45 +334,6 @@ function openSeriesDrawer(){
     if (activeEl) activeEl.scrollIntoView({ block: 'center', behavior: 'smooth' });
 }
 function goBox(e, job){ e.preventDefault(); selectSeries(normalizeJobName(job)); toggleMenu(); }
-
-const REWARD_TICKET_KEY = 'huajian_omikuji_box_tickets_v1';
-
-function getBoxResetTickets() {
-    return Math.max(0, parseInt(localStorage.getItem(REWARD_TICKET_KEY) || '0', 10));
-}
-
-function updateOmikujiTicketUI() {
-    const tickets = getBoxResetTickets();
-    const bar = document.getElementById('omikujiTicketBar');
-    const txt = document.getElementById('omikujiTicketText');
-    if (!bar || !txt) return;
-    if (tickets > 0) {
-        bar.classList.add('show');
-        txt.innerHTML = `⛩️ 御神籤吉籤獎勵：持有 <b>${tickets} 張</b> 次數重置券（可選任一系列 +1 次）`;
-    } else {
-        bar.classList.remove('show');
-    }
-}
-
-function useOmikujiResetTicket() {
-    const tickets = getBoxResetTickets();
-    if (tickets <= 0) {
-        alert("目前沒有可用的御神籤重置券喔！每天都可以回首頁搖御神籤試手氣～");
-        return;
-    }
-    const used = getUsedDraws(curJob);
-    if (used <= 0) {
-        alert(`【${curJob}盲盒】目前還是滿額（${MAX_DRAWS} / ${MAX_DRAWS} 次），尚未消耗次數喔！\n\n請先抽過或切換到已消耗次數的盲盒系列再使用重置券～`);
-        return;
-    }
-    if (!confirm(`確定要消耗 1 張「⛩️ 御神籤重置券」，將【${curJob}盲盒】的抽取次數恢復 +1 次嗎？\n\n（註：原本已獲得的小卡圖鑑會完整保留）`)) {
-        return;
-    }
-    localStorage.setItem(REWARD_TICKET_KEY, String(tickets - 1));
-    localStorage.setItem('huajian_draws_' + curJob, String(Math.max(0, used - 1)));
-    updateQuotaUI();
-    renderLotteryBox('', `🎉 已使用御神籤吉籤獎勵！【${curJob}盲盒】抽取次數 +1 次，快來抽吧！`);
-}
 
 function updateQuotaUI(){
     const used = getUsedDraws(curJob);
@@ -650,12 +344,6 @@ function updateQuotaUI(){
             ? `🎟️ 【${curJob}盲盒】剩餘抽選次數：${left} / ${MAX_DRAWS} 次` 
             : `🔒 【${curJob}盲盒】抽選次數已用完（${MAX_DRAWS} / ${MAX_DRAWS} 次）`;
     }
-    const stats = getSeriesCollectionStats(curJob);
-    const pillEl = document.getElementById('asbCollectPill');
-    if (pillEl) {
-        pillEl.innerText = `📦 已獲得 ${stats.ownedCount} / ${stats.totalCount} 款`;
-    }
-    updateOmikujiTicketUI();
 }
 
 function selectSeries(job){
@@ -673,17 +361,6 @@ function selectSeries(job){
         sub.style.color = cfg.color;
         sub.innerText = cfg.seriesNo;
         title.innerText = `${curJob}盲盒`;
-        const newBadgeEl = document.getElementById('asbNewBadge');
-        if (newBadgeEl) {
-            newBadgeEl.innerHTML = isUploadedWithinDays(curJob, cfg, 7)
-                ? '<span class="new-badge">NEW</span>'
-                : '';
-        }
-        const stats = getSeriesCollectionStats(curJob);
-        const pillEl = document.getElementById('asbCollectPill');
-        if (pillEl) {
-            pillEl.innerText = `📦 已獲得 ${stats.ownedCount} / ${stats.totalCount} 款`;
-        }
     }
     highlightActiveMenu();
     updateQuotaUI();
@@ -695,17 +372,8 @@ function renderLotteryBox(snd = "", clue = "💡 提示：點擊「搖一搖抽�
     if (randomizeSkin) {
         curSkinIdx = pickRandomBoxSkin(curSkinIdx);
     }
-    const keys = Object.keys(seriesConfig || {});
-    if (!seriesConfig || !seriesConfig[curJob]) {
-        curJob = keys[0] || "袋裝零食";
-    }
-    const cfg = (seriesConfig && seriesConfig[curJob]) ? seriesConfig[curJob] : {
-        seriesNo: "花間盲盒",
-        color: "#c76272",
-        folder: ".",
-        members: []
-    };
-    const skinFile = BOX_SKINS[curSkinIdx] || BOX_SKINS[0];
+    const cfg = seriesConfig[curJob];
+    const skinFile = BOX_SKINS[curSkinIdx];
     const left = Math.max(0, MAX_DRAWS - getUsedDraws(curJob));
     const available = cfg.members.filter(name => !getDrawnList(curJob).includes(name));
     const canDraw = left > 0 && available.length > 0;
@@ -717,7 +385,6 @@ function renderLotteryBox(snd = "", clue = "💡 提示：點擊「搖一搖抽�
     document.getElementById('stageCard').innerHTML = `
         <div class="series-tag" style="color:${cfg.color}">${cfg.seriesNo}</div>
         <div class="stage-title">${canDraw ? '搖一搖抽獎箱，抽出你的專屬盲盒！' : '本系列抽選已完成'}</div>
-        <div class="stage-collect-status">📦 本系列收集進度：已獲得 <b>${getSeriesCollectionStats(curJob).ownedCount}</b> / <b>${getSeriesCollectionStats(curJob).totalCount}</b> 款</div>
         <div class="lottery-stage">
             <div class="lottery-box-wrap" id="lotteryBoxWrap" onclick="${canDraw ? 'drawFromLotteryBox()' : ''}" title="${canDraw ? '點擊抽獎箱直接抽出盲盒' : ''}">
                 <div id="comicBubbleSlot">${snd ? `<div class="sound-comic">🎵 ${snd}</div>` : ''}</div>
@@ -802,7 +469,6 @@ function revealDrawnResult(drawnMember) {
     document.getElementById('stageCard').innerHTML = `
         <div id="confettiBox"></div>
         <div class="rarity-pill" style="background:${cfg.color}">🌸 花間小憩・${curJob}系列 🌸</div>
-        <div class="stage-collect-status">📦 本系列收集進度：已獲得 <b>${getSeriesCollectionStats(curJob).ownedCount}</b> / <b>${getSeriesCollectionStats(curJob).totalCount}</b> 款</div>
         <div class="result-img-box">
             <img src="${cfg.folder}/${drawnMember}.jpg" alt="${drawnMember}" title="點擊放大檢視"
                 onclick="openZoom('${cfg.folder}','${drawnMember}','${curJob}')"
@@ -881,13 +547,13 @@ function closeZoom() {
 }
 
 function normalizeJobName(rawName) {
-    const newestKey = getNewestSeriesName(seriesConfig);
-    if (!rawName) return newestKey;
+    const firstKey = Object.keys(seriesConfig)[0] || "袋裝零食";
+    if (!rawName) return firstKey;
     if (seriesConfig[rawName]) return rawName;
     const cleaned = window.HuajianMenu ? window.HuajianMenu.extractShortSeriesName(rawName) : rawName;
     if (seriesConfig[cleaned]) return cleaned;
     const matched = Object.keys(seriesConfig).find(k => rawName.includes(k) || k.includes(cleaned));
-    return matched || newestKey;
+    return matched || firstKey;
 }
 
 window.addEventListener('DOMContentLoaded', async function() {
@@ -896,17 +562,12 @@ window.addEventListener('DOMContentLoaded', async function() {
         for(let i=0;i<45;i++){ const p=document.createElement('div');p.className='petal'; const s=9+Math.random()*13;p.style.width=s+'px';p.style.height=(s*.75)+'px'; p.style.left=(Math.random()*100)+'vw';p.style.animationDuration=(6+Math.random()*8)+'s'; p.style.animationDelay=(-Math.random()*10)+'s';bg.appendChild(p); }
         for(let i=0;i<25;i++){ const b=document.createElement('div');b.className='bubble'; const s=20+Math.random()*45;b.style.width=s+'px';b.style.height=s+'px'; b.style.left=(Math.random()*100)+'vw';b.style.animationDuration=(10+Math.random()*10)+'s'; b.style.animationDelay=(-Math.random()*8)+'s';bg.appendChild(b); }
     }
-    const rawSeries = await window.HuajianMenu.fetchAllSeries();
-    await hydrateGithubSeriesDates(rawSeries, false);
-    seriesConfig = sortSeriesConfigByUploadDesc(rawSeries);
-    installSubMenuObserver();
-    window.HuajianMenu.renderSharedSubMenu(seriesConfig, { onRendered: highlightActiveMenu });
+    seriesConfig = await window.HuajianMenu.fetchAllSeries();
+    window.HuajianMenu.renderSharedSubMenu(seriesConfig);
     const u = new URLSearchParams(window.location.search).get('job');
-    selectSeries(normalizeJobName(u || getNewestSeriesName(seriesConfig)));
+    selectSeries(normalizeJobName(u));
     updateQuotaUI();
     updateDexCount();
-    setTimeout(() => renderSeriesNewBadgesOnMenu(), 400);
-    setTimeout(() => renderSeriesNewBadgesOnMenu(), 1200);
 });
 </script>
 </body>
