@@ -83,7 +83,7 @@
   <canvas id="game-canvas"></canvas>
 
   <!-- 頂部 HUD 狀態列 -->
-  <header class="fixed top-0 inset-x-0 z-20 pointer-events-none p-2 sm:p-3.5 flex flex-col items-center gap-1.5">
+  <header class="fixed top-0 inset-x-0 z-[55] pointer-events-none p-2 sm:p-3.5 flex flex-col items-center gap-1.5">
     <div class="w-full max-w-2xl flex items-center justify-between gap-2">
       <!-- 公會標題徽章 -->
       <div class="flex items-center gap-1.5 bg-slate-900/85 backdrop-blur-md text-white px-3 py-1.5 rounded-2xl border border-purple-300/40 shadow-md">
@@ -92,12 +92,16 @@
         <span class="hidden sm:inline text-xs text-purple-200 font-bold">| 喵喵 × 一劍呦</span>
       </div>
 
-      <!-- 最高紀錄與靜音按鈕 -->
-      <div class="flex items-center gap-2 pointer-events-auto">
-        <div class="bg-white/95 backdrop-blur-md px-3 py-1 rounded-2xl border border-white shadow text-right">
+      <!-- 最高紀錄、排行榜與靜音按鈕 -->
+      <div class="flex items-center gap-1.5 sm:gap-2 pointer-events-auto">
+        <div class="bg-white/95 backdrop-blur-md px-2.5 sm:px-3 py-1 rounded-2xl border border-white shadow text-right">
           <div class="text-[10px] font-bold text-slate-500">公會最高紀錄</div>
           <div id="hud-best" class="text-xs sm:text-sm font-black text-purple-700">0 ml</div>
         </div>
+        <button id="top-lb-btn" type="button" aria-label="查看排行榜" class="cursor-pointer bg-amber-100/95 hover:bg-amber-200 active:scale-95 transition h-10 px-2.5 sm:px-3 rounded-2xl shadow border border-amber-300 flex items-center justify-center gap-1 text-xs sm:text-sm font-black text-amber-900">
+          <span>🏆</span>
+          <span>排行</span>
+        </button>
         <button id="sound-btn" type="button" aria-label="切換音效" class="cursor-pointer bg-white/95 hover:bg-white active:scale-95 transition w-10 h-10 rounded-2xl shadow border border-slate-100 flex items-center justify-center text-lg">
           🔊
         </button>
@@ -212,9 +216,37 @@
         </div>
       </div>
 
-      <button id="start-btn" type="button" class="btn-action w-full bg-gradient-to-r from-amber-400 via-orange-400 to-purple-500 text-white font-black text-lg sm:text-xl py-3.5 rounded-2xl flex items-center justify-center gap-2 shadow-lg">
-        <span>🚀</span>
-        <span>開始挑戰（餵喵喵喝牛奶！）</span>
+      <div class="flex flex-col gap-2.5">
+        <button id="start-btn" type="button" class="btn-action w-full bg-gradient-to-r from-amber-400 via-orange-400 to-purple-500 text-white font-black text-lg sm:text-xl py-3.5 rounded-2xl flex items-center justify-center gap-2 shadow-lg">
+          <span>🚀</span>
+          <span>開始挑戰（餵喵喵喝牛奶！）</span>
+        </button>
+
+        <button id="open-start-lb-btn" type="button" class="cursor-pointer w-full bg-purple-100 hover:bg-purple-200 active:scale-95 transition text-purple-900 border-2 border-purple-300 font-black text-sm sm:text-base py-2.5 rounded-2xl flex items-center justify-center gap-2 shadow-sm">
+          <span>🏆</span>
+          <span>查看花間飲奶王排行榜</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 開始前查看排行榜彈窗 -->
+  <div id="start-lb-modal" class="fixed inset-0 z-[60] hidden items-center justify-center p-4 bg-slate-950/65 backdrop-blur-sm">
+    <div class="glass-panel rounded-3xl max-w-md w-full p-5 text-center relative overflow-hidden">
+      <div class="absolute top-0 inset-x-0 h-2.5 bg-gradient-to-r from-purple-500 via-pink-500 to-amber-400"></div>
+      <div class="flex items-center justify-between mb-3">
+        <div class="text-left">
+          <div class="text-base sm:text-lg font-black text-purple-900">🏆 花間飲奶王・即時排行榜</div>
+          <div id="start-lb-status" class="text-xs font-bold text-purple-600">讀取中...</div>
+        </div>
+        <button id="close-start-lb-btn" type="button" class="cursor-pointer w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-black text-base flex items-center justify-center">✕</button>
+      </div>
+      <div id="start-lb-list" class="bg-white rounded-2xl border-2 border-purple-100 divide-y divide-slate-100 max-h-72 overflow-y-auto text-xs sm:text-sm text-left mb-3.5">
+        <div class="p-4 text-center text-slate-400 font-bold">載入排行榜中...</div>
+      </div>
+      <button id="close-start-lb-bottom-btn" type="button" class="cursor-pointer w-full bg-slate-800 hover:bg-slate-700 text-white font-black text-sm py-2.5 rounded-2xl shadow">
+        關閉排行榜
       </button>
     </div>
   </div>
@@ -997,6 +1029,66 @@
           statusEl.textContent = '連線錯誤';
         }
       };
+    }
+
+    const openStartLbBtn = document.getElementById('open-start-lb-btn');
+    const startLbModal = document.getElementById('start-lb-modal');
+    const closeStartLbBtn = document.getElementById('close-start-lb-btn');
+    const closeStartLbBottomBtn = document.getElementById('close-start-lb-bottom-btn');
+
+    async function openMeowMilkStartLeaderboard() {
+      const lb = window.HUAJIAN_LEADERBOARD;
+      const statusEl = document.getElementById('start-lb-status');
+      const listEl = document.getElementById('start-lb-list');
+      startLbModal.classList.remove('hidden');
+      startLbModal.classList.add('flex');
+
+      if (!lb || !lb.isConfigured()) {
+        statusEl.textContent = '尚未綁定試算表';
+        listEl.innerHTML = '<div class="p-4 text-center text-amber-700 font-bold">⚙️ 請先在 leaderboard-config.js 填入 Apps Script 網址！</div>';
+        return;
+      }
+      statusEl.textContent = '同步中...';
+      listEl.innerHTML = '<div class="p-4 text-center text-slate-400 font-bold">載入排行榜中...</div>';
+      try {
+        const data = await lb.fetchTop('MeowMilk');
+        if (data && data.ok) {
+          statusEl.textContent = '即時前 10 名（每人保留最高分）';
+          renderLeaderboardRows(listEl, data.top, 'ml');
+        } else {
+          statusEl.textContent = '讀取失敗';
+          listEl.innerHTML = '<div class="p-4 text-center text-rose-600 font-bold">讀取失敗，請稍後再試</div>';
+        }
+      } catch (err) {
+        statusEl.textContent = '連線異常';
+        listEl.innerHTML = '<div class="p-4 text-center text-rose-600 font-bold">連線異常，請檢查網路狀態</div>';
+      }
+    }
+
+    function closeMeowMilkStartLeaderboard() {
+      startLbModal.classList.add('hidden');
+      startLbModal.classList.remove('flex');
+    }
+
+    const topLbBtn = document.getElementById('top-lb-btn');
+    if (topLbBtn) {
+      topLbBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openMeowMilkStartLeaderboard();
+      });
+    }
+    if (openStartLbBtn) {
+      openStartLbBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openMeowMilkStartLeaderboard();
+      });
+    }
+    if (closeStartLbBtn) closeStartLbBtn.addEventListener('click', closeMeowMilkStartLeaderboard);
+    if (closeStartLbBottomBtn) closeStartLbBottomBtn.addEventListener('click', closeMeowMilkStartLeaderboard);
+    if (startLbModal) {
+      startLbModal.addEventListener('click', (e) => {
+        if (e.target === startLbModal) closeMeowMilkStartLeaderboard();
+      });
     }
 
     startBtn.addEventListener('click', (e) => {
