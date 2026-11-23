@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>暴打小菜雞：我就菜！</title>
 <script src="leaderboard-config.js?v=20261123_v1"></script>
 <script>
@@ -377,6 +377,35 @@
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+  @media (max-width: 640px), (max-height: 740px) {
+    #overlay {
+      align-items: flex-start;
+      justify-content: center;
+      padding: max(8px, env(safe-area-inset-top, 0px)) 10px max(8px, env(safe-area-inset-bottom, 0px));
+      overflow-y: auto;
+    }
+    .card {
+      margin: auto 0;
+      max-height: calc(100dvh - max(8px, env(safe-area-inset-top, 0px)) - max(8px, env(safe-area-inset-bottom, 0px)));
+      padding: 14px 16px;
+      overflow-y: auto;
+    }
+    .rule-box {
+      padding: 8px 10px;
+      margin-bottom: 10px;
+    }
+    #hm-start-lb-modal {
+      align-items: flex-start;
+      overflow-y: auto;
+    }
+    #hm-start-lb-modal .card {
+      max-height: calc(100dvh - 28px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+      overflow-y: auto;
+    }
+    #hm-start-lb-list {
+      max-height: min(32dvh, 180px) !important;
+    }
   }
 </style>
 </head>

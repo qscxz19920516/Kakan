@@ -75,6 +75,43 @@
     .danger-pulse {
       animation: pulseWarning 0.32s ease-in-out infinite;
     }
+
+    @media (max-width: 640px), (max-height: 700px) {
+      #start-screen {
+        align-items: flex-start;
+        overflow-y: auto;
+        padding: max(52px, env(safe-area-inset-top, 0px)) 10px max(8px, env(safe-area-inset-bottom, 0px));
+      }
+
+      #start-screen > .glass-panel {
+        max-height: calc(100dvh - max(52px, env(safe-area-inset-top, 0px)) - max(8px, env(safe-area-inset-bottom, 0px)));
+        padding: 14px;
+        border-radius: 22px;
+      }
+
+      #start-lb-modal,
+      #gameover-screen {
+        align-items: flex-start;
+        overflow-y: auto;
+        padding: max(8px, env(safe-area-inset-top, 0px)) 10px max(8px, env(safe-area-inset-bottom, 0px));
+      }
+
+      #start-lb-modal > .glass-panel,
+      #gameover-screen > .glass-panel {
+        max-height: calc(100dvh - max(8px, env(safe-area-inset-top, 0px)) - max(8px, env(safe-area-inset-bottom, 0px)));
+        padding: 12px;
+        border-radius: 22px;
+        overflow-y: auto;
+      }
+
+      #start-lb-list {
+        max-height: min(38dvh, 240px);
+      }
+
+      #lb-list {
+        max-height: min(22dvh, 120px);
+      }
+    }
   </style>
 </head>
 <body class="relative w-full h-full overflow-hidden">
@@ -683,8 +720,9 @@
     function spawnBalancedItem() {
       const marginX = Math.max(64, state.width * 0.14);
       const x = marginX + Math.random() * (state.width - marginX * 2);
-      const minY = Math.max(155, state.height * 0.25);
-      const maxY = Math.max(minY + 60, state.height * 0.56);
+      const hudBottom = hudStatsPanel.parentElement.getBoundingClientRect().bottom;
+      const minY = Math.max(190, state.height * 0.3, hudBottom + 32);
+      const maxY = Math.max(minY + 60, state.height * 0.64);
       const y = minY + Math.random() * (maxY - minY);
 
       // 避免與現有道具重疊

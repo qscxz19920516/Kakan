@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -153,9 +153,57 @@ body.game-mode-active .topbar-omikuji-btn{display:none}
     background:#fff !important;
 }
 .game-card.pseudo-fullscreen .game-frame-wrap{
+    position:relative;
+    z-index:1;
     height:calc(100dvh - 64px) !important;
     min-height:0 !important;
     border-radius:14px !important;
+}
+.game-card.pseudo-fullscreen .game-hd{
+    position:relative;
+    z-index:2;
+    pointer-events:auto;
+}
+@media(max-width:768px){
+    .game-card.pseudo-fullscreen{
+        height:100vh !important;
+        height:100dvh !important;
+        padding:0 !important;
+    }
+    .game-card.pseudo-fullscreen .game-hd{
+        position:absolute;
+        top:calc(env(safe-area-inset-top, 0px) + 10px);
+        left:0;
+        right:0;
+        z-index:10000;
+        height:48px;
+        padding:0 10px;
+        justify-content:flex-end;
+        gap:0;
+        pointer-events:none;
+    }
+    .game-card.pseudo-fullscreen .game-title{display:none}
+    .game-card.pseudo-fullscreen .game-hd-actions{
+        position:relative;
+        z-index:10001;
+        gap:6px;
+        pointer-events:auto;
+    }
+    .game-card.pseudo-fullscreen .game-hd-actions button{
+        min-height:44px;
+        touch-action:manipulation;
+    }
+    .game-card.pseudo-fullscreen .game-frame-wrap{
+        position:absolute;
+        top:calc(env(safe-area-inset-top, 0px) + 58px);
+        right:0;
+        bottom:0;
+        left:0;
+        height:auto !important;
+        min-height:0 !important;
+        border:0;
+        border-radius:0 !important;
+    }
 }
 .game-card:fullscreen,
 .game-card:-webkit-full-screen{
@@ -193,7 +241,7 @@ body.game-mode-active .topbar-omikuji-btn{display:none}
 </style>
 <link rel="stylesheet" href="site-menu.css?v=20261121_v1">
 <script>
-const SITE_VERSION = "20261123_v12";
+const SITE_VERSION = "20261123_v16";
 (function(){
     const url = new URL(window.location.href);
     const verKey = "huajian_site_ver_checked";
@@ -645,10 +693,10 @@ function closeZoom(){
     document.getElementById('zoomModal').classList.remove('open');
 }
 function openGame(event){
-    openEmbeddedGame(event, 'MeowMilk.html?v=20261123_v12', '#meow-milk', '🥛 喵喵乳糖挑戰');
+    openEmbeddedGame(event, 'MeowMilk.html?v=20261123_v16', '#meow-milk', '🥛 喵喵乳糖挑戰');
 }
 function openGame1(event){
-    openEmbeddedGame(event, 'HitMeow.html?v=20261123_v12', '#hit-meow', '🩴 暴打小菜雞');
+    openEmbeddedGame(event, 'HitMeow.html?v=20261123_v16', '#hit-meow', '🩴 暴打小菜雞');
 }
 let cachedSeriesConfig = null;
 
@@ -675,6 +723,11 @@ function openEmbeddedGame(event, source, hash, title){
     if (window.location.hash !== hash) history.replaceState(null,'',hash);
     syncMenuActiveState();
     toggleMenuIfOpen();
+    if (window.matchMedia('(max-width: 768px)').matches) {
+        gameCard.classList.add('pseudo-fullscreen');
+        document.body.style.overflow='hidden';
+        updateFullscreenBtnLabel();
+    }
     window.scrollTo({top:0,behavior:'smooth'});
 }
 
