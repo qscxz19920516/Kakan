@@ -349,7 +349,6 @@ function getSeriesCollectionStats(job = curJob) {
 }
 
 function renderSeriesNewBadgesOnMenu() {
-    renderSeriesNewBadgesOnMenu();
     document.querySelectorAll('#subMenu a').forEach(a => {
         const sName = a.dataset.series;
         if (!sName) return;
@@ -563,8 +562,17 @@ function renderLotteryBox(snd = "", clue = "💡 提示：點擊「搖一搖抽�
     if (randomizeSkin) {
         curSkinIdx = pickRandomBoxSkin(curSkinIdx);
     }
-    const cfg = seriesConfig[curJob];
-    const skinFile = BOX_SKINS[curSkinIdx];
+    const keys = Object.keys(seriesConfig || {});
+    if (!seriesConfig || !seriesConfig[curJob]) {
+        curJob = keys[0] || "袋裝零食";
+    }
+    const cfg = (seriesConfig && seriesConfig[curJob]) ? seriesConfig[curJob] : {
+        seriesNo: "花間盲盒",
+        color: "#c76272",
+        folder: ".",
+        members: []
+    };
+    const skinFile = BOX_SKINS[curSkinIdx] || BOX_SKINS[0];
     const left = Math.max(0, MAX_DRAWS - getUsedDraws(curJob));
     const available = cfg.members.filter(name => !getDrawnList(curJob).includes(name));
     const canDraw = left > 0 && available.length > 0;
