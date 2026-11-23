@@ -263,7 +263,7 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
     </div>
 </div>
 
-<script src="menu-sync.js?v=20261123_v7"></script>
+<script src="menu-sync.js?v=20261123_v8"></script>
 <script>
 const MAX_DRAWS = 3;
 let seriesConfig = {};
@@ -378,6 +378,12 @@ async function hydrateGithubSeriesDates(configObj, force = false) {
     if (Object.keys(nextCache).length > 0) {
         saveCachedGithubDates(nextCache);
     }
+
+    Object.entries(configObj).forEach(([jobName, cfg]) => {
+        if (cfg) {
+            cfg.isNew = isUploadedWithinDays(jobName, cfg, 7);
+        }
+    });
 }
 
 function getSeriesTimestamp(jobName, cfg) {
@@ -525,7 +531,7 @@ async function forceRefreshSeries() {
     const raw = await window.HuajianMenu.fetchAllSeries(true);
     await hydrateGithubSeriesDates(raw, true);
     seriesConfig = sortSeriesConfigByUploadDesc(raw);
-    window.HuajianMenu.renderSharedSubMenu(seriesConfig, { onRendered: highlightActiveMenu });
+    window.HuajianMenu.renderSharedSubMenu(seriesConfig, { onRendered: highlightActiveMenu, isNewFn: (k, c) => Boolean(c && c.isNew) });
     selectSeries(curJob);
     if (btn) btn.innerText = '🔄';
 }
@@ -900,7 +906,7 @@ window.addEventListener('DOMContentLoaded', async function() {
     await hydrateGithubSeriesDates(rawSeries, false);
     seriesConfig = sortSeriesConfigByUploadDesc(rawSeries);
     installSubMenuObserver();
-    window.HuajianMenu.renderSharedSubMenu(seriesConfig, { onRendered: highlightActiveMenu });
+    window.HuajianMenu.renderSharedSubMenu(seriesConfig, { onRendered: highlightActiveMenu, isNewFn: (k, c) => Boolean(c && c.isNew) });
     const u = new URLSearchParams(window.location.search).get('job');
     selectSeries(normalizeJobName(u || getNewestSeriesName(seriesConfig)));
     updateQuotaUI();
