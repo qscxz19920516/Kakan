@@ -134,6 +134,48 @@ body.game-mode-active .topbar-omikuji-btn{display:none}
 .global-lb-play-btn{flex:1;border:none;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;padding:10px 12px;border-radius:16px;font-size:.86rem;font-weight:900;cursor:pointer;box-shadow:0 4px 12px rgba(217,119,6,.28)}
 .global-lb-close-btn{border:1.5px solid #f0a8b4;background:#fff8f9;color:#c76272;padding:10px 16px;border-radius:16px;font-size:.86rem;font-weight:900;cursor:pointer}
 
+
+/* 遊戲全螢幕 / 網頁滿版模式樣式 */
+.game-fs-btn{border:1.5px solid #f0a8b4;background:#fff8f9;color:#c76272;border-radius:12px;padding:7px 12px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:4px}
+.game-fs-btn:hover{background:#ffe6eb}
+.game-hd-actions{display:flex;align-items:center;gap:8px}
+
+.game-card.pseudo-fullscreen{
+    position:fixed !important;
+    inset:0 !important;
+    width:100vw !important;
+    height:100dvh !important;
+    max-width:none !important;
+    max-height:none !important;
+    z-index:9998 !important;
+    border-radius:0 !important;
+    padding:8px !important;
+    background:#fff !important;
+}
+.game-card.pseudo-fullscreen .game-frame-wrap{
+    height:calc(100dvh - 64px) !important;
+    min-height:0 !important;
+    border-radius:14px !important;
+}
+.game-card:fullscreen,
+.game-card:-webkit-full-screen{
+    width:100vw !important;
+    height:100vh !important;
+    max-width:none !important;
+    border-radius:0 !important;
+    padding:8px !important;
+    background:#fff !important;
+    display:flex !important;
+    flex-direction:column !important;
+}
+.game-card:fullscreen .game-frame-wrap,
+.game-card:-webkit-full-screen .game-frame-wrap{
+    flex:1 !important;
+    height:auto !important;
+    min-height:0 !important;
+    border-radius:14px !important;
+}
+
 @media(max-width:520px){
     .topbar-omikuji-btn{padding:0 9px;font-size:.74rem;height:36px}
     .wrap.game-active{width:calc(100% - 16px)}
@@ -230,7 +272,10 @@ const SITE_VERSION = "20261123_v12";
     <div class="game-card" id="gameCard">
         <div class="game-hd">
             <div class="game-title" id="gameTitle">🥛 喵喵乳糖挑戰</div>
-            <button type="button" class="game-back" onclick="showHome()">返回首頁</button>
+            <div class="game-hd-actions">
+                <button type="button" class="game-fs-btn" id="gameFullscreenBtn" onclick="toggleGameFullscreen()" title="切換全螢幕">⛶ 全螢幕</button>
+                <button type="button" class="game-back" onclick="showHome()">返回首頁</button>
+            </div>
         </div>
         <div class="game-frame-wrap">
             <iframe id="gameFrame" class="game-frame" title="遊戲" loading="lazy"></iframe>
@@ -632,8 +677,82 @@ function openEmbeddedGame(event, source, hash, title){
     toggleMenuIfOpen();
     window.scrollTo({top:0,behavior:'smooth'});
 }
-function showHome(event){
+
+function isGameCurrentlyFullscreen() {
+    const gameCard = document.getElementById('gameCard');
+    const nativeFs = document.fullscreenElement || document.webkitFullscreenElement;
+    return Boolean(nativeFs === gameCard || (gameCard && gameCard.classList.contains('pseudo-fullscreen')));
+}
+
+function updateFullscreenBtnLabel() {
+    const btn = document.getElementById('gameFullscreenBtn');
+    if (!btn) return;
+    if (isGameCurrentlyFullscreen()) {
+        btn.textContent = '🗗 退出全螢幕';
+    } else {
+        btn.textContent = '⛶ 全螢幕';
+    }
+}
+
+async function enterGameFullscreen() {
+    const gameCard = document.getElementById('gameCard');
+    if (!gameCard) return;
+
+    try {
+        if (gameCard.requestFullscreen) {
+            await gameCard.requestFullscreen();
+            updateFullscreenBtnLabel();
+            return;
+        }
+        if (gameCard.webkitRequestFullscreen) {
+            gameCard.webkitRequestFullscreen();
+            updateFullscreenBtnLabel();
+            return;
+        }
+    } catch (e) {
+        // iOS Safari 或部分瀏覽器限制元素全螢幕時，改用網頁滿版模式
+    }
+
+    gameCard.classList.add('pseudo-fullscreen');
+    document.body.style.overflow = 'hidden';
+    updateFullscreenBtnLabel();
+}
+
+async function exitGameFullscreen() {
+    const gameCard = document.getElementById('gameCard');
+    const nativeFs = document.fullscreenElement || document.webkitFullscreenElement;
+
+    if (nativeFs) {
+        try {
+            if (document.exitFullscreen) {
+                await document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            }
+        } catch (e) {}
+    }
+
+    if (gameCard) {
+        gameCard.classList.remove('pseudo-fullscreen');
+    }
+    document.body.style.overflow = '';
+    updateFullscreenBtnLabel();
+}
+
+async function toggleGameFullscreen() {
+    if (isGameCurrentlyFullscreen()) {
+        await exitGameFullscreen();
+    } else {
+        await enterGameFullscreen();
+    }
+}
+
+document.addEventListener('fullscreenchange', updateFullscreenBtnLabel);
+document.addEventListener('webkitfullscreenchange', updateFullscreenBtnLabel);
+
+async function showHome(event){
     if (event) event.preventDefault();
+    if (isGameCurrentlyFullscreen()) await exitGameFullscreen();
     document.getElementById('homeView').classList.remove('hidden');
     document.getElementById('mainWrap').classList.remove('game-active');
     document.body.classList.remove('game-mode-active');
