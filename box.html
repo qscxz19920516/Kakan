@@ -199,6 +199,9 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 .dex-card{background:#fff;width:100%;max-width:560px;max-height:82vh;border-radius:28px;border:3px solid #f9dfe3;box-shadow:0 12px 30px rgba(0,0,0,.2);display:flex;flex-direction:column;overflow:hidden;animation:popResult .25s ease}
 .dex-hd{padding:18px 22px;background:linear-gradient(135deg,#ffe5e2,#fbdce6);display:flex;justify-content:space-between;align-items:center;border-bottom:2px dashed #f2bec7}
 .dex-hd h3{color:#c76272;font-size:1.15rem;font-weight:800}
+button.dex-series-chip{cursor:pointer;font-family:inherit;transition:.18s}
+button.dex-series-chip:hover{transform:translateY(-1px);box-shadow:0 3px 8px rgba(199,98,114,.16);background:#fff}
+.dex-summary-hint{grid-column:1/-1;font-size:.74rem;color:#947479;font-weight:700;margin-bottom:2px}
 .dex-series-summary{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:8px;padding-bottom:10px;margin-bottom:4px;border-bottom:2px dashed #f2bec7}
 .dex-series-chip{display:inline-flex;align-items:center;gap:6px;background:#fff8f9;border:1.5px solid #f2bec7;border-radius:14px;padding:4px 10px;font-size:.78rem;font-weight:800;color:#5a4649}
 .dex-series-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
@@ -659,6 +662,14 @@ function updateDexCount() {
     if (el) el.innerText = total;
 }
 
+function jumpToSeriesFromDex(job) {
+    closeDex();
+    if (typeof selectSeries === 'function') {
+        selectSeries(job);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+}
+
 function openDex() {
     const body = document.getElementById('dexBody');
     const allSeriesKeys = new Set(Object.keys(seriesConfig || {}));
@@ -689,11 +700,12 @@ function openDex() {
         const progressText = total > 0 ? `${owned} / ${total} 款` : `${owned} 款`;
 
         const isZero = (owned === 0 && drawn.length === 0);
+        const safeJob = String(job).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
         chips.push(
-            `<div class="dex-series-chip" style="border-color:${cfg.color};${isZero ? 'opacity:.72;background:#fafafa' : ''}">` +
+            `<button type="button" class="dex-series-chip" title="點擊切換至 ${displayLabel}" onclick="jumpToSeriesFromDex('${safeJob}')" style="border-color:${cfg.color};${isZero ? 'opacity:.72;background:#fafafa' : ''}">` +
             `<span class="dex-series-dot" style="background:${cfg.color}"></span>` +
             `<span>${displayLabel}：<b>${progressText}</b></span>` +
-            `</div>`
+            `</button>`
         );
 
         if (drawn.length > 0) {
@@ -717,7 +729,7 @@ function openDex() {
     });
 
     const summaryBar = chips.length > 0
-        ? `<div class="dex-series-summary">${chips.join('')}</div>`
+        ? `<div class="dex-summary-hint">💡 點擊下方任一「系列徽章」可直接切換到該盲盒系列</div><div class="dex-series-summary">${chips.join('')}</div>`
         : '';
 
     body.innerHTML = anyCollected
