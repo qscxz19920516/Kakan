@@ -199,14 +199,6 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 .dex-card{background:#fff;width:100%;max-width:560px;max-height:82vh;border-radius:28px;border:3px solid #f9dfe3;box-shadow:0 12px 30px rgba(0,0,0,.2);display:flex;flex-direction:column;overflow:hidden;animation:popResult .25s ease}
 .dex-hd{padding:18px 22px;background:linear-gradient(135deg,#ffe5e2,#fbdce6);display:flex;justify-content:space-between;align-items:center;border-bottom:2px dashed #f2bec7}
 .dex-hd h3{color:#c76272;font-size:1.15rem;font-weight:800}
-button.dex-series-chip{cursor:pointer;font-family:inherit;transition:.18s}
-button.dex-series-chip:hover{transform:translateY(-1px);box-shadow:0 3px 8px rgba(199,98,114,.16);background:#fff}
-.dex-summary-hint{grid-column:1/-1;font-size:.74rem;color:#947479;font-weight:700;margin-bottom:2px}
-.dex-series-summary{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:8px;padding-bottom:10px;margin-bottom:4px;border-bottom:2px dashed #f2bec7}
-.dex-series-chip{display:inline-flex;align-items:center;gap:6px;background:#fff8f9;border:1.5px solid #f2bec7;border-radius:14px;padding:4px 10px;font-size:.78rem;font-weight:800;color:#5a4649}
-.dex-series-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
-.dex-series-group-hd{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;background:#fff5f7;border-left:4px solid var(--g-color,#c76272);padding:6px 12px;border-radius:10px;font-size:.86rem;font-weight:900;color:#5a4649;margin-top:4px}
-.dex-series-count{font-size:.78rem;font-weight:900;color:#c76272;background:#fff;border:1px solid #f2bec7;padding:1px 8px;border-radius:10px}
 .dex-body{padding:18px;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px}
 .dex-item{background:#fff9fa;border:2px solid #f7d7dc;border-radius:16px;padding:10px;text-align:center}
 .dex-item img{width:100%;height:115px;object-fit:contain;border-radius:10px;background:#fff;margin-bottom:6px;cursor:zoom-in;transition:transform .2s}
@@ -662,76 +654,19 @@ function updateDexCount() {
     if (el) el.innerText = total;
 }
 
-function jumpToSeriesFromDex(job) {
-    closeDex();
-    if (typeof selectSeries === 'function') {
-        selectSeries(job);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-}
-
 function openDex() {
     const body = document.getElementById('dexBody');
-    const allSeriesKeys = new Set(Object.keys(seriesConfig || {}));
-    for (let i = 0; i < localStorage.length; i++) {
-        const k = localStorage.key(i);
-        if (k && k.startsWith('huajian_drawn_list_')) {
-            allSeriesKeys.add(k.replace('huajian_drawn_list_', ''));
-        }
-    }
-
-    const chips = [];
-    const groupsHtml = [];
-    let anyCollected = false;
-
-    allSeriesKeys.forEach(job => {
-        const cfg = (seriesConfig && seriesConfig[job]) ? seriesConfig[job] : {
-            folder: job,
-            displayFolder: job,
-            color: '#c76272',
-            members: []
-        };
-        const drawn = getDrawnList(job);
-        const total = Array.isArray(cfg.members) ? cfg.members.length : 0;
-        const owned = Array.isArray(cfg.members) && total > 0
-            ? cfg.members.filter(m => drawn.includes(m)).length
-            : drawn.length;
-        const displayLabel = cfg.displayFolder || job;
-        const progressText = total > 0 ? `${owned} / ${total} 款` : `${owned} 款`;
-
-        const isZero = (owned === 0 && drawn.length === 0);
-        const safeJob = String(job).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-        chips.push(
-            `<button type="button" class="dex-series-chip" title="點擊切換至 ${displayLabel}" onclick="jumpToSeriesFromDex('${safeJob}')" style="border-color:${cfg.color};${isZero ? 'opacity:.72;background:#fafafa' : ''}">` +
-            `<span class="dex-series-dot" style="background:${cfg.color}"></span>` +
-            `<span>${displayLabel}：<b>${progressText}</b></span>` +
-            `</button>`
-        );
-
-        if (drawn.length > 0) {
-            anyCollected = true;
-            drawn.forEach(name => {
-                groupsHtml.push(
-                    `<div class="dex-item">` +
-                    `<img src="${cfg.folder}/${name}.jpg" alt="${name}" title="點擊放大檢視" onclick="openZoom('${cfg.folder}','${name}','${job}')" onerror="if(!this.dataset.step){this.dataset.step=1;this.src='${cfg.folder}/${name}.JPG';}else if(this.dataset.step==1){this.dataset.step=2;this.src='${cfg.folder}/${name}.png';}else{this.onerror=null;this.src='${cfg.folder}/${name}.PNG';}">` +
-                    `<div class="dex-item-name">${name}</div>` +
-                    `<span class="dex-item-tag" style="background:${cfg.color}">${displayLabel}・${progressText}</span>` +
-                    `</div>`
-                );
-            });
-        }
+    let html = '';
+    Object.keys(seriesConfig).forEach(job => {
+        const cfg = seriesConfig[job];
+        if (!cfg) return;
+        getDrawnList(job).forEach(name => {
+            html += `<div class="dex-item"><img src="${cfg.folder}/${name}.jpg" alt="${name}" title="點擊放大檢視" onclick="openZoom('${cfg.folder}','${name}','${job}')" onerror="if(!this.dataset.step){this.dataset.step=1;this.src='${cfg.folder}/${name}.JPG';}else if(this.dataset.step==1){this.dataset.step=2;this.src='${cfg.folder}/${name}.png';}else{this.onerror=null;this.src='${cfg.folder}/${name}.PNG';}"><div class="dex-item-name">${name}</div><span class="dex-item-tag" style="background:${cfg.color}">${job}</span></div>`;
+        });
     });
-
-    const summaryBar = chips.length > 0
-        ? `<div class="dex-series-summary">${chips.join('')}</div>`
-        : '';
-
-    body.innerHTML = anyCollected
-        ? (summaryBar + groupsHtml.join(''))
-        : (summaryBar + '<div style="grid-column:1/-1;text-align:center;padding:32px 10px;color:#947479;font-weight:700">🌸 還沒有抽到任何小卡喔，快去搖搖抽獎箱吧！</div>');
+    body.innerHTML = html || '<div style="grid-column:1/-1;text-align:center;padding:40px 10px;color:#947479;font-weight:700">🌸 還沒有抽到任何小卡喔，快去搖搖抽獎箱吧！</div>';
     document.getElementById('dexModal').classList.add('open');
 }
-
 function closeDex() {
     document.getElementById('dexModal').classList.remove('open');
 }
