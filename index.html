@@ -241,7 +241,7 @@ body.game-mode-active .topbar-omikuji-btn{display:none}
 </style>
 <link rel="stylesheet" href="site-menu.css?v=20261121_v1">
 <script>
-const SITE_VERSION = "20261123_v17";
+const SITE_VERSION = "20261123_v16";
 (function(){
     const url = new URL(window.location.href);
     const verKey = "huajian_site_ver_checked";
@@ -676,8 +676,7 @@ function triggerOmikujiSecretReset() {
     if (omikujiTapCount < 5) return;
     omikujiTapCount = 0;
 
-    const input = prompt("⛩️ 觸發御神籤隱藏重置密技！
-請輸入通關密語以重置今日抽籤紀錄：");
+    const input = prompt("⛩️ 觸發御神籤隱藏重置密技！\n請輸入通關密語以重置今日抽籤紀錄：");
     if (input === null) return;
     if (input.trim().toLowerCase() !== OMIKUJI_SECRET_CODE.toLowerCase()) {
         alert("❌ 密語不正確喔！");
@@ -722,10 +721,10 @@ function closeZoom(){
     document.getElementById('zoomModal').classList.remove('open');
 }
 function openGame(event){
-    openEmbeddedGame(event, 'MeowMilk.html?v=20261123_v17', '#meow-milk', '🥛 喵喵乳糖挑戰');
+    openEmbeddedGame(event, 'MeowMilk.html?v=20261123_v16', '#meow-milk', '🥛 喵喵乳糖挑戰');
 }
 function openGame1(event){
-    openEmbeddedGame(event, 'HitMeow.html?v=20261123_v17', '#hit-meow', '🩴 暴打小菜雞');
+    openEmbeddedGame(event, 'HitMeow.html?v=20261123_v16', '#hit-meow', '🩴 暴打小菜雞');
 }
 let cachedSeriesConfig = null;
 
