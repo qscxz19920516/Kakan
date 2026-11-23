@@ -295,11 +295,11 @@ const cluesPool = [
 ];
 
 
-// ★ 高效查詢 GitHub 近期 Commit 修改時間（1~數次請求即涵蓋全站系列，避免觸發每小時 60 次限流）
+// ★ 查詢 GitHub 近期 Commit 時間（精簡請求數：列表 1 次 + 7 天內最新最多 8 筆明細，並快取 30 分鐘）
 const GH_OWNER = "qscxz19920516";
 const GH_REPO = "Kakan";
-const GH_COMMIT_CACHE_KEY = "huajian_gh_folder_dates_v3";
-const GH_COMMIT_CACHE_TTL_MS = 15 * 60 * 1000;
+const GH_COMMIT_CACHE_KEY = "huajian_gh_folder_dates_v4";
+const GH_COMMIT_CACHE_TTL_MS = 30 * 60 * 1000;
 
 const githubFolderDates = {};
 
@@ -351,62 +351,62 @@ async function hydrateGithubSeriesDates(configObj, force = false) {
                 githubFolderDates[jobName] = cached[folder];
             }
         }
-    }
+    } else {
+        try {
+            const listUrl = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/commits?per_page=50${force ? "&_=" + Date.now() : ""}`;
+            const res = await fetch(listUrl, force ? { cache: "no-store" } : {});
+            if (res.ok) {
+                const commits = await res.json();
+                if (Array.isArray(commits) && commits.length > 0) {
+                    const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+                    const recentCommits = commits.filter(c => {
+                        const ds = (c.commit && c.commit.committer && c.commit.committer.date) ||
+                                   (c.commit && c.commit.author && c.commit.author.date);
+                        const ts = ds ? new Date(ds).getTime() : 0;
+                        return ts >= sevenDaysAgo;
+                    });
 
-    try {
-        const listUrl = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/commits?per_page=30${force ? "&_=" + Date.now() : ""}`;
-        const res = await fetch(listUrl, force ? { cache: "no-store" } : {});
-        if (res.ok) {
-            const commits = await res.json();
-            if (Array.isArray(commits) && commits.length > 0) {
-                const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
-                const recentCommits = commits.filter(c => {
-                    const ds = (c.commit && c.commit.committer && c.commit.committer.date) ||
-                               (c.commit && c.commit.author && c.commit.author.date);
-                    const ts = ds ? new Date(ds).getTime() : 0;
-                    return ts >= sevenDaysAgo;
-                });
+                    const detailCommits = recentCommits.slice(0, 8);
+                    const folderLatestTs = {};
 
-                const detailCommits = recentCommits.slice(0, 15);
-                const folderLatestTs = cached ? Object.assign({}, cached) : {};
-
-                await Promise.all(detailCommits.map(async (c) => {
-                    if (!c || !c.sha) return;
-                    const ds = (c.commit && c.commit.committer && c.commit.committer.date) ||
-                               (c.commit && c.commit.author && c.commit.author.date);
-                    const ts = ds ? new Date(ds).getTime() : NaN;
-                    if (isNaN(ts)) return;
-                    try {
-                        const detRes = await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/commits/${c.sha}`);
-                        if (!detRes.ok) return;
-                        const det = await detRes.json();
-                        const files = Array.isArray(det.files) ? det.files : [];
-                        files.forEach(f => {
-                            const matchedJob = matchFolderToSeriesName(f.filename, configObj);
-                            if (matchedJob) {
-                                const cfg = configObj[matchedJob];
-                                const folderKey = String((cfg && cfg.folder) || matchedJob).replace(/^\/+|\/+$/g, "");
-                                if (!folderLatestTs[folderKey] || ts > folderLatestTs[folderKey]) {
-                                    folderLatestTs[folderKey] = ts;
+                    await Promise.all(detailCommits.map(async (c) => {
+                        if (!c || !c.sha) return;
+                        const ds = (c.commit && c.commit.committer && c.commit.committer.date) ||
+                                   (c.commit && c.commit.author && c.commit.author.date);
+                        const ts = ds ? new Date(ds).getTime() : NaN;
+                        if (isNaN(ts)) return;
+                        try {
+                            const detRes = await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/commits/${c.sha}`);
+                            if (!detRes.ok) return;
+                            const det = await detRes.json();
+                            const files = Array.isArray(det.files) ? det.files : [];
+                            files.forEach(f => {
+                                const matchedJob = matchFolderToSeriesName(f.filename, configObj);
+                                if (matchedJob) {
+                                    const cfg = configObj[matchedJob];
+                                    const folderKey = String((cfg && cfg.folder) || matchedJob).replace(/^\/+|\/+$/g, "");
+                                    if (!folderLatestTs[folderKey] || ts > folderLatestTs[folderKey]) {
+                                        folderLatestTs[folderKey] = ts;
+                                    }
+                                    if (!githubFolderDates[matchedJob] || ts > githubFolderDates[matchedJob]) {
+                                        githubFolderDates[matchedJob] = ts;
+                                    }
                                 }
-                                if (!githubFolderDates[matchedJob] || ts > githubFolderDates[matchedJob]) {
-                                    githubFolderDates[matchedJob] = ts;
-                                }
-                            }
-                        });
-                    } catch (e) {}
-                }));
+                            });
+                        } catch (e) {}
+                    }));
 
-                for (const [jobName, cfg] of Object.entries(configObj)) {
-                    const folderKey = String((cfg && cfg.folder) || jobName).replace(/^\/+|\/+$/g, "");
-                    if (typeof folderLatestTs[folderKey] === "number") {
-                        githubFolderDates[jobName] = folderLatestTs[folderKey];
+                    for (const [jobName, cfg] of Object.entries(configObj)) {
+                        const folderKey = String((cfg && cfg.folder) || jobName).replace(/^\/+|\/+$/g, "");
+                        if (typeof folderLatestTs[folderKey] === "number") {
+                            githubFolderDates[jobName] = folderLatestTs[folderKey];
+                        }
                     }
+                    saveCachedGithubDates(folderLatestTs);
                 }
-                saveCachedGithubDates(folderLatestTs);
             }
-        }
-    } catch (err) {}
+        } catch (err) {}
+    }
 
     Object.entries(configObj).forEach(([jobName, cfg]) => {
         if (cfg) {
@@ -931,29 +931,19 @@ window.addEventListener('DOMContentLoaded', async function() {
         for(let i=0;i<45;i++){ const p=document.createElement('div');p.className='petal'; const s=9+Math.random()*13;p.style.width=s+'px';p.style.height=(s*.75)+'px'; p.style.left=(Math.random()*100)+'vw';p.style.animationDuration=(6+Math.random()*8)+'s'; p.style.animationDelay=(-Math.random()*10)+'s';bg.appendChild(p); }
         for(let i=0;i<25;i++){ const b=document.createElement('div');b.className='bubble'; const s=20+Math.random()*45;b.style.width=s+'px';b.style.height=s+'px'; b.style.left=(Math.random()*100)+'vw';b.style.animationDuration=(10+Math.random()*10)+'s'; b.style.animationDelay=(-Math.random()*8)+'s';bg.appendChild(b); }
     }
-
     try {
         installSubMenuObserver();
-        let rawSeries = {};
-        if (window.HuajianMenu && typeof window.HuajianMenu.fetchAllSeries === 'function') {
-            rawSeries = await window.HuajianMenu.fetchAllSeries();
-        }
-        if (!rawSeries || Object.keys(rawSeries).length === 0) {
-            rawSeries = {
-                "袋裝零食": { folder: "花間 × 袋裝零食", displayFolder: "花間 × 袋裝零食", color: "#c76272", softBg: "#fff0f3", seriesNo: "SERIES 01・花間 × 袋裝零食", members: ["爆米花", "奶油曲奇", "棉花糖", "糖果球", "洋芋片", "巧克力"] }
-            };
-        }
-
-        // 先立即渲染可用盲盒畫面，避免等待外部 API 時畫面空白或卡住
-        seriesConfig = rawSeries;
+        const rawSeries = (window.HuajianMenu && typeof window.HuajianMenu.fetchAllSeries === 'function')
+            ? await window.HuajianMenu.fetchAllSeries()
+            : {};
+        seriesConfig = rawSeries || {};
         const u = new URLSearchParams(window.location.search).get('job');
         selectSeries(normalizeJobName(u || getNewestSeriesName(seriesConfig)));
         updateQuotaUI();
         updateDexCount();
 
-        // 再背景查詢 GitHub Commit 時間並重新排序 + 補上 NEW 徽章
-        await hydrateGithubSeriesDates(rawSeries, false);
-        seriesConfig = sortSeriesConfigByUploadDesc(rawSeries);
+        await hydrateGithubSeriesDates(seriesConfig, false);
+        seriesConfig = sortSeriesConfigByUploadDesc(seriesConfig);
         if (window.HuajianMenu && typeof window.HuajianMenu.renderSharedSubMenu === 'function') {
             window.HuajianMenu.renderSharedSubMenu(seriesConfig, {
                 onRendered: highlightActiveMenu,
@@ -965,15 +955,12 @@ window.addEventListener('DOMContentLoaded', async function() {
         updateDexCount();
         setTimeout(() => renderSeriesNewBadgesOnMenu(), 300);
         setTimeout(() => renderSeriesNewBadgesOnMenu(), 1000);
-    } catch (err) {
-        if (!seriesConfig || Object.keys(seriesConfig).length === 0) {
-            seriesConfig = {
-                "袋裝零食": { folder: "花間 × 袋裝零食", displayFolder: "花間 × 袋裝零食", color: "#c76272", softBg: "#fff0f3", seriesNo: "SERIES 01・花間 × 袋裝零食", members: ["爆米花", "奶油曲奇", "棉花糖", "糖果球", "洋芋片", "巧克力"] }
-            };
+    } catch (e) {
+        if (seriesConfig && Object.keys(seriesConfig).length > 0) {
+            selectSeries(curJob);
+            updateQuotaUI();
+            updateDexCount();
         }
-        selectSeries(curJob);
-        updateQuotaUI();
-        updateDexCount();
     }
 });
 </script>
