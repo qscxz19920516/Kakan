@@ -3,10 +3,10 @@
 (function(){
     const GITHUB_OWNER = "qscxz19920516";
     const GITHUB_REPO = "Kakan";
-    const CACHE_KEY = "huajian_kakan_series_v4_" + GITHUB_OWNER + "_" + GITHUB_REPO;
+    const OLD_CACHE_KEY = "huajian_kakan_series_v4_" + GITHUB_OWNER + "_" + GITHUB_REPO;
+    const CACHE_KEY = "huajian_kakan_series_v5_" + GITHUB_OWNER + "_" + GITHUB_REPO;
     const EXCLUDED_FOLDERS = new Set([".github", "assets", "css", "js", "images", "img", "fonts", "職業", "職業介紹", "小卡", "小卡圖鑑", "card", "cards"]);
 
-    // ▼ 全站主選單總表（全站每一頁都會同步讀取這份清單）
     const SITE_NAV_ITEMS = [
         { icon: "🏠", label: "首頁", href: "index.html" },
         { icon: "🎴", label: "小卡圖鑑", href: "card.html" },
@@ -85,7 +85,6 @@
         return (!path || path === '') ? 'index.html' : path.toLowerCase();
     }
 
-    // 自動渲染全站一致的側邊選單骨架（支援所有頁面與無限新增遊戲）
     function mountGlobalDrawer() {
         const drawerList = document.querySelector('#drawer .drawer-list');
         if (!drawerList) return;
@@ -137,6 +136,10 @@
     }
 
     async function fetchAllSeries(bypassCache = false) {
+        try {
+            sessionStorage.removeItem(OLD_CACHE_KEY);
+        } catch (e) {}
+
         if (!bypassCache) {
             try {
                 const cached = sessionStorage.getItem(CACHE_KEY);
@@ -148,6 +151,16 @@
         }
 
         const branches = ["main", "master"];
+        try {
+            const repoRes = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}?_=${Date.now()}`);
+            if (repoRes.ok) {
+                const repoInfo = await repoRes.json();
+                if (repoInfo && repoInfo.default_branch && !branches.includes(repoInfo.default_branch)) {
+                    branches.unshift(repoInfo.default_branch);
+                }
+            }
+        } catch (e) {}
+
         for (const br of branches) {
             try {
                 const branchRes = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/branches/${br}?_=${Date.now()}`);
@@ -239,7 +252,6 @@
         if (options.onRendered) options.onRendered(seriesConfig);
     }
 
-    // 頁面一載入先立刻畫出主選單骨架，等 GitHub 資料回來再自動補上盲盒列表
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', mountGlobalDrawer);
     } else {
