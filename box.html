@@ -688,14 +688,13 @@ function openDex() {
         const displayLabel = cfg.displayFolder || job;
         const progressText = total > 0 ? `${owned} / ${total} 款` : `${owned} 款`;
 
-        if (owned > 0 || drawn.length > 0) {
-            chips.push(
-                `<div class="dex-series-chip" style="border-color:${cfg.color}">` +
-                `<span class="dex-series-dot" style="background:${cfg.color}"></span>` +
-                `<span>${displayLabel}：<b>${progressText}</b></span>` +
-                `</div>`
-            );
-        }
+        const isZero = (owned === 0 && drawn.length === 0);
+        chips.push(
+            `<div class="dex-series-chip" style="border-color:${cfg.color};${isZero ? 'opacity:.72;background:#fafafa' : ''}">` +
+            `<span class="dex-series-dot" style="background:${cfg.color}"></span>` +
+            `<span>${displayLabel}：<b>${progressText}</b></span>` +
+            `</div>`
+        );
 
         if (drawn.length > 0) {
             anyCollected = true;
@@ -723,7 +722,7 @@ function openDex() {
 
     body.innerHTML = anyCollected
         ? (summaryBar + groupsHtml.join(''))
-        : '<div style="grid-column:1/-1;text-align:center;padding:40px 10px;color:#947479;font-weight:700">🌸 還沒有抽到任何小卡喔，快去搖搖抽獎箱吧！</div>';
+        : (summaryBar + '<div style="grid-column:1/-1;text-align:center;padding:32px 10px;color:#947479;font-weight:700">🌸 還沒有抽到任何小卡喔，快去搖搖抽獎箱吧！</div>');
     document.getElementById('dexModal').classList.add('open');
 }
 
