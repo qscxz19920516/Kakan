@@ -121,7 +121,7 @@ body.game-mode-active .topbar-omikuji-btn{display:none}
 </style>
 <link rel="stylesheet" href="site-menu.css?v=20261121_v1">
 <script>
-const SITE_VERSION = "20261123_v5";
+const SITE_VERSION = "20261123_v7";
 (function(){
     const url = new URL(window.location.href);
     const verKey = "huajian_site_ver_checked";
@@ -200,7 +200,7 @@ const SITE_VERSION = "20261123_v5";
 <div class="omikuji-modal" id="omikujiModal" onclick="if(event.target===this) closeOmikujiModal()">
     <div class="omikuji-dialog">
         <button type="button" class="omikuji-close" onclick="closeOmikujiModal()" aria-label="關閉御神籤">✕</button>
-        <div class="omikuji-hd">⛩️ 花間小憩・每日御神籤 ⛩️</div>
+        <div class="omikuji-hd" id="omikujiSecretTitle" onclick="triggerOmikujiSecretReset()" style="cursor:pointer;user-select:none" title="每日御神籤">⛩️ 花間小憩・每日御神籤 ⛩️</div>
         <div class="omikuji-sub" id="omikujiSub">誠心搖一搖籤筒，看看今天的運勢吧！</div>
         <div id="omikujiStage"></div>
     </div>
@@ -388,7 +388,7 @@ function renderOmikujiSection() {
         return;
     }
 
-    sub.innerText = `誠心搖一搖籤筒，看看今天（${getTodayDateKey()}）的公會運勢！（每日限抽 1 次）`;
+    sub.innerText = `誠心搖一搖籤筒，看看今天（${getTodayDateKey()}）的運勢！（每日限抽 1 次）`;
     stage.innerHTML = `
         <div class="omikuji-stage">
             <div class="omikuji-tube-wrap" id="omikujiTubeWrap" onclick="drawDailyOmikuji()" title="點擊籤筒抽取今日御神籤">
@@ -401,6 +401,33 @@ function renderOmikujiSection() {
             </button>
         </div>
     `;
+}
+
+// ★ 隱藏測試密技：在御神籤彈窗內連續點擊標題「⛩️ 花間小憩・每日御神籤 ⛩️」5 次並輸入通關密語，可重置今日抽籤狀態
+const OMIKUJI_SECRET_CODE = "百百好可愛";
+let omikujiTapCount = 0;
+let omikujiTapTimer = null;
+
+function triggerOmikujiSecretReset() {
+    omikujiTapCount++;
+    clearTimeout(omikujiTapTimer);
+    omikujiTapTimer = setTimeout(() => { omikujiTapCount = 0; }, 2000);
+
+    if (omikujiTapCount < 5) return;
+    omikujiTapCount = 0;
+
+    const input = prompt("⛩️ 觸發御神籤隱藏重置密技！\n請輸入通關密語以重置今日抽籤紀錄：");
+    if (input === null) return;
+    if (input.trim().toLowerCase() !== OMIKUJI_SECRET_CODE.toLowerCase()) {
+        alert("❌ 密語不正確喔！");
+        return;
+    }
+
+    localStorage.removeItem('huajian_daily_omikuji_v1');
+    localStorage.removeItem(REWARD_GRANTED_DATE_KEY);
+
+    alert("✨ 今日御神籤抽籤次數已重置！現在可以重新點擊籤筒抽籤囉～");
+    renderOmikujiSection();
 }
 
 function drawDailyOmikuji() {
@@ -434,10 +461,10 @@ function closeZoom(){
     document.getElementById('zoomModal').classList.remove('open');
 }
 function openGame(event){
-    openEmbeddedGame(event, 'MeowMilk.html?v=20261123_v5', '#meow-milk', '🥛 喵喵乳糖挑戰');
+    openEmbeddedGame(event, 'MeowMilk.html?v=20261123_v7', '#meow-milk', '🥛 喵喵乳糖挑戰');
 }
 function openGame1(event){
-    openEmbeddedGame(event, 'HitMeow.html?v=20261123_v5', '#hit-meow', '🩴 暴打小菜雞');
+    openEmbeddedGame(event, 'HitMeow.html?v=20261123_v7', '#hit-meow', '🩴 暴打小菜雞');
 }
 let cachedSeriesConfig = null;
 
