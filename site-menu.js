@@ -7,7 +7,7 @@
     const isCard = page === 'card.html';
     const isBox = page === 'box.html';
     const isMilkGame = isHome && window.location.hash === '#meow-milk';
-    const isHitMeowGame = isHome && window.location.hash === '#game1';
+    const isHitMeowGame = isHome && window.location.hash === '#hit-meow';
     const homeLink = isHome
         ? '<a href="index.html" class="current" onclick="showHome(event)">'
         : '<a href="index.html">';
@@ -15,8 +15,8 @@
         ? `<a href="#meow-milk"${isMilkGame ? ' class="current"' : ''} onclick="openGame(event)">`
         : '<a href="index.html#meow-milk">';
     const game1Link = isHome
-        ? `<a href="#game1"${isHitMeowGame ? ' class="current"' : ''} onclick="openGame1(event)">`
-        : '<a href="index.html#game1">';
+        ? `<a href="#hit-meow"${isHitMeowGame ? ' class="current"' : ''} onclick="openGame1(event)">`
+        : '<a href="index.html#hit-meow">';
     const brand = isHome
         ? '🌸 花間小憩 🌸'
         : isCard
