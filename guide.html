@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>花間小憩 - 《杖劍傳說》遊戲攻略查詢表</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:"PingFang TC","Microsoft JhengHei","Rounded Mplus 1c",sans-serif}
+body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);color:#5a4649;line-height:1.6;min-height:100vh;overflow-x:hidden;position:relative;padding-bottom:65px}
+.fx-bg{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.petal{position:absolute;top:-30px;background:linear-gradient(135deg,#ffe4ea 0%,#ffb3c6 50%,#ff8fa3 100%);border-radius:18px 0 18px 0;box-shadow:0 2px 6px rgba(255,158,181,.3);opacity:.85;animation:fall ease-in-out infinite}
+.bubble{position:absolute;bottom:-60px;border-radius:50%;background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.95),rgba(135,206,250,.32));border:1.5px solid rgba(173,216,230,.65);box-shadow:0 2px 8px rgba(135,206,250,.2);animation:rise ease-in-out infinite}
+@keyframes fall{0%{transform:translateY(-30px) rotate(0deg) translateX(0);opacity:0}10%{opacity:.9}35%{transform:translateY(35vh) rotate(120deg) translateX(35px)}65%{transform:translateY(70vh) rotate(240deg) translateX(-25px)}90%{opacity:.85}100%{transform:translateY(108vh) rotate(380deg) translateX(30px);opacity:0}}
+@keyframes rise{0%{transform:translateY(0) scale(.8);opacity:0}20%{opacity:.6}80%{opacity:.5}100%{transform:translateY(-110vh) scale(1.15);opacity:0}}
+
+.wrap{position:relative;z-index:1;max-width:1040px;margin:20px auto;padding:0 16px}
+
+/* 頂部標題橫幅 */
+.guide-hero{background:rgba(255,255,255,.95);backdrop-filter:blur(8px);border-radius:26px;padding:22px 20px;box-shadow:0 8px 25px rgba(226,158,168,.15);border:2px solid #f9dfe3;margin-bottom:18px;text-align:center}
+.guide-badge{display:inline-flex;align-items:center;gap:6px;background:#fff0f3;border:1.5px solid #f2bec7;color:#c76272;font-size:.78rem;font-weight:900;padding:3px 12px;border-radius:999px;margin-bottom:8px}
+.guide-hero h1{font-size:1.65rem;font-weight:900;color:#c76272;margin-bottom:0}
+
+/* 分類主頁籤 */
+.cat-tabs{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:16px}
+.cat-tab{padding:10px 20px;border-radius:20px;border:2px solid #f0a8b4;background:#fff;color:#7a5c61;font-size:.94rem;font-weight:900;cursor:pointer;transition:.2s;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 6px rgba(226,158,168,.1)}
+.cat-tab:hover{transform:translateY(-2px);border-color:#c76272;color:#c76272}
+.cat-tab.active{background:linear-gradient(135deg,#ff8fa3,#e26d82);border-color:#e26d82;color:#fff;box-shadow:0 4px 12px rgba(226,109,130,.3)}
+
+/* 攻略圖片展示卡片 */
+.section-card{background:rgba(255,255,255,.95);backdrop-filter:blur(6px);border-radius:24px;padding:18px;box-shadow:0 6px 20px rgba(226,158,168,.13);border:2px solid #f9dfe3;margin-bottom:18px;text-align:center}
+.section-hd{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;padding-bottom:10px;margin-bottom:14px;border-bottom:2px dashed #f2bec7}
+.section-title{font-size:1.08rem;font-weight:900;color:#c76272;display:flex;align-items:center;gap:6px}
+.section-note{font-size:.78rem;font-weight:700;color:#947479;background:#fff8f9;padding:3px 10px;border-radius:12px;border:1px solid #f2bec7}
+
+.guide-img-wrap{max-width:920px;margin:0 auto;border-radius:18px;overflow:hidden;border:2px dashed #f2bec7;background:#fff9fa;padding:8px}
+.guide-img{width:100%;height:auto;display:block;object-fit:contain;border-radius:12px;cursor:zoom-in;transition:transform .2s}
+.guide-img:hover{transform:scale(1.005)}
+.guide-img-hint{font-size:.82rem;color:#947479;margin-top:10px;font-weight:700}
+
+/* 全螢幕放大預覽彈窗 */
+.zoom-modal{display:none;position:fixed;inset:0;background:rgba(40,28,30,.84);z-index:200;align-items:center;justify-content:center;padding:16px}
+.zoom-modal.open{display:flex}
+.zoom-card{position:relative;background:#fff;padding:12px;border-radius:22px;border:3px solid #f9dfe3;max-width:96vw;max-height:92vh;box-shadow:0 15px 35px rgba(0,0,0,.35);display:flex;flex-direction:column;align-items:center}
+.zoom-card img{max-width:92vw;max-height:82vh;object-fit:contain;border-radius:14px;display:block}
+.zoom-title{margin-top:8px;font-size:1rem;font-weight:900;color:#c76272}
+
+/* 九轉技能專屬篩選列與雙區塊卡片網格 */
+.job-filter-bar{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:12px}
+.job-pill{padding:8px 16px;border-radius:18px;border:2px solid #e6c5ca;background:#fff;color:#5a4649;font-size:.88rem;font-weight:900;cursor:pointer;transition:.18s;display:inline-flex;align-items:center;gap:5px;box-shadow:0 2px 5px rgba(0,0,0,.04)}
+.job-pill:hover{transform:translateY(-1px)}
+.job-pill.job-騎士{border-color:#f39c12;color:#d68910}
+.job-pill.job-騎士.active{background:#f39c12;color:#fff}
+.job-pill.job-術士{border-color:#38bdf8;color:#0284c7}
+.job-pill.job-術士.active{background:#38bdf8;color:#fff}
+.job-pill.job-鬥士{border-color:#b91c1c;color:#991b1b}
+.job-pill.job-鬥士.active{background:#b91c1c;color:#fff}
+.job-pill.job-賢者{border-color:#10b981;color:#047857}
+.job-pill.job-賢者.active{background:#10b981;color:#fff}
+
+.type-filter-bar{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:16px}
+.type-pill{padding:6px 15px;border-radius:14px;border:1.5px solid #f0a8b4;background:#fff8f9;color:#c76272;font-size:.84rem;font-weight:900;cursor:pointer;transition:.15s}
+.type-pill:hover{border-color:#c76272}
+.type-pill.active{background:#c76272;border-color:#c76272;color:#fff}
+
+.skill-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.skill-card{background:#fff9fa;border:2px solid #f7d7dc;border-radius:18px;padding:10px;text-align:center;transition:.2s}
+.skill-card:hover{transform:translateY(-2px);border-color:#f0a8b4;background:#fff;box-shadow:0 6px 16px rgba(226,158,168,.16)}
+.skill-card-hd{font-size:.92rem;font-weight:900;color:#5a4649;margin-bottom:8px}
+.skill-card img{width:100%;height:auto;display:block;border-radius:12px;background:#fff;cursor:zoom-in}
+
+@media(max-width:600px){
+    .guide-hero{padding:18px 14px}
+    .guide-hero h1{font-size:1.38rem}
+    .section-card{padding:14px 12px}
+}
+</style>
+<link rel="stylesheet" href="site-menu.css?v=20261121_v1">
+</head>
+<body>
+<div class="fx-bg" id="fxBg"></div>
+<div id="siteMenu"></div>
+<script src="site-menu.js?v=20261124_v3"></script>
+
+<div class="wrap">
+    <div class="guide-hero">
+        <div class="guide-badge">🌸 花間小憩公會資料庫・《杖劍傳說》攻略查詢表</div>
+        <h1>📖 公會遊戲攻略與資訊查詢區</h1>
+    </div>
+
+    <div class="cat-tabs" id="catTabs"></div>
+    <div id="guideContainer"></div>
+</div>
+
+<div class="zoom-modal" id="zoomModal" onclick="if(event.target===this) closeZoom()">
+    <div class="zoom-card">
+        <button class="close-btn" onclick="closeZoom()" style="position:absolute;top:-14px;right:-14px;box-shadow:0 3px 10px rgba(0,0,0,.2)">✕</button>
+        <img id="zoomModalImg" src="" alt="放大預覽">
+        <div class="zoom-title" id="zoomModalTitle"></div>
+    </div>
+</div>
+
+<script src="menu-sync.js?v=20261124_v3"></script>
+<script>
+// ============================================================================
+// ★ 攻略資料庫設定區（以後要新增分頁，直接在下方 GUIDE_SECTIONS 增加項目即可！）
+// ============================================================================
+const GUIDE_SECTIONS = [
+    {
+        id: "gear_stats",
+        type: "single_image",
+        icon: "⚔️",
+        label: "裝備詞條",
+        folder: "遊戲攻略",
+        imageName: "裝備詞條",
+        note: "《杖劍傳說》裝備詞條推薦對照圖"
+    },
+    {
+        id: "s6_dungeon",
+        type: "single_image",
+        icon: "🏰",
+        label: "S6 副本門檻",
+        folder: "遊戲攻略",
+        imageName: "S6副本門檻",
+        note: "《杖劍傳說》S6 賽季副本門檻一覽圖"
+    },
+    {
+        id: "tier9_skills",
+        type: "tier9_skills",
+        icon: "🔥",
+        label: "九轉技能",
+        baseFolder: "遊戲攻略",
+        jobs: [
+            { key: "騎士", icon: "🛡️", folder: "9轉騎士" },
+            { key: "術士", icon: "📖", folder: "9轉術士" },
+            { key: "鬥士", icon: "⚔️", folder: "9轉鬥士" },
+            { key: "賢者", icon: "🔮", folder: "9轉賢者" }
+        ],
+        skillTypes: ["戰技", "祕法"],
+        countPerType: 6
+    }
+];
+
+const initialTabParam = new URLSearchParams(window.location.search).get('tab');
+window.activeCatId = GUIDE_SECTIONS.some(s => s.id === initialTabParam) ? initialTabParam : GUIDE_SECTIONS[0].id;
+let activeTier9Job = "騎士";
+let activeTier9Type = "全部";
+
+function syncGuideMenuActive() {
+    document.querySelectorAll('#guideSubMenu a').forEach(a => {
+        a.classList.toggle('current', a.dataset.guideTab === window.activeCatId);
+    });
+}
+
+function goGuide(e, catId) {
+    if (e) e.preventDefault();
+    selectCategory(catId);
+    if (typeof toggleMenu === 'function') toggleMenu();
+}
+
+function selectCategory(catId) {
+    window.activeCatId = GUIDE_SECTIONS.some(s => s.id === catId) ? catId : GUIDE_SECTIONS[0].id;
+    const url = new URL(window.location.href);
+    url.searchParams.set('tab', window.activeCatId);
+    window.history.replaceState(null, '', url.pathname + '?' + url.searchParams.toString());
+    syncGuideMenuActive();
+    renderTabs();
+    renderGuideContent();
+}
+
+function renderTabs() {
+    const tabsEl = document.getElementById('catTabs');
+    if (!tabsEl) return;
+    tabsEl.innerHTML = GUIDE_SECTIONS.map(sec => {
+        const activeCls = sec.id === window.activeCatId ? ' active' : '';
+        return `<button type="button" class="cat-tab${activeCls}" onclick="selectCategory('${sec.id}')">${sec.icon} ${sec.label}</button>`;
+    }).join('');
+}
+
+function openZoom(src, title) {
+    const zImg = document.getElementById('zoomModalImg');
+    const zTitle = document.getElementById('zoomModalTitle');
+    if (zImg) zImg.src = src;
+    if (zTitle) zTitle.textContent = title || '';
+    document.getElementById('zoomModal').classList.add('open');
+}
+
+function closeZoom() {
+    document.getElementById('zoomModal').classList.remove('open');
+}
+
+function selectTier9Job(jobKey) {
+    activeTier9Job = jobKey;
+    renderGuideContent();
+}
+
+function selectTier9Type(typeKey) {
+    activeTier9Type = typeKey;
+    renderGuideContent();
+}
+
+function buildImgHtml(basePath, altText, titleText) {
+    return `<img class="guide-img" src="${basePath}.jpg?v=20261124_v4" alt="${altText}"
+        onclick="openZoom(this.src, '${titleText.replace(/'/g, "\\'")}')"
+        onerror="if(!this.dataset.step){this.dataset.step=1;this.src='${basePath}.JPG?v=20261124_v4';}else if(this.dataset.step==1){this.dataset.step=2;this.src='${basePath}.png?v=20261124_v4';}else if(this.dataset.step==2){this.dataset.step=3;this.src='${basePath}.PNG?v=20261124_v4';}else{this.onerror=null;this.src='${basePath}.webp?v=20261124_v4';}">`;
+}
+
+function renderGuideContent() {
+    const container = document.getElementById('guideContainer');
+    if (!container) return;
+
+    const sec = GUIDE_SECTIONS.find(s => s.id === window.activeCatId) || GUIDE_SECTIONS[0];
+
+    if (sec.type === "tier9_skills") {
+        const jobObj = sec.jobs.find(j => j.key === activeTier9Job) || sec.jobs[0];
+        const jobBtnsHtml = sec.jobs.map(j => {
+            const act = j.key === activeTier9Job ? ' active' : '';
+            return `<button type="button" class="job-pill job-${j.key}${act}" onclick="selectTier9Job('${j.key}')">${j.icon} ${j.key}</button>`;
+        }).join('');
+
+        const typeOptions = ["全部", ...sec.skillTypes];
+        const typeBtnsHtml = typeOptions.map(t => {
+            const act = t === activeTier9Type ? ' active' : '';
+            const labelText = t === "全部" ? "✨ 全部（戰技＋祕法）" : (t === "戰技" ? "⚔️ 戰技 (1~6)" : "🔮 祕法 (1~6)");
+            return `<button type="button" class="type-pill${act}" onclick="selectTier9Type('${t}')">${labelText}</button>`;
+        }).join('');
+
+        const visibleTypes = activeTier9Type === "全部" ? sec.skillTypes : [activeTier9Type];
+        let sectionsHtml = '';
+
+        visibleTypes.forEach(sType => {
+            let cardsHtml = '';
+            for (let i = 1; i <= sec.countPerType; i++) {
+                const fileName = `${sType}${i}`;
+                const basePath = `${sec.baseFolder}/${jobObj.folder}/${fileName}`;
+                const fullTitle = `${jobObj.icon} 9轉${jobObj.key}・${fileName}`;
+                cardsHtml += `
+                    <div class="skill-card">
+                        <div class="skill-card-hd">${fileName}</div>
+                        ${buildImgHtml(basePath, fullTitle, fullTitle)}
+                    </div>
+                `;
+            }
+
+            sectionsHtml += `
+                <div class="section-card">
+                    <div class="section-hd">
+                        <div class="section-title">${jobObj.icon} 9轉${jobObj.key}・${sType}（${sType}1～${sType}${sec.countPerType}）</div>
+                        <span class="section-note">🔍 點擊任一張圖片可放大檢視</span>
+                    </div>
+                    <div class="skill-grid">${cardsHtml}</div>
+                </div>
+            `;
+        });
+
+        container.innerHTML = `
+            <div class="job-filter-bar">${jobBtnsHtml}</div>
+            <div class="type-filter-bar">${typeBtnsHtml}</div>
+            ${sectionsHtml}
+        `;
+        return;
+    }
+
+    const basePath = `${sec.folder}/${sec.imageName}`;
+    container.innerHTML = `
+        <div class="section-card">
+            <div class="section-hd">
+                <div class="section-title">${sec.icon} ${sec.label}</div>
+                <span class="section-note">${sec.note}</span>
+            </div>
+            <div class="guide-img-wrap">
+                ${buildImgHtml(basePath, sec.label, `${sec.icon} ${sec.label}`)}
+            </div>
+            <div class="guide-img-hint">🔍 點擊圖片可放大檢視完整細節</div>
+        </div>
+    `;
+}
+
+window.addEventListener('DOMContentLoaded', async function() {
+    const bg = document.getElementById('fxBg');
+    if (bg && bg.children.length === 0) {
+        for(let i=0;i<45;i++){ const p=document.createElement('div');p.className='petal'; const s=9+Math.random()*13;p.style.width=s+'px';p.style.height=(s*.75)+'px'; p.style.left=(Math.random()*100)+'vw';p.style.animationDuration=(6+Math.random()*8)+'s'; p.style.animationDelay=(-Math.random()*10)+'s';bg.appendChild(p); }
+        for(let i=0;i<25;i++){ const b=document.createElement('div');b.className='bubble'; const s=20+Math.random()*45;b.style.width=s+'px';b.style.height=s+'px'; b.style.left=(Math.random()*100)+'vw';b.style.animationDuration=(10+Math.random()*10)+'s'; b.style.animationDelay=(-Math.random()*8)+'s';bg.appendChild(b); }
+    }
+
+    renderTabs();
+    renderGuideContent();
+
+    if (window.HuajianMenu) {
+        const cfg = await window.HuajianMenu.fetchAllSeries();
+        window.HuajianMenu.renderSharedSubMenu(cfg, { onRendered: syncGuideMenuActive });
+    }
+});
+</script>
+</body>
+</html>

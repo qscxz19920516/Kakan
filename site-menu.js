@@ -5,9 +5,12 @@
     const page = window.location.pathname.split('/').pop().toLowerCase();
     const isHome = page === '' || page === 'index.html';
     const isCard = page === 'card.html';
+    const isGuide = page === 'guide.html';
     const isBox = page === 'box.html';
     const isMilkGame = isHome && window.location.hash === '#meow-milk';
-    const isHitMeowGame = isHome && window.location.hash === '#game1';
+    const isHitMeowGame = isHome && window.location.hash === '#hit-meow';
+    const curGuideTab = isGuide ? (new URLSearchParams(window.location.search).get('tab') || 'gear_stats') : '';
+
     const homeLink = isHome
         ? '<a href="index.html" class="current" onclick="showHome(event)">'
         : '<a href="index.html">';
@@ -15,15 +18,24 @@
         ? `<a href="#meow-milk"${isMilkGame ? ' class="current"' : ''} onclick="openGame(event)">`
         : '<a href="index.html#meow-milk">';
     const game1Link = isHome
-        ? `<a href="#game1"${isHitMeowGame ? ' class="current"' : ''} onclick="openGame1(event)">`
-        : '<a href="index.html#game1">';
+        ? `<a href="#hit-meow"${isHitMeowGame ? ' class="current"' : ''} onclick="openGame1(event)">`
+        : '<a href="index.html#hit-meow">';
+
+    function guideItemLink(tabId, icon, label) {
+        const isCur = isGuide && curGuideTab === tabId;
+        const clickAttr = isGuide ? ` onclick="goGuide(event, '${tabId}')"` : '';
+        return `<li><a href="guide.html?tab=${tabId}" data-guide-tab="${tabId}"${isCur ? ' class="current"' : ''}${clickAttr}><span>${icon} ${label}</span><span class="arrow">&gt;</span></a></li>`;
+    }
+
     const brand = isHome
         ? '🌸 花間小憩 🌸'
         : isCard
             ? '🎴 小卡圖鑑 🎴'
-            : isBox
-                ? '<span style="user-select:none">🎁 <span id="secretBrand" onclick="triggerSecretReset()" style="cursor:pointer">驚喜盲盒</span> 🎁</span>'
-                : '🌸 花間小憩 🌸';
+            : isGuide
+                ? '📖 遊戲攻略區 📖'
+                : isBox
+                    ? '<span style="user-select:none">🎁 <span id="secretBrand" onclick="triggerSecretReset()" style="cursor:pointer">驚喜盲盒</span> 🎁</span>'
+                    : '🌸 花間小憩 🌸';
 
     mount.innerHTML = `
         <div class="topbar">
@@ -40,6 +52,16 @@
             <ul class="drawer-list">
                 <li>${homeLink}<span>🏠 首頁</span><span class="arrow">&gt;</span></a></li>
                 <li><a href="card.html"${isCard ? ' class="current"' : ''}><span>🎴 小卡圖鑑</span><span class="arrow">&gt;</span></a></li>
+                <li>
+                    <div class="sub-toggle" onclick="toggleGuideSubMenu()" aria-expanded="${isGuide ? 'true' : 'false'}" aria-controls="guideSubMenu">
+                        <span>📖 遊戲攻略區</span><span class="arrow${isGuide ? ' rot' : ''}" id="guideSubArrow">&gt;</span>
+                    </div>
+                    <ul class="submenu${isGuide ? ' open' : ''}" id="guideSubMenu">
+                        ${guideItemLink('gear_stats', '⚔️', '裝備詞條')}
+                        ${guideItemLink('s6_dungeon', '🏰', 'S6 副本門檻')}
+                        ${guideItemLink('tier9_skills', '🔥', '九轉技能')}
+                    </ul>
+                </li>
                 <li>
                     <div class="sub-toggle" onclick="toggleSubMenu()"><span>🎁 驚喜盲盒</span><span class="arrow" id="subArrow">&gt;</span></div>
                     <ul class="submenu" id="subMenu"></ul>
@@ -63,6 +85,14 @@
         mount.querySelector('.menu-btn').setAttribute('aria-expanded', String(isOpen));
     };
 
+    window.toggleGuideSubMenu = function(){
+        const submenu = document.getElementById('guideSubMenu');
+        const isOpen = submenu.classList.toggle('open');
+        document.getElementById('guideSubArrow').classList.toggle('rot', isOpen);
+        const toggleBtn = mount.querySelector('[aria-controls="guideSubMenu"]');
+        if (toggleBtn) toggleBtn.setAttribute('aria-expanded', String(isOpen));
+    };
+
     window.toggleSubMenu = function(){
         document.getElementById('subMenu').classList.toggle('open');
         document.getElementById('subArrow').classList.toggle('rot');
@@ -72,6 +102,7 @@
         const submenu = document.getElementById('gameSubMenu');
         const isOpen = submenu.classList.toggle('open');
         document.getElementById('gameSubArrow').classList.toggle('rot', isOpen);
-        mount.querySelector('[aria-controls="gameSubMenu"]').setAttribute('aria-expanded', String(isOpen));
+        const toggleBtn = mount.querySelector('[aria-controls="gameSubMenu"]');
+        if (toggleBtn) toggleBtn.setAttribute('aria-expanded', String(isOpen));
     };
 })();
