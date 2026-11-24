@@ -3,8 +3,12 @@
 (function(){
     const GITHUB_OWNER = "qscxz19920516";
     const GITHUB_REPO = "Kakan";
-    const OLD_CACHE_KEY = "huajian_kakan_series_v4_" + GITHUB_OWNER + "_" + GITHUB_REPO;
-    const CACHE_KEY = "huajian_kakan_series_v6_" + GITHUB_OWNER + "_" + GITHUB_REPO;
+    const OLD_CACHE_KEYS = [
+        "huajian_kakan_series_v4_" + GITHUB_OWNER + "_" + GITHUB_REPO,
+        "huajian_kakan_series_v5_" + GITHUB_OWNER + "_" + GITHUB_REPO,
+        "huajian_kakan_series_v6_" + GITHUB_OWNER + "_" + GITHUB_REPO
+    ];
+    const CACHE_KEY = "huajian_kakan_series_v7_" + GITHUB_OWNER + "_" + GITHUB_REPO;
     const EXCLUDED_FOLDERS = new Set([".github", "assets", "css", "js", "images", "img", "fonts", "職業", "職業介紹", "小卡", "小卡圖鑑", "card", "cards", "御神籤", "遊戲攻略"]);
 
     const SITE_NAV_ITEMS = [
@@ -169,8 +173,7 @@
 
     async function fetchAllSeries(bypassCache = false) {
         try {
-            sessionStorage.removeItem(OLD_CACHE_KEY);
-            sessionStorage.removeItem("huajian_kakan_series_v5_" + GITHUB_OWNER + "_" + GITHUB_REPO);
+            OLD_CACHE_KEYS.forEach(k => sessionStorage.removeItem(k));
         } catch (e) {}
 
         if (!bypassCache) {
@@ -271,7 +274,7 @@
             const cfg = seriesConfig[key];
             const label = cfg.displayFolder || cfg.folder;
             const clickAttr = isBoxPage
-                ? `onclick="goBox(event, '${key.replace(/'/g, "\'")}')"`
+                ? `onclick="goBox(event, '${key.replace(/'/g, "\\'")}')" `
                 : '';
             itemsHtml += `<li class="series-menu-item" data-label="${label.toLowerCase()}">
                 <a href="box.html?job=${encodeURIComponent(label)}" data-series="${key}" ${clickAttr}>
