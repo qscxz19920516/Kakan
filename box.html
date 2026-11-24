@@ -208,6 +208,10 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 .dex-select{flex:1;min-width:160px;padding:8px 12px;border-radius:14px;border:2px solid #f0a8b4;background:#fff;color:#5a4649;font-size:.9rem;font-weight:900;outline:none;cursor:pointer}
 .dex-mode-btn{padding:7px 12px;border-radius:14px;border:1.5px solid #f0a8b4;background:#fff;color:#c76272;font-size:.78rem;font-weight:900;cursor:pointer;white-space:nowrap;transition:.18s}
 .dex-mode-btn.active{background:#c76272;color:#fff;border-color:#c76272}
+
+.dex-meta-row{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-size:.8rem;font-weight:800;color:#7a5c61;margin-bottom:6px}
+.dex-quota-tag{display:inline-flex;align-items:center;gap:4px;background:#fff;border:1.5px solid #f2bec7;color:#c76272;padding:2px 9px;border-radius:12px;font-size:.76rem;font-weight:900}
+
 .dex-prog-hd{display:flex;justify-content:space-between;align-items:center;font-size:.8rem;font-weight:800;color:#7a5c61;margin-bottom:5px}
 
 .dex-jump-series-btn{margin-top:8px;width:100%;padding:8px 12px;border-radius:14px;border:none;color:#fff;font-size:.82rem;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 3px 10px rgba(0,0,0,.14);transition:.18s}
@@ -711,7 +715,7 @@ function openDex(targetJob) {
             const drawn = getDrawnList(job);
             totalOwnedAll += drawn.length;
             drawn.forEach(name => {
-                ownedCards += `<div class="dex-item"><img src="${cfg.folder}/${name}.jpg" alt="${name}" title="點擊放大檢視" onclick="openZoom('${cfg.folder}','${name}','${job}')" onerror="if(!this.dataset.step){this.dataset.step=1;this.src='${cfg.folder}/${name}.JPG';}else if(this.dataset.step==1){this.dataset.step=2;this.src='${cfg.folder}/${name}.png';}else{this.onerror=null;this.src='${cfg.folder}/${name}.PNG';}"><div class="dex-item-name">${name}</div><span class="dex-item-tag" style="background:${cfg.color}">${job}</span></div>`;
+                ownedCards += `<div class="dex-item"><img src="${cfg.folder}/${name}.jpg" alt="${name}" title="點擊放大檢視" onclick="openZoom('${cfg.folder}','${name}','${job}')" onerror="if(!this.dataset.step){this.dataset.step=1;this.src='${cfg.folder}/${name}.JPG';}else if(this.dataset.step==1){this.dataset.step=2;this.src='${cfg.folder}/${name}.png';}else{this.onerror=null;this.src='${cfg.folder}/${name}.PNG';}"><div class="dex-item-name">${name}</div><span class="dex-item-tag" style="background:${cfg.color}">${job}・剩${Math.max(0, MAX_DRAWS - getUsedDraws(job))}次</span></div>`;
             });
         });
 
@@ -743,9 +747,9 @@ function openDex(targetJob) {
                         <button type="button" class="dex-mode-btn" onclick="setDexViewMode('owned')">只看已抽到</button>
                     </div>
                 </div>
-                <div class="dex-prog-hd">
-                    <span>📦 ${cfg.displayFolder || dexSelectedJob} 收集進度</span>
-                    <span style="color:${cfg.color};font-weight:900">${ownedCount} / ${totalCount} 款 (${pct}%)</span>
+                <div class="dex-meta-row">
+                    <span>📦 ${cfg.displayFolder || dexSelectedJob} 收集進度：<b>${ownedCount} / ${totalCount} 款 (${pct}%)</b></span>
+                    <span class="dex-quota-tag">🎟️ 剩餘 ${Math.max(0, MAX_DRAWS - getUsedDraws(dexSelectedJob))} / ${MAX_DRAWS} 次</span>
                 </div>
                 <div class="dex-prog-track">
                     <div class="dex-prog-fill" style="width:${pct}%;background:${cfg.color}"></div>
