@@ -137,14 +137,25 @@
 
         const styleEl = document.createElement('style');
         styleEl.textContent = `
-            .huajian-bgm-bar{position:fixed;left:16px;bottom:20px;z-index:85;display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.94);backdrop-filter:blur(8px);border:2px solid #f0a8b4;border-radius:999px;padding:6px 12px;box-shadow:0 5px 16px rgba(226,158,168,.28);font-size:.8rem;font-weight:900;color:#5a4649;transition:.25s}
+            .huajian-bgm-bar{position:fixed;left:16px;bottom:22px;z-index:85;display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.94);backdrop-filter:blur(8px);border:2px solid #f0a8b4;border-radius:999px;padding:6px 12px;box-shadow:0 5px 16px rgba(226,158,168,.28);font-size:.8rem;font-weight:900;color:#5a4649;transition:.25s}
             .huajian-bgm-bar.hidden-in-game{display:none !important}
             .huajian-bgm-btn{border:none;background:linear-gradient(135deg,#ff9a9e,#f68084);color:#fff;width:28px;height:28px;border-radius:50%;font-size:.82rem;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 6px rgba(246,128,132,.35)}
             .huajian-bgm-next{border:1.5px solid #f2bec7;background:#fff8f9;color:#c76272;width:26px;height:26px;border-radius:50%;font-size:.76rem;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
             .huajian-bgm-next:hover{background:#c76272;color:#fff}
             .huajian-bgm-title{max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#c76272;cursor:pointer}
             .huajian-yt-hidden{position:fixed;width:2px;height:2px;left:0;top:0;opacity:0.001;pointer-events:none;overflow:hidden}
-            @media(max-width:520px){.huajian-bgm-bar{left:12px;bottom:16px;padding:5px 10px}.huajian-bgm-title{max-width:105px;font-size:.74rem}}
+            @media(max-width:640px){
+                body.has-dex-fab{padding-bottom:84px !important}
+                body.has-dex-fab .huajian-bgm-bar{left:12px;bottom:16px;padding:5px 8px;gap:4px;font-size:.72rem;max-width:calc(100vw - 172px)}
+                body.has-dex-fab .huajian-bgm-btn{width:24px;height:24px;font-size:.74rem}
+                body.has-dex-fab .huajian-bgm-next{width:22px;height:22px;font-size:.7rem}
+                body.has-dex-fab .huajian-bgm-title{max-width:74px;font-size:.72rem}
+                body.has-dex-fab .dex-fab{right:12px;bottom:16px;padding:10px 13px;font-size:.82rem;gap:4px}
+            }
+            @media(max-width:520px){
+                .huajian-bgm-bar{left:12px;bottom:16px;padding:5px 10px}
+                .huajian-bgm-title{max-width:105px;font-size:.74rem}
+            }
         `;
         document.head.appendChild(styleEl);
 
@@ -158,6 +169,9 @@
             </div>
         `;
         document.body.appendChild(bgmWrap);
+        if (document.querySelector('.dex-fab')) {
+            document.body.classList.add('has-dex-fab');
+        }
 
         function updateBgmUI() {
             const bar = document.getElementById('huajianBgmBar');
