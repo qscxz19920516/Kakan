@@ -141,10 +141,10 @@
             styleEl.textContent = `
                 .huajian-bgm-widget{position:fixed;left:16px;top:76px;z-index:85;touch-action:none;user-select:none}
                 .huajian-bgm-widget.hidden-in-game{display:none !important}
-                .huajian-bgm-orb{width:44px;height:44px;border-radius:50%;border:2px solid rgba(240,168,180,.75);background:rgba(255,255,255,.5);backdrop-filter:blur(6px);color:#c76272;font-size:1.1rem;font-weight:900;cursor:grab;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(226,158,168,.22);transition:background .2s,transform .15s}
+                .huajian-bgm-orb{width:44px;height:44px;border-radius:50%;border:2px solid rgba(240,168,180,.75);background:rgba(255,255,255,.5);backdrop-filter:blur(6px);color:#c76272;font-size:1.1rem;font-weight:900;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(226,158,168,.22);transition:background .2s,transform .15s}
                 .huajian-bgm-orb.playing{background:rgba(255,143,163,.5);color:#fff;border-color:rgba(255,143,163,.8)}
                 .huajian-bgm-orb.dragging{cursor:grabbing;background:rgba(255,255,255,.82);transform:scale(1.06)}
-                .huajian-bgm-panel{display:none;align-items:center;gap:6px;background:rgba(255,255,255,.94);backdrop-filter:blur(8px);border:2px solid #f0a8b4;border-radius:999px;padding:5px 10px 5px 6px;box-shadow:0 6px 18px rgba(226,158,168,.28);font-size:.78rem;font-weight:900;color:#5a4649}
+                .huajian-bgm-panel{display:none;align-items:center;gap:6px;background:rgba(255,255,255,.94);backdrop-filter:blur(8px);border:2px solid #f0a8b4;border-radius:999px;padding:5px 10px 5px 6px;box-shadow:0 6px 18px rgba(226,158,168,.28);font-size:.78rem;font-weight:900;color:#5a4649;cursor:grab}
                 .huajian-bgm-widget.expanded .huajian-bgm-orb{display:none}
                 .huajian-bgm-widget.expanded .huajian-bgm-panel{display:inline-flex}
                 .huajian-bgm-btn{border:none;background:linear-gradient(135deg,#ff9a9e,#f68084);color:#fff;width:28px;height:28px;border-radius:50%;font-size:.8rem;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
@@ -207,6 +207,7 @@
             let suppressNextOrbClick = false;
 
             widgetEl.addEventListener('pointerdown', function(e) {
+                if (e.button !== undefined && e.button !== 0) return;
                 if (e.target.closest('button.huajian-bgm-btn, button.huajian-bgm-next, button.huajian-bgm-collapse, .huajian-bgm-title')) {
                     return;
                 }
@@ -219,16 +220,16 @@
                     origTop: rect.top,
                     moved: false
                 };
-                try { widgetEl.setPointerCapture(e.pointerId); } catch (err) {}
             });
 
-            widgetEl.addEventListener('pointermove', function(e) {
+            window.addEventListener('pointermove', function(e) {
                 if (!dragState || e.pointerId !== dragState.pointerId) return;
                 const dx = e.clientX - dragState.startX;
                 const dy = e.clientY - dragState.startY;
                 if (!dragState.moved && Math.hypot(dx, dy) > 6) {
                     dragState.moved = true;
                     orbEl.classList.add('dragging');
+                    try { widgetEl.setPointerCapture(e.pointerId); } catch (err) {}
                 }
                 if (dragState.moved) {
                     const rect = widgetEl.getBoundingClientRect();
@@ -247,17 +248,18 @@
             function finishDrag(e) {
                 if (!dragState || e.pointerId !== dragState.pointerId) return;
                 const wasMoved = dragState.moved;
+                const pid = dragState.pointerId;
                 dragState = null;
                 orbEl.classList.remove('dragging');
-                try { widgetEl.releasePointerCapture(e.pointerId); } catch (err) {}
                 if (wasMoved) {
+                    try { widgetEl.releasePointerCapture(pid); } catch (err) {}
                     suppressNextOrbClick = true;
                     setTimeout(() => { suppressNextOrbClick = false; }, 120);
                 }
             }
 
-            widgetEl.addEventListener('pointerup', finishDrag);
-            widgetEl.addEventListener('pointercancel', finishDrag);
+            window.addEventListener('pointerup', finishDrag);
+            window.addEventListener('pointercancel', finishDrag);
             window.addEventListener('resize', clampWidgetPosition);
 
             orbEl.addEventListener('click', function(e) {
@@ -365,103 +367,3 @@
             ['pointerdown', 'touchstart', 'keydown'].forEach(evt => {
                 window.addEventListener(evt, onFirstGesture, { passive: true });
             });
-
-            window.HuajianBGM = {
-                enterGameMode: function() {
-                    inGameMode = true;
-                    setExpanded(false);
-                    if (ytReady && ytPlayer) {
-                        try { ytPlayer.pauseVideo(); } catch (e) {}
-                    }
-                    isPlayingNow = false;
-                    updateBgmUI();
-                },
-                exitGameMode: function() {
-                    inGameMode = false;
-                    updateBgmUI();
-                    if (!userPaused) {
-                        tryPlayCurrent();
-                    }
-                },
-                nextTrack: playNextRandomTrack
-            };
-
-            function initYouTubePlayer() {
-                if (ytPlayer || !window.YT || !window.YT.Player) return;
-                const originParam = (window.location.origin && window.location.origin.startsWith('http'))
-                    ? { origin: window.location.origin }
-                    : {};
-                ytPlayer = new window.YT.Player('huajianYtPlayer', {
-                    height: '2',
-                    width: '2',
-                    videoId: BGM_TRACKS[currentIdx].id,
-                    playerVars: Object.assign({
-                        autoplay: 0,
-                        controls: 0,
-                        disablekb: 1,
-                        fs: 0,
-                        modestbranding: 1,
-                        playsinline: 1,
-                        rel: 0
-                    }, originParam),
-                    events: {
-                        onReady: function(event) {
-                            ytReady = true;
-                            updateBgmUI();
-                            if (!inGameMode && !userPaused && gestureUnlocked) {
-                                tryPlayCurrent();
-                            }
-                        },
-                        onStateChange: function(event) {
-                            if (!window.YT || !window.YT.PlayerState) return;
-                            if (event.data === window.YT.PlayerState.PLAYING) {
-                                if (inGameMode) {
-                                    try { event.target.pauseVideo(); } catch (e) {}
-                                    isPlayingNow = false;
-                                } else {
-                                    isPlayingNow = true;
-                                }
-                                updateBgmUI();
-                            } else if (event.data === window.YT.PlayerState.PAUSED) {
-                                isPlayingNow = false;
-                                updateBgmUI();
-                            } else if (event.data === window.YT.PlayerState.ENDED) {
-                                isPlayingNow = false;
-                                if (!inGameMode && !userPaused) {
-                                    playNextRandomTrack();
-                                } else {
-                                    updateBgmUI();
-                                }
-                            }
-                        },
-                        onError: function() {
-                            if (!inGameMode && !userPaused && gestureUnlocked) {
-                                currentIdx = pickNextRandomIndex(currentIdx);
-                                updateBgmUI();
-                                try { event.target.loadVideoById(BGM_TRACKS[currentIdx].id); } catch (e) {}
-                            }
-                        }
-                    }
-                });
-            }
-
-            const prevYtReady = window.onYouTubeIframeAPIReady;
-            window.onYouTubeIframeAPIReady = function() {
-                if (typeof prevYtReady === 'function') prevYtReady();
-                initYouTubePlayer();
-            };
-
-            if (window.YT && window.YT.Player) {
-                initYouTubePlayer();
-            } else if (!document.querySelector('script[src*="youtube.com/iframe_api"]')) {
-                const tag = document.createElement('script');
-                tag.src = 'https://www.youtube.com/iframe_api';
-                document.head.appendChild(tag);
-            }
-
-            updateBgmUI();
-        } catch (err) {
-            console.error('[HuajianBGM]', err);
-        }
-    }
-})();
