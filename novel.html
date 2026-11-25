@@ -6,9 +6,9 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>花間小憩 - 公會小說閱讀館</title>
+<title>花間小憩 - 公會小說閱讀區</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:"PingFang TC","Microsoft JhengHei","Noto Sans TC",sans-serif}
+*{box-sizing:border-box;margin:0;padding:0;font-family:"PingFang TC","Microsoft JhengHei","Noto Serif TC","Rounded Mplus 1c",sans-serif}
 body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);color:#5a4649;line-height:1.6;min-height:100vh;overflow-x:hidden;position:relative;padding-bottom:75px;transition:background .25s,color .25s}
 .fx-bg{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
 .petal{position:absolute;top:-30px;background:linear-gradient(135deg,#ffe4ea 0%,#ffb3c6 50%,#ff8fa3 100%);border-radius:18px 0 18px 0;box-shadow:0 2px 6px rgba(255,158,181,.3);opacity:.85;animation:fall ease-in-out infinite}
@@ -18,89 +18,91 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 
 .wrap{position:relative;z-index:1;max-width:860px;margin:20px auto;padding:0 16px}
 
-/* 頂部標題與操作橫幅 */
-.novel-hero{background:rgba(255,255,255,.95);backdrop-filter:blur(8px);border-radius:26px;padding:20px 18px;box-shadow:0 8px 25px rgba(226,158,168,.15);border:2px solid #f9dfe3;margin-bottom:16px;text-align:center}
-.novel-badge{display:inline-flex;align-items:center;gap:6px;background:#fff0f3;border:1.5px solid #f2bec7;color:#c76272;font-size:.78rem;font-weight:900;padding:3px 12px;border-radius:999px;margin-bottom:8px}
-.novel-hero h1{font-size:1.55rem;font-weight:900;color:#c76272;margin-bottom:6px}
-.novel-hero-sub{font-size:.84rem;color:#8c7075;font-weight:700}
+/* 頂部標題橫幅 */
+.novel-hero{background:rgba(255,255,255,.95);backdrop-filter:blur(8px);border-radius:26px;padding:20px 18px;box-shadow:0 8px 25px rgba(226,158,168,.15);border:2px solid #f9dfe3;margin-bottom:14px;text-align:center;position:relative}
+.novel-badge{display:inline-flex;align-items:center;gap:6px;background:#fff0f3;border:1.5px solid #f2bec7;color:#c76272;font-size:.78rem;font-weight:900;padding:3px 12px;border-radius:999px;margin-bottom:6px}
+.novel-hero h1{font-size:1.55rem;font-weight:900;color:#c76272;margin-bottom:4px}
+.novel-sub{font-size:.84rem;color:#8c7075;font-weight:700}
+.sync-btn{position:absolute;top:16px;right:16px;background:#fff;border:1.5px solid #e6c5ca;color:#8c7075;width:36px;height:36px;border-radius:50%;font-size:.95rem;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:.2s}
+.sync-btn:hover{border-color:#c76272;color:#c76272;transform:rotate(90deg)}
 
 /* 繼續閱讀書籤提示列 */
 .bookmark-bar{display:none;background:linear-gradient(135deg,#fffbeb,#fef3c7);border:2px solid #f59e0b;border-radius:20px;padding:10px 14px;margin-bottom:14px;box-shadow:0 4px 12px rgba(245,158,11,.15);align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .bookmark-bar.show{display:flex}
-.bm-text{font-size:.84rem;font-weight:800;color:#92400e;text-align:left}
-.bm-btn{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border:none;padding:7px 14px;border-radius:14px;font-size:.8rem;font-weight:900;cursor:pointer;white-space:nowrap;box-shadow:0 2px 6px rgba(217,119,6,.25)}
+.bm-text{font-size:.84rem;font-weight:800;color:#92400e;text-align:left;line-height:1.4}
+.bm-btn{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border:none;padding:7px 14px;border-radius:15px;font-size:.8rem;font-weight:900;cursor:pointer;white-space:nowrap;box-shadow:0 3px 8px rgba(217,119,6,.25)}
+.bm-btn:hover{filter:brightness(1.06)}
 
-/* 作品與章節導覽卡片 */
+/* 作品系列選擇列與折疊目錄 */
 .catalog-card{background:rgba(255,255,255,.95);backdrop-filter:blur(6px);border-radius:24px;padding:16px 18px;box-shadow:0 6px 20px rgba(226,158,168,.13);border:2px solid #f9dfe3;margin-bottom:16px}
-.series-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding-bottom:12px;border-bottom:2px dashed #f2bec7;margin-bottom:12px}
-.series-select-wrap{display:flex;align-items:center;gap:8px;flex:1;min-width:220px}
-.series-select{flex:1;padding:9px 14px;border-radius:16px;border:2px solid #f0a8b4;background:#fff8f9;color:#5a4649;font-size:.94rem;font-weight:900;outline:none;cursor:pointer}
-.sync-btn{background:#fff;border:1.5px solid #e6c5ca;color:#8c7075;width:38px;height:38px;border-radius:50%;font-size:.95rem;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;transition:.2s}
-.sync-btn:hover{border-color:#c76272;color:#c76272;transform:rotate(90deg)}
+.book-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.book-tab{padding:8px 16px;border-radius:18px;border:2px solid #f0a8b4;background:#fff;color:#7a5c61;font-size:.88rem;font-weight:900;cursor:pointer;transition:.18s;display:inline-flex;align-items:center;gap:6px}
+.book-tab:hover{border-color:#c76272;color:#c76272;transform:translateY(-1px)}
+.book-tab.active{background:linear-gradient(135deg,#ff8fa3,#e26d82);border-color:#e26d82;color:#fff;box-shadow:0 4px 12px rgba(226,109,130,.28)}
 
-.chapter-toggle-hd{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;font-size:.9rem;font-weight:900;color:#c76272;padding:2px 4px}
-.chapter-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px;margin-top:12px}
-.chapter-list.collapsed{display:none}
-.chap-btn{text-align:left;padding:9px 13px;border-radius:14px;border:1.5px solid #f2bec7;background:#fff8f9;color:#5a4649;font-size:.86rem;font-weight:800;cursor:pointer;transition:.18s;display:flex;align-items:center;justify-content:space-between;gap:6px}
-.chap-btn:hover{border-color:#c76272;background:#fff;transform:translateY(-1px)}
-.chap-btn.active{background:linear-gradient(135deg,#ff8fa3,#e26d82);border-color:#e26d82;color:#fff;box-shadow:0 3px 10px rgba(226,109,130,.28)}
-.chap-read-dot{font-size:.7rem;opacity:.85;flex-shrink:0}
+.toc-header{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;background:#fff8f9;border:1.5px solid #f7d7dc;border-radius:16px;cursor:pointer;user-select:none}
+.toc-title{font-size:.92rem;font-weight:900;color:#c76272;display:flex;align-items:center;gap:6px}
+.toc-toggle-pill{font-size:.78rem;font-weight:800;color:#8c7075;background:#fff;border:1px solid #f2bec7;padding:2px 10px;border-radius:12px}
+.chapter-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px;margin-top:12px}
+.chapter-grid.collapsed{display:none}
+.chap-btn{text-align:left;padding:10px 14px;border-radius:14px;border:1.5px solid #f2bec7;background:#fff9fa;color:#5a4649;font-size:.86rem;font-weight:800;cursor:pointer;transition:.18s;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.chap-btn:hover{background:#fff;border-color:#e26d82;color:#c76272;transform:translateY(-1px)}
+.chap-btn.active{background:linear-gradient(135deg,#fff0f3,#ffe4ea);border-color:#e26d82;color:#c76272;font-weight:900;box-shadow:0 3px 10px rgba(226,109,130,.15)}
+.chap-btn-label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chap-read-tag{font-size:.7rem;padding:1px 7px;border-radius:999px;background:#edf9f0;color:#1e8e3e;border:1px solid #bfe6c9;flex-shrink:0}
 
-/* 閱讀設定列（字級與底色切換） */
-.reader-toolbar{background:rgba(255,255,255,.95);backdrop-filter:blur(6px);border-radius:20px;padding:10px 14px;box-shadow:0 4px 14px rgba(226,158,168,.12);border:2px solid #f9dfe3;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+/* 閱讀器控制列（字級 + 底色） */
+.reader-toolbar{background:rgba(255,255,255,.96);backdrop-filter:blur(6px);border-radius:22px;padding:12px 16px;box-shadow:0 6px 18px rgba(226,158,168,.12);border:2px solid #f9dfe3;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;scroll-margin-top:72px}
 .tool-group{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.tool-lbl{font-size:.78rem;font-weight:900;color:#8c7075}
-.tool-pill{padding:5px 11px;border-radius:12px;border:1.5px solid #f0a8b4;background:#fff;color:#7a5c61;font-size:.78rem;font-weight:900;cursor:pointer;transition:.15s}
-.tool-pill.active{background:#c76272;border-color:#c76272;color:#fff}
-.theme-dot{width:24px;height:24px;border-radius:50%;border:2px solid #d6b8bd;cursor:pointer;transition:transform .15s}
-.theme-dot.active{transform:scale(1.16);border-color:#c76272;box-shadow:0 0 0 2px #fff,0 0 0 4px #c76272}
+.tool-label{font-size:.78rem;font-weight:900;color:#8c7075}
+.ctrl-pill{padding:5px 11px;border-radius:12px;border:1.5px solid #f0a8b4;background:#fff;color:#5a4649;font-size:.8rem;font-weight:800;cursor:pointer;transition:.15s}
+.ctrl-pill:hover{border-color:#c76272;color:#c76272}
+.ctrl-pill.active{background:#c76272;border-color:#c76272;color:#fff}
+.theme-swatch{width:26px;height:26px;border-radius:50%;border:2px solid #d4b8bd;cursor:pointer;transition:transform .15s;display:inline-flex;align-items:center;justify-content:center;font-size:.72rem}
+.theme-swatch.active{border-color:#c76272;transform:scale(1.12);box-shadow:0 0 0 2px rgba(199,98,114,.28)}
 
-/* 小說正文閱讀區 */
-.reader-card{background:#ffffff;border-radius:26px;padding:28px 26px;box-shadow:0 8px 26px rgba(226,158,168,.16);border:2px solid #f9dfe3;transition:background .25s,color .25s,border-color .25s}
-.reader-series-tag{font-size:.8rem;font-weight:900;color:#c76272;margin-bottom:4px;text-align:center}
-.reader-chap-title{font-size:1.42rem;font-weight:900;color:#4a3538;text-align:center;padding-bottom:14px;margin-bottom:20px;border-bottom:2px dashed #f2bec7}
-.reader-meta{text-align:center;font-size:.76rem;color:#947479;font-weight:700;margin-top:-12px;margin-bottom:18px}
-.reader-content{font-size:1.06rem;line-height:1.95;color:#3f3133;letter-spacing:.4px;word-break:break-word}
-.reader-content p{margin-bottom:1.15em;text-indent:2em}
-.reader-content p.scene-break{text-indent:0;text-align:center;color:#b89a9f;letter-spacing:4px;margin:1.5em 0}
+/* 文章閱讀主舞台 */
+.reader-card{background:#ffffff;border-radius:28px;padding:28px 26px 32px;box-shadow:0 10px 28px rgba(226,158,168,.16);border:2px solid #f9dfe3;transition:background .25s,color .25s,border-color .25s;scroll-margin-top:72px}
+.reader-book-tag{display:inline-block;font-size:.78rem;font-weight:900;color:#c76272;background:#fff0f3;border:1px solid #f2bec7;padding:3px 12px;border-radius:999px;margin-bottom:8px}
+.reader-chap-title{font-size:1.42rem;font-weight:900;color:#4a373a;margin-bottom:8px;line-height:1.4}
+.reader-meta{font-size:.8rem;color:#947479;font-weight:700;padding-bottom:14px;margin-bottom:20px;border-bottom:2px dashed #f2bec7;display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px}
 
-/* 上下章節切換按鈕 */
-.chap-nav-row{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;margin-top:26px;padding-top:18px;border-top:2px dashed #f2bec7;align-items:center}
+.novel-content{font-size:1.08rem;line-height:1.95;color:#3f3134;letter-spacing:.03em;word-break:break-word}
+.novel-content p{margin-bottom:1.15em;text-indent:2em}
+.novel-content p.no-indent{text-indent:0}
+.novel-content p.scene-break{text-indent:0;text-align:center;color:#c76272;font-weight:900;letter-spacing:4px;margin:1.5em 0}
+
+/* 底部上一章／下一章導覽列 */
+.chapter-nav-bar{margin-top:26px;padding-top:18px;border-top:2px dashed #f2bec7;display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center}
 .nav-chap-btn{padding:11px 14px;border-radius:16px;border:2px solid #f0a8b4;background:#fff8f9;color:#c76272;font-size:.88rem;font-weight:900;cursor:pointer;transition:.18s;text-align:center}
 .nav-chap-btn:hover:not(:disabled){background:#c76272;border-color:#c76272;color:#fff;transform:translateY(-1px)}
-.nav-chap-btn:disabled{opacity:.42;cursor:not-allowed}
-.nav-top-btn{padding:11px 14px;border-radius:16px;border:1.5px solid #e6c5ca;background:#fff;color:#7a5c61;font-size:.84rem;font-weight:900;cursor:pointer}
+.nav-chap-btn:disabled{opacity:.42;cursor:not-allowed;transform:none}
+.chap-select{padding:10px 12px;border-radius:14px;border:2px solid #f0a8b4;background:#fff;color:#5a4649;font-size:.86rem;font-weight:800;max-width:210px;outline:none;cursor:pointer}
 
-/* 字級設定 */
-.reader-content.font-sm{font-size:.95rem;line-height:1.85}
-.reader-content.font-md{font-size:1.08rem;line-height:1.95}
-.reader-content.font-lg{font-size:1.24rem;line-height:2.05}
+/* 閱讀底色主題：護眼米黃 (sepia) 與 夜間深色 (dark) */
+body.theme-sepia .reader-card{background:#fbf4e4;border-color:#e6d5b8}
+body.theme-sepia .reader-chap-title{color:#4b3b28}
+body.theme-sepia .novel-content{color:#433422}
+body.theme-sepia .reader-meta,body.theme-sepia .chapter-nav-bar{border-color:#e2cfa9}
 
-/* 護眼底色主題 */
-body.theme-paper .reader-card{background:#faf4e6;border-color:#e6d8bd}
-body.theme-paper .reader-chap-title{color:#4a3b26;border-bottom-color:#dfd0b4}
-body.theme-paper .reader-content{color:#3d3020}
+body.theme-dark{background:linear-gradient(180deg,#1a1820 0%,#211e29 100%);color:#e2dce8}
+body.theme-dark .novel-hero,body.theme-dark .catalog-card,body.theme-dark .reader-toolbar{background:rgba(36,33,46,.95);border-color:#3d3752;color:#e2dce8}
+body.theme-dark .novel-hero h1,body.theme-dark .toc-title{color:#f497aa}
+body.theme-dark .novel-sub,body.theme-dark .tool-label,body.theme-dark .reader-meta{color:#a79eb5}
+body.theme-dark .toc-header,body.theme-dark .chap-btn,body.theme-dark .ctrl-pill,body.theme-dark .book-tab,body.theme-dark .nav-chap-btn,body.theme-dark .chap-select{background:#2a2636;border-color:#453e5c;color:#e2dce8}
+body.theme-dark .chap-btn.active,body.theme-dark .book-tab.active,body.theme-dark .ctrl-pill.active{background:#c76272;border-color:#c76272;color:#fff}
+body.theme-dark .reader-card{background:#24212e;border-color:#3d3752}
+body.theme-dark .reader-chap-title{color:#f7eef2}
+body.theme-dark .novel-content{color:#ddd6e6}
+body.theme-dark .reader-meta,body.theme-dark .chapter-nav-bar{border-color:#3d3752}
 
-body.theme-dark{background:linear-gradient(180deg,#1c1b22 0%,#23212b 100%);color:#dcd8e3}
-body.theme-dark .novel-hero,
-body.theme-dark .catalog-card,
-body.theme-dark .reader-toolbar{background:rgba(38,36,48,.94);border-color:#3d394d;color:#e5e1ed}
-body.theme-dark .reader-card{background:#262430;border-color:#3d394d;color:#e5e1ed}
-body.theme-dark .reader-chap-title{color:#f4d0d8;border-bottom-color:#3d394d}
-body.theme-dark .reader-content{color:#e2dee9}
-body.theme-dark .series-select,
-body.theme-dark .chap-btn,
-body.theme-dark .tool-pill,
-body.theme-dark .nav-chap-btn,
-body.theme-dark .nav-top-btn{background:#302d3d;border-color:#4b465e;color:#e5e1ed}
-body.theme-dark .chap-btn.active{background:linear-gradient(135deg,#e26d82,#c75268);color:#fff;border-color:#e26d82}
+.state-box{text-align:center;padding:38px 16px;color:#8c7075;font-weight:800;font-size:.95rem;line-height:1.7}
 
 @media(max-width:600px){
-    .reader-card{padding:20px 16px}
+    .reader-card{padding:22px 16px 26px;border-radius:22px}
     .reader-chap-title{font-size:1.22rem}
-    .chapter-list{grid-template-columns:1fr}
-    .chap-nav-row{grid-template-columns:1fr 1fr}
-    .nav-top-btn{grid-column:1/-1;order:3}
+    .chapter-nav-bar{grid-template-columns:1fr 1fr}
+    .chap-select{grid-column:1/-1;max-width:100%;order:-1}
 }
 </style>
 <link rel="stylesheet" href="site-menu.css?v=20261121_v1">
@@ -112,226 +114,107 @@ body.theme-dark .chap-btn.active{background:linear-gradient(135deg,#e26d82,#c752
 
 <div class="wrap">
     <div class="novel-hero">
-        <div class="novel-badge">🌸花間小憩公會文創館🌸</div>
-        <h1>📚 公會小說閱讀館</h1>
-        <div class="novel-hero-sub">可自由切換字級與護眼底色</div>
+        <button type="button" class="sync-btn" id="syncNovelBtn" title="重新掃描 GitHub 小說資料夾" onclick="initNovels(true)">🔄</button>
+        <div class="novel-badge">🌸 花間小憩文創館・自動同步書庫</div>
+        <h1>📚 公會小說與成員故事集</h1>
+        <div class="novel-sub" id="novelHeroSub">正在掃描書庫章節中...</div>
     </div>
 
     <div class="bookmark-bar" id="bookmarkBar">
-        <div class="bm-text" id="bookmarkText">🔖 偵測到上次閱讀紀錄</div>
-        <button type="button" class="bm-btn" onclick="resumeLastBookmark()">繼續閱讀 ＞</button>
+        <div class="bm-text" id="bookmarkText">🔖 上次閱讀進度</div>
+        <button type="button" class="bm-btn" id="bookmarkResumeBtn">繼續閱讀 ＞</button>
     </div>
 
-    <div class="catalog-card">
-        <div class="series-bar">
-            <div class="series-select-wrap">
-                <select class="series-select" id="seriesSelect" onchange="selectNovelSeries(this.value)">
-                    <option value="">載入作品目錄中...</option>
-                </select>
-                <button type="button" class="sync-btn" id="syncNovelBtn" title="重新掃描 GitHub 小說資料夾" onclick="loadNovelCatalog(true)">🔄</button>
-            </div>
-            <div class="chapter-toggle-hd" onclick="toggleChapterDrawer()">
-                <span id="chapterCountLabel">📑 章節目錄</span>
-                <span id="chapterToggleArrow" style="margin-left:6px">▲</span>
-            </div>
+    <div class="catalog-card" id="catalogCard" style="display:none">
+        <div class="book-tabs" id="bookTabs"></div>
+        <div class="toc-header" onclick="toggleChapterGrid()">
+            <div class="toc-title" id="tocTitle">📖 章節目錄</div>
+            <span class="toc-toggle-pill" id="tocTogglePill">收合目錄 ▲</span>
         </div>
-        <div class="chapter-list" id="chapterList"></div>
+        <div class="chapter-grid" id="chapterGrid"></div>
     </div>
 
-    <div class="reader-toolbar">
+    <div class="reader-toolbar" id="readerToolbar" style="display:none">
         <div class="tool-group">
-            <span class="tool-lbl">🔤 字級：</span>
-            <button type="button" class="tool-pill" id="fontBtn-sm" onclick="setFontSize('sm')">小</button>
-            <button type="button" class="tool-pill active" id="fontBtn-md" onclick="setFontSize('md')">中</button>
-            <button type="button" class="tool-pill" id="fontBtn-lg" onclick="setFontSize('lg')">大</button>
+            <span class="tool-label">🔤 字級：</span>
+            <button type="button" class="ctrl-pill" data-size="0.96rem" onclick="setFontSize('0.96rem')">小</button>
+            <button type="button" class="ctrl-pill active" data-size="1.08rem" onclick="setFontSize('1.08rem')">中</button>
+            <button type="button" class="ctrl-pill" data-size="1.24rem" onclick="setFontSize('1.24rem')">大</button>
         </div>
         <div class="tool-group">
-            <span class="tool-lbl">🎨 底色：</span>
-            <button type="button" class="theme-dot active" id="themeBtn-pink" style="background:#ffffff" title="花間粉白" onclick="setReaderTheme('pink')"></button>
-            <button type="button" class="theme-dot" id="themeBtn-paper" style="background:#f5ebd6" title="護眼米黃紙張" onclick="setReaderTheme('paper')"></button>
-            <button type="button" class="theme-dot" id="themeBtn-dark" style="background:#262430" title="夜間深色模式" onclick="setReaderTheme('dark')"></button>
+            <span class="tool-label">🎨 底色：</span>
+            <button type="button" class="theme-swatch active" data-theme="light" style="background:#ffffff" title="花間粉白" onclick="setReaderTheme('light')">白</button>
+            <button type="button" class="theme-swatch" data-theme="sepia" style="background:#fbf4e4;color:#5a4632" title="護眼米黃" onclick="setReaderTheme('sepia')">黃</button>
+            <button type="button" class="theme-swatch" data-theme="dark" style="background:#24212e;color:#f5eef2" title="夜間深色" onclick="setReaderTheme('dark')">夜</button>
         </div>
     </div>
 
-    <article class="reader-card" id="readerCard">
-        <div class="reader-series-tag" id="readerSeriesTag">📚 公會小說</div>
-        <h2 class="reader-chap-title" id="readerChapTitle">載入章節內容中...</h2>
-        <div class="reader-meta" id="readerMeta"></div>
-        <div class="reader-content font-md" id="readerContent">
-            <p style="text-indent:0;text-align:center;color:#947479">正在連線讀取故事篇章，請稍候～</p>
-        </div>
-        <div class="chap-nav-row">
-            <button type="button" class="nav-chap-btn" id="prevChapBtn" onclick="stepChapter(-1)" disabled>⬅ 上一章</button>
-            <button type="button" class="nav-top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})">⬆ 回到頂部</button>
-            <button type="button" class="nav-chap-btn" id="nextChapBtn" onclick="stepChapter(1)" disabled>下一章 ➡</button>
-        </div>
-    </article>
+    <div class="reader-card" id="readerCard">
+        <div class="state-box">⏳ 正在載入花間小憩小說書庫，請稍候...</div>
+    </div>
 </div>
 
 <script src="menu-sync.js?v=20261125_v3"></script>
 <script>
 const NOVEL_OWNER = "qscxz19920516";
 const NOVEL_REPO = "Kakan";
-const NOVEL_ROOT_FOLDER = "小說";
-const NOVEL_CACHE_KEY = "huajian_novel_catalog_v1";
-const NOVEL_BOOKMARK_KEY = "huajian_novel_bookmark_v1";
-const NOVEL_READ_KEY = "huajian_novel_read_set_v1";
-const NOVEL_PREF_KEY = "huajian_novel_reader_pref_v1";
+const NOVEL_ROOT = "小說";
+const NOVEL_CACHE_KEY = "huajian_novel_tree_v1_" + NOVEL_OWNER + "_" + NOVEL_REPO;
+const BOOKMARK_KEY = "huajian_novel_bookmark_v1";
+const READ_HISTORY_KEY = "huajian_novel_read_chapters_v1";
+const PREF_FONT_KEY = "huajian_novel_font_size_v1";
+const PREF_THEME_KEY = "huajian_novel_theme_v1";
 
-let novelCatalog = {};
-let currentSeries = "";
-let currentChapterIdx = 0;
-let chapterListCollapsed = false;
+let novelBooks = [];
+let activeBookIdx = 0;
+let activeChapIdx = 0;
+let tocCollapsed = false;
 
-function getReadSet() {
-    try {
-        return new Set(JSON.parse(localStorage.getItem(NOVEL_READ_KEY) || "[]"));
-    } catch (e) {
-        return new Set();
+const CN_NUM_MAP = { "零":0, "〇":0, "一":1, "二":2, "兩":2, "三":3, "四":4, "五":5, "六":6, "七":7, "八":8, "九":9 };
+function parseChineseNumber(str) {
+    if (!str) return null;
+    if (/^\d+$/.test(str)) return parseInt(str, 10);
+    let total = 0;
+    let current = 0;
+    for (const ch of str) {
+        if (ch === "十") {
+            total += (current === 0 ? 1 : current) * 10;
+            current = 0;
+        } else if (ch === "百") {
+            total += (current === 0 ? 1 : current) * 100;
+            current = 0;
+        } else if (ch in CN_NUM_MAP) {
+            current = CN_NUM_MAP[ch];
+        }
     }
+    return total + current;
 }
 
-function markChapterRead(path) {
-    if (!path) return;
-    const set = getReadSet();
-    set.add(path);
-    try {
-        localStorage.setItem(NOVEL_READ_KEY, JSON.stringify(Array.from(set)));
-    } catch (e) {}
-}
-
-function saveBookmark(seriesName, chapIdx, chapTitle) {
-    try {
-        localStorage.setItem(NOVEL_BOOKMARK_KEY, JSON.stringify({
-            series: seriesName,
-            index: chapIdx,
-            title: chapTitle,
-            updatedAt: Date.now()
-        }));
-    } catch (e) {}
-}
-
-function checkBookmarkBanner() {
-    const bar = document.getElementById("bookmarkBar");
-    const txt = document.getElementById("bookmarkText");
-    if (!bar || !txt) return;
-    try {
-        const raw = localStorage.getItem(NOVEL_BOOKMARK_KEY);
-        if (!raw) return;
-        const bm = JSON.parse(raw);
-        if (bm && bm.series && novelCatalog[bm.series] && novelCatalog[bm.series].chapters[bm.index]) {
-            if (bm.series === currentSeries && bm.index === currentChapterIdx) {
-                bar.classList.remove("show");
-                return;
-            }
-            txt.innerHTML = `🔖 上次閱讀：<b>${bm.series}</b> — ${bm.title}`;
-            bar.classList.add("show");
-        }
-    } catch (e) {}
-}
-
-function resumeLastBookmark() {
-    try {
-        const bm = JSON.parse(localStorage.getItem(NOVEL_BOOKMARK_KEY) || "null");
-        if (bm && novelCatalog[bm.series]) {
-            selectNovelSeries(bm.series, bm.index);
-            document.getElementById("bookmarkBar").classList.remove("show");
-        }
-    } catch (e) {}
-}
-
-function toggleChapterDrawer() {
-    chapterListCollapsed = !chapterListCollapsed;
-    const listEl = document.getElementById("chapterList");
-    const arrowEl = document.getElementById("chapterToggleArrow");
-    if (listEl) listEl.classList.toggle("collapsed", chapterListCollapsed);
-    if (arrowEl) arrowEl.textContent = chapterListCollapsed ? "▼" : "▲";
-}
-
-function setFontSize(sizeKey) {
-    const contentEl = document.getElementById("readerContent");
-    if (!contentEl) return;
-    contentEl.classList.remove("font-sm", "font-md", "font-lg");
-    contentEl.classList.add("font-" + sizeKey);
-    ["sm", "md", "lg"].forEach(k => {
-        const btn = document.getElementById("fontBtn-" + k);
-        if (btn) btn.classList.toggle("active", k === sizeKey);
-    });
-    saveReaderPrefs();
-}
-
-function setReaderTheme(themeKey) {
-    document.body.classList.remove("theme-pink", "theme-paper", "theme-dark");
-    if (themeKey !== "pink") {
-        document.body.classList.add("theme-" + themeKey);
+function extractChapterOrder(title) {
+    const m = title.match(/^第([零〇一二兩三四五六七八九十百\d]+)[章回話節]/);
+    if (m) {
+        const n = parseChineseNumber(m[1]);
+        if (n !== null) return n;
     }
-    ["pink", "paper", "dark"].forEach(k => {
-        const btn = document.getElementById("themeBtn-" + k);
-        if (btn) btn.classList.toggle("active", k === themeKey);
-    });
-    saveReaderPrefs();
+    const numPrefix = title.match(/^(\d+)/);
+    if (numPrefix) return parseInt(numPrefix[1], 10);
+    return 999999;
 }
 
-function saveReaderPrefs() {
-    const contentEl = document.getElementById("readerContent");
-    const font = contentEl && contentEl.classList.contains("font-sm") ? "sm"
-        : (contentEl && contentEl.classList.contains("font-lg") ? "lg" : "md");
-    const theme = document.body.classList.contains("theme-paper") ? "paper"
-        : (document.body.classList.contains("theme-dark") ? "dark" : "pink");
-    try {
-        localStorage.setItem(NOVEL_PREF_KEY, JSON.stringify({ font, theme }));
-    } catch (e) {}
+function compareChapters(a, b) {
+    const oa = extractChapterOrder(a.title);
+    const ob = extractChapterOrder(b.title);
+    if (oa !== ob) return oa - ob;
+    return a.title.localeCompare(b.title, "zh-Hant", { numeric: true });
 }
 
-function loadReaderPrefs() {
-    try {
-        const pref = JSON.parse(localStorage.getItem(NOVEL_PREF_KEY) || "null");
-        if (pref) {
-            if (pref.font) setFontSize(pref.font);
-            if (pref.theme) setReaderTheme(pref.theme);
-        }
-    } catch (e) {}
-}
-
-const CHAPTER_NUM_MAP = {
-    "一": 1, "二": 2, "三": 3, "四": 4, "五": 5,
-    "六": 6, "七": 7, "八": 8, "九": 9, "十": 10
-};
-
-function parseChapterOrder(title) {
-    const numMatch = title.match(/第\s*(\d+)\s*[章回話節]/);
-    if (numMatch) return parseInt(numMatch[1], 10);
-    const zhMatch = title.match(/第\s*([一二三四五六七八九十]+)\s*[章回話節]/);
-    if (zhMatch) {
-        const s = zhMatch[1];
-        if (s === "十") return 10;
-        if (s.startsWith("十")) return 10 + (CHAPTER_NUM_MAP[s[1]] || 0);
-        if (s.endsWith("十")) return (CHAPTER_NUM_MAP[s[0]] || 1) * 10;
-        if (s.includes("十")) {
-            const parts = s.split("十");
-            return (CHAPTER_NUM_MAP[parts[0]] || 1) * 10 + (CHAPTER_NUM_MAP[parts[1]] || 0);
-        }
-        return CHAPTER_NUM_MAP[s] || 999;
-    }
-    return 9999;
-}
-
-function sortChapters(list) {
-    return list.slice().sort((a, b) => {
-        const oa = parseChapterOrder(a.title);
-        const ob = parseChapterOrder(b.title);
-        if (oa !== ob) return oa - ob;
-        return a.title.localeCompare(b.title, "zh-Hant", { numeric: true });
-    });
-}
-
-async function fetchNovelTreeFromGitHub(bypassCache = false) {
+async function fetchNovelCatalog(bypassCache = false) {
     if (!bypassCache) {
         try {
             const cached = sessionStorage.getItem(NOVEL_CACHE_KEY);
             if (cached) {
                 const parsed = JSON.parse(cached);
-                if (parsed && Object.keys(parsed).length > 0) return parsed;
+                if (Array.isArray(parsed) && parsed.length > 0) return parsed;
             }
         } catch (e) {}
     }
@@ -340,9 +223,9 @@ async function fetchNovelTreeFromGitHub(bypassCache = false) {
     try {
         const repoRes = await fetch(`https://api.github.com/repos/${NOVEL_OWNER}/${NOVEL_REPO}?_=${Date.now()}`);
         if (repoRes.ok) {
-            const repoInfo = await repoRes.json();
-            if (repoInfo && repoInfo.default_branch && !branches.includes(repoInfo.default_branch)) {
-                branches.unshift(repoInfo.default_branch);
+            const info = await repoRes.json();
+            if (info && info.default_branch && !branches.includes(info.default_branch)) {
+                branches.unshift(info.default_branch);
             }
         }
     } catch (e) {}
@@ -352,9 +235,9 @@ async function fetchNovelTreeFromGitHub(bypassCache = false) {
             const branchRes = await fetch(`https://api.github.com/repos/${NOVEL_OWNER}/${NOVEL_REPO}/branches/${br}?_=${Date.now()}`);
             let treeSha = br;
             if (branchRes.ok) {
-                const branchData = await branchRes.json();
-                if (branchData && branchData.commit && branchData.commit.commit && branchData.commit.commit.tree) {
-                    treeSha = branchData.commit.commit.tree.sha;
+                const bData = await branchRes.json();
+                if (bData && bData.commit && bData.commit.commit && bData.commit.commit.tree) {
+                    treeSha = bData.commit.commit.tree.sha;
                 }
             }
 
@@ -363,188 +246,293 @@ async function fetchNovelTreeFromGitHub(bypassCache = false) {
             const data = await res.json();
             if (!data.tree) continue;
 
-            const catalog = {};
+            const bookMap = {};
             data.tree.forEach(item => {
                 if (item.type !== "blob") return;
                 if (!/\.(txt|md)$/i.test(item.path)) return;
                 const parts = item.path.split("/");
-                if (parts[0] !== NOVEL_ROOT_FOLDER) return;
+                if (parts[0] !== NOVEL_ROOT || parts.length < 2) return;
 
-                let seriesName = "公會短篇故事集";
-                let fileName = parts[parts.length - 1];
-                if (parts.length >= 3) {
-                    seriesName = parts[1];
-                }
-                const title = fileName.replace(/\.(txt|md)$/i, "");
-                if (!catalog[seriesName]) {
-                    catalog[seriesName] = { title: seriesName, chapters: [] };
-                }
-                catalog[seriesName].chapters.push({
-                    title,
-                    path: item.path,
-                    fileName
-                });
+                const fileName = parts[parts.length - 1];
+                const chapTitle = fileName.replace(/\.(txt|md)$/i, "").trim();
+                const bookTitle = parts.length >= 3 ? parts[1] : "精選短篇集";
+
+                if (!bookMap[bookTitle]) bookMap[bookTitle] = [];
+                bookMap[bookTitle].push({ title: chapTitle, path: item.path });
             });
 
-            Object.keys(catalog).forEach(k => {
-                catalog[k].chapters = sortChapters(catalog[k].chapters);
-            });
+            const books = Object.keys(bookMap)
+                .sort((a, b) => a.localeCompare(b, "zh-Hant", { numeric: true }))
+                .map(bookTitle => ({
+                    bookTitle,
+                    chapters: bookMap[bookTitle].sort(compareChapters)
+                }));
 
-            if (Object.keys(catalog).length > 0) {
-                try { sessionStorage.setItem(NOVEL_CACHE_KEY, JSON.stringify(catalog)); } catch (e) {}
-                return catalog;
+            if (books.length > 0) {
+                try { sessionStorage.setItem(NOVEL_CACHE_KEY, JSON.stringify(books)); } catch (e) {}
+                return books;
             }
         } catch (e) {}
     }
-    return {};
+    return [];
 }
 
-function renderSeriesDropdown() {
-    const sel = document.getElementById("seriesSelect");
-    if (!sel) return;
-    const keys = Object.keys(novelCatalog);
-    if (keys.length === 0) {
-        sel.innerHTML = `<option value="">尚未在「小說/」資料夾偵測到文章</option>`;
-        return;
+function getReadSet() {
+    try {
+        return new Set(JSON.parse(localStorage.getItem(READ_HISTORY_KEY) || "[]"));
+    } catch (e) {
+        return new Set();
     }
-    sel.innerHTML = keys.map(k => {
-        const cnt = novelCatalog[k].chapters.length;
-        const selected = k === currentSeries ? " selected" : "";
-        return `<option value="${k.replace(/"/g, "&quot;")}"${selected}>📖 ${k}（共 ${cnt} 章）</option>`;
+}
+
+function markChapterRead(path) {
+    try {
+        const set = getReadSet();
+        set.add(path);
+        localStorage.setItem(READ_HISTORY_KEY, JSON.stringify(Array.from(set)));
+    } catch (e) {}
+}
+
+function saveBookmark(bookTitle, chapTitle, path) {
+    try {
+        localStorage.setItem(BOOKMARK_KEY, JSON.stringify({ bookTitle, chapTitle, path }));
+    } catch (e) {}
+}
+
+function checkBookmarkBanner() {
+    const bar = document.getElementById("bookmarkBar");
+    const txt = document.getElementById("bookmarkText");
+    const btn = document.getElementById("bookmarkResumeBtn");
+    if (!bar || !txt || !btn) return;
+    try {
+        const raw = localStorage.getItem(BOOKMARK_KEY);
+        if (!raw) return;
+        const bm = JSON.parse(raw);
+        if (!bm || !bm.path) return;
+        const bIdx = novelBooks.findIndex(b => b.bookTitle === bm.bookTitle);
+        if (bIdx === -1) return;
+        const cIdx = novelBooks[bIdx].chapters.findIndex(c => c.path === bm.path);
+        if (cIdx === -1) return;
+
+        txt.innerHTML = `🔖 上次讀到：《${bm.bookTitle}》<b>${bm.chapTitle}</b>`;
+        bar.classList.add("show");
+        btn.onclick = () => {
+            bar.classList.remove("show");
+            openChapter(bIdx, cIdx, true);
+        };
+    } catch (e) {}
+}
+
+function toggleChapterGrid() {
+    tocCollapsed = !tocCollapsed;
+    const grid = document.getElementById("chapterGrid");
+    const pill = document.getElementById("tocTogglePill");
+    if (grid) grid.classList.toggle("collapsed", tocCollapsed);
+    if (pill) pill.textContent = tocCollapsed ? "展開目錄 ▼" : "收合目錄 ▲";
+}
+
+function renderCatalog() {
+    const card = document.getElementById("catalogCard");
+    const tabsEl = document.getElementById("bookTabs");
+    const tocTitle = document.getElementById("tocTitle");
+    const gridEl = document.getElementById("chapterGrid");
+    if (!card || !novelBooks.length) return;
+
+    card.style.display = "block";
+    tabsEl.innerHTML = novelBooks.map((b, idx) => {
+        const act = idx === activeBookIdx ? " active" : "";
+        return `<button type="button" class="book-tab${act}" onclick="selectBook(${idx})">📘 ${b.bookTitle} (${b.chapters.length}章)</button>`;
     }).join("");
-}
 
-function renderChapterList() {
-    const listEl = document.getElementById("chapterList");
-    const cntEl = document.getElementById("chapterCountLabel");
-    if (!listEl) return;
-
-    const seriesObj = novelCatalog[currentSeries];
-    if (!seriesObj || !seriesObj.chapters.length) {
-        if (cntEl) cntEl.textContent = "📑 章節目錄（0 章）";
-        listEl.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:16px;color:#947479;font-size:.86rem;font-weight:700">
-            🌸 請在 GitHub 儲存庫根目錄建立 <b>小說/作品名稱/第一章：標題.txt</b>，系統就會自動同步顯示囉！
-        </div>`;
-        return;
-    }
-
+    const curBook = novelBooks[activeBookIdx];
+    tocTitle.textContent = `📖 ${curBook.bookTitle}・章節目錄（共 ${curBook.chapters.length} 章）`;
     const readSet = getReadSet();
-    if (cntEl) cntEl.textContent = `📑 章節目錄（共 ${seriesObj.chapters.length} 章）`;
 
-    listEl.innerHTML = seriesObj.chapters.map((ch, idx) => {
-        const isAct = idx === currentChapterIdx ? " active" : "";
-        const isRead = readSet.has(ch.path);
-        const dotHtml = isAct
-            ? `<span class="chap-read-dot">閱讀中</span>`
-            : (isRead ? `<span class="chap-read-dot">已讀</span>` : "");
-        return `<button type="button" class="chap-btn${isAct}" onclick="openChapter(${idx})">
-            <span>${ch.title}</span>
-            ${dotHtml}
+    gridEl.innerHTML = curBook.chapters.map((ch, cIdx) => {
+        const act = cIdx === activeChapIdx ? " active" : "";
+        const readTag = readSet.has(ch.path) ? `<span class="chap-read-tag">已讀</span>` : "";
+        return `<button type="button" class="chap-btn${act}" onclick="openChapter(${activeBookIdx}, ${cIdx}, true)">
+            <span class="chap-btn-label">${ch.title}</span>
+            ${readTag}
         </button>`;
     }).join("");
 }
 
-function formatPlainTextToHtml(rawText) {
-    const normalized = (rawText || "").replace(/\r\n/g, "\n").replace(/\r/g, "\n").trim();
-    if (!normalized) {
-        return `<p style="text-indent:0;text-align:center;color:#947479">（本章節目前尚無文字內容）</p>`;
-    }
-    const lines = normalized.split("\n");
-    return lines.map(line => {
+function selectBook(bIdx) {
+    activeBookIdx = bIdx;
+    openChapter(bIdx, 0, false);
+}
+
+function formatNovelParagraphs(rawText) {
+    const cleaned = rawText.replace(/^\uFEFF/, "").replace(/\r\n/g, "\n");
+    const lines = cleaned.split("\n");
+    let html = "";
+    for (const line of lines) {
         const trimmed = line.trim();
-        if (!trimmed) return "";
-        if (/^[-—=*＊~～•・]{3,}$/.test(trimmed)) {
-            return `<p class="scene-break">${trimmed}</p>`;
-        }
-        const escaped = trimmed
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;");
-        return `<p>${escaped}</p>`;
-    }).filter(Boolean).join("");
-}
-
-async function openChapter(idx) {
-    const seriesObj = novelCatalog[currentSeries];
-    if (!seriesObj || !seriesObj.chapters[idx]) return;
-
-    currentChapterIdx = idx;
-    const chap = seriesObj.chapters[idx];
-
-    const url = new URL(window.location.href);
-    url.searchParams.set("series", currentSeries);
-    url.searchParams.set("ch", String(idx + 1));
-    window.history.replaceState(null, "", url.pathname + "?" + url.searchParams.toString());
-
-    document.getElementById("readerSeriesTag").textContent = `📚 ${currentSeries}`;
-    document.getElementById("readerChapTitle").textContent = chap.title;
-    document.getElementById("readerMeta").textContent = `第 ${idx + 1} / ${seriesObj.chapters.length} 章・載入內文中...`;
-    document.getElementById("readerContent").innerHTML = `<p style="text-indent:0;text-align:center;color:#947479">⏳ 正在開啟章節內容...</p>`;
-
-    document.getElementById("prevChapBtn").disabled = idx <= 0;
-    document.getElementById("nextChapBtn").disabled = idx >= seriesObj.chapters.length - 1;
-
-    renderChapterList();
-
-    try {
-        const encodedPath = chap.path.split("/").map(encodeURIComponent).join("/");
-        const res = await fetch(`${encodedPath}?v=${Date.now()}`);
-        if (!res.ok) throw new Error("HTTP " + res.status);
-        const text = await res.text();
-        const charCount = text.replace(/\s+/g, "").length;
-        document.getElementById("readerMeta").textContent = `第 ${idx + 1} / ${seriesObj.chapters.length} 章・約 ${charCount.toLocaleString()} 字`;
-        document.getElementById("readerContent").innerHTML = formatPlainTextToHtml(text);
-
-        markChapterRead(chap.path);
-        saveBookmark(currentSeries, idx, chap.title);
-        renderChapterList();
-    } catch (err) {
-        document.getElementById("readerMeta").textContent = `第 ${idx + 1} / ${seriesObj.chapters.length} 章`;
-        document.getElementById("readerContent").innerHTML = `<p style="text-indent:0;text-align:center;color:#c76272">⚠️ 無法讀取本章檔案（${chap.path}），請確認檔案已上傳至 GitHub。</p>`;
-    }
-}
-
-function stepChapter(delta) {
-    const seriesObj = novelCatalog[currentSeries];
-    if (!seriesObj) return;
-    const nextIdx = currentChapterIdx + delta;
-    if (nextIdx >= 0 && nextIdx < seriesObj.chapters.length) {
-        openChapter(nextIdx);
-        document.getElementById("readerCard").scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-}
-
-function selectNovelSeries(seriesName, initialChapIdx = 0) {
-    const keys = Object.keys(novelCatalog);
-    if (!keys.length) {
-        renderSeriesDropdown();
-        renderChapterList();
-        document.getElementById("readerChapTitle").textContent = "尚未新增小說章節";
-        document.getElementById("readerContent").innerHTML = `<p style="text-indent:0;text-align:center;color:#947479">請先在儲存庫建立 <b>小說/作品名稱/第一章：標題.txt</b> 後點擊上方 🔄 重新掃描！</p>`;
-        return;
-    }
-    currentSeries = novelCatalog[seriesName] ? seriesName : keys[0];
-    renderSeriesDropdown();
-    const safeIdx = Math.max(0, Math.min(initialChapIdx, novelCatalog[currentSeries].chapters.length - 1));
-    openChapter(safeIdx);
-}
-
-async function loadNovelCatalog(bypassCache = false) {
-    const syncBtn = document.getElementById("syncNovelBtn");
-    if (syncBtn) syncBtn.textContent = "⏳";
-    try {
-        novelCatalog = await fetchNovelTreeFromGitHub(bypassCache);
-        const params = new URLSearchParams(window.location.search);
-        const paramSeries = params.get("series") || "";
-        const paramCh = Math.max(0, (parseInt(params.get("ch") || "1", 10) || 1) - 1);
-
-        if (paramSeries && novelCatalog[paramSeries]) {
-            selectNovelSeries(paramSeries, paramCh);
+        if (!trimmed) continue;
+        if (/^[-—=*~＊・]{3,}$/.test(trimmed)) {
+            html += `<p class="scene-break">${escapeHtml(trimmed)}</p>`;
+        } else if (/^[「『（(【]/.test(trimmed)) {
+            html += `<p class="no-indent">${escapeHtml(trimmed)}</p>`;
         } else {
-            const firstKey = Object.keys(novelCatalog)[0] || "";
-            selectNovelSeries(firstKey, 0);
+            html += `<p>${escapeHtml(trimmed)}</p>`;
         }
+    }
+    return html || `<p class="no-indent">（本章尚無文字內容）</p>`;
+}
+
+function escapeHtml(str) {
+    return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+}
+
+async function fetchChapterText(relPath) {
+    const encodedPath = relPath.split("/").map(encodeURIComponent).join("/");
+    const urls = [
+        `${encodedPath}?v=${Date.now()}`,
+        `https://raw.githubusercontent.com/${NOVEL_OWNER}/${NOVEL_REPO}/main/${encodedPath}`,
+        `https://raw.githubusercontent.com/${NOVEL_OWNER}/${NOVEL_REPO}/master/${encodedPath}`
+    ];
+    for (const url of urls) {
+        try {
+            const res = await fetch(url);
+            if (res.ok) return await res.text();
+        } catch (e) {}
+    }
+    throw new Error("無法讀取章節檔案");
+}
+
+function scrollToChapterTop() {
+    const target = document.getElementById("readerToolbar") || document.getElementById("readerCard");
+    if (!target) return;
+    requestAnimationFrame(() => {
+        const topbar = document.querySelector("#siteMenu .topbar");
+        const offset = (topbar ? topbar.offsetHeight : 56) + 12;
+        const targetY = Math.max(0, window.scrollY + target.getBoundingClientRect().top - offset);
+        window.scrollTo({ top: targetY, behavior: "smooth" });
+    });
+}
+
+async function openChapter(bIdx, cIdx, shouldScroll = true) {
+    activeBookIdx = bIdx;
+    activeChapIdx = cIdx;
+    const book = novelBooks[bIdx];
+    const chap = book.chapters[cIdx];
+
+    markChapterRead(chap.path);
+    saveBookmark(book.bookTitle, chap.title, chap.path);
+    renderCatalog();
+
+    const toolbar = document.getElementById("readerToolbar");
+    const reader = document.getElementById("readerCard");
+    if (toolbar) toolbar.style.display = "flex";
+    reader.innerHTML = `<div class="state-box">📖 正在載入「${escapeHtml(chap.title)}」...</div>`;
+
+    try {
+        const rawText = await fetchChapterText(chap.path);
+        const charCount = rawText.replace(/\s+/g, "").length;
+        const hasPrev = cIdx > 0;
+        const hasNext = cIdx < book.chapters.length - 1;
+        const selectOptions = book.chapters.map((c, idx) =>
+            `<option value="${idx}"${idx === cIdx ? " selected" : ""}>${escapeHtml(c.title)}</option>`
+        ).join("");
+
+        reader.innerHTML = `
+            <div class="reader-book-tag">📘 ${escapeHtml(book.bookTitle)}</div>
+            <h2 class="reader-chap-title">${escapeHtml(chap.title)}</h2>
+            <div class="reader-meta">
+                <span>第 ${cIdx + 1} / ${book.chapters.length} 章</span>
+                <span>約 ${charCount.toLocaleString()} 字</span>
+            </div>
+            <div class="novel-content" id="novelContentBody">${formatNovelParagraphs(rawText)}</div>
+            <div class="chapter-nav-bar">
+                <button type="button" class="nav-chap-btn" ${hasPrev ? "" : "disabled"} onclick="openChapter(${bIdx}, ${cIdx - 1}, true)">⬅ 上一章</button>
+                <select class="chap-select" aria-label="快速跳轉章節" onchange="openChapter(${bIdx}, Number(this.value), true)">${selectOptions}</select>
+                <button type="button" class="nav-chap-btn" ${hasNext ? "" : "disabled"} onclick="openChapter(${bIdx}, ${cIdx + 1}, true)">下一章 ➡</button>
+            </div>
+        `;
+        applySavedReaderPrefs();
+        if (shouldScroll) {
+            scrollToChapterTop();
+        }
+    } catch (err) {
+        reader.innerHTML = `<div class="state-box">⚠️ 章節載入失敗，請確認檔案是否存在於 <code>${escapeHtml(chap.path)}</code> 或稍後重試。</div>`;
+        if (shouldScroll) {
+            scrollToChapterTop();
+        }
+    }
+}
+
+function setFontSize(size) {
+    localStorage.setItem(PREF_FONT_KEY, size);
+    const bodyEl = document.getElementById("novelContentBody");
+    if (bodyEl) bodyEl.style.fontSize = size;
+    document.querySelectorAll("#readerToolbar [data-size]").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.size === size);
+    });
+}
+
+function setReaderTheme(theme) {
+    localStorage.setItem(PREF_THEME_KEY, theme);
+    document.body.classList.remove("theme-sepia", "theme-dark");
+    if (theme === "sepia") document.body.classList.add("theme-sepia");
+    if (theme === "dark") document.body.classList.add("theme-dark");
+    document.querySelectorAll("#readerToolbar [data-theme]").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.theme === theme);
+    });
+}
+
+function applySavedReaderPrefs() {
+    const savedSize = localStorage.getItem(PREF_FONT_KEY) || "1.08rem";
+    const savedTheme = localStorage.getItem(PREF_THEME_KEY) || "light";
+    setFontSize(savedSize);
+    setReaderTheme(savedTheme);
+}
+
+async function initNovels(bypassCache = false) {
+    const syncBtn = document.getElementById("syncNovelBtn");
+    const subEl = document.getElementById("novelHeroSub");
+    const reader = document.getElementById("readerCard");
+    if (syncBtn) syncBtn.textContent = "⏳";
+
+    try {
+        novelBooks = await fetchNovelCatalog(bypassCache);
+        if (!novelBooks.length) {
+            if (subEl) subEl.textContent = "目前尚未建立「小說/」資料夾或章節檔案";
+            reader.innerHTML = `
+                <div class="state-box">
+                    🌸 書庫目前還是空的喔！<br>
+                    只要在 GitHub 根目錄建立 <code>小說/作品名稱/第一章：標題.txt</code>，<br>
+                    重新整理後就會自動出現在這裡囉！
+                </div>
+            `;
+            return;
+        }
+
+        const totalChaps = novelBooks.reduce((sum, b) => sum + b.chapters.length, 0);
+        if (subEl) subEl.textContent = `共收錄 ${novelBooks.length} 部作品・合計 ${totalChaps} 章（點擊章節即可線上閱讀）`;
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const targetBook = urlParams.get("book");
+        const targetChap = urlParams.get("chap");
+        let startBook = 0;
+        let startChap = 0;
+        if (targetBook) {
+            const foundB = novelBooks.findIndex(b => b.bookTitle.includes(targetBook));
+            if (foundB !== -1) {
+                startBook = foundB;
+                if (targetChap) {
+                    const foundC = novelBooks[foundB].chapters.findIndex(c => c.title.includes(targetChap));
+                    if (foundC !== -1) startChap = foundC;
+                }
+            }
+        }
+
         checkBookmarkBanner();
+        await openChapter(startBook, startChap, false);
     } finally {
         if (syncBtn) syncBtn.textContent = "🔄";
     }
@@ -557,8 +545,8 @@ window.addEventListener("DOMContentLoaded", async function() {
         for(let i=0;i<25;i++){ const b=document.createElement("div");b.className="bubble"; const s=20+Math.random()*45;b.style.width=s+"px";b.style.height=s+"px"; b.style.left=(Math.random()*100)+"vw";b.style.animationDuration=(10+Math.random()*10)+"s"; b.style.animationDelay=(-Math.random()*8)+"s";bg.appendChild(b); }
     }
 
-    loadReaderPrefs();
-    await loadNovelCatalog(false);
+    applySavedReaderPrefs();
+    await initNovels(false);
 
     if (window.HuajianMenu) {
         const cfg = await window.HuajianMenu.fetchAllSeries();
