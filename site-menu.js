@@ -124,6 +124,7 @@
         let userPaused = localStorage.getItem(BGM_PREF_KEY) === "1";
         let currentIdx = Math.floor(Math.random() * BGM_TRACKS.length);
         let isPlayingNow = false;
+        let gestureUnlocked = false;
 
         function pickNextRandomIndex(excludeIdx) {
             if (BGM_TRACKS.length <= 1) return 0;
@@ -141,9 +142,9 @@
             .huajian-bgm-btn{border:none;background:linear-gradient(135deg,#ff9a9e,#f68084);color:#fff;width:28px;height:28px;border-radius:50%;font-size:.82rem;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 6px rgba(246,128,132,.35)}
             .huajian-bgm-next{border:1.5px solid #f2bec7;background:#fff8f9;color:#c76272;width:26px;height:26px;border-radius:50%;font-size:.76rem;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
             .huajian-bgm-next:hover{background:#c76272;color:#fff}
-            .huajian-bgm-title{max-width:128px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#c76272;cursor:pointer}
-            .huajian-yt-hidden{position:fixed;width:1px;height:1px;left:-9999px;top:-9999px;opacity:0;pointer-events:none;overflow:hidden}
-            @media(max-width:520px){.huajian-bgm-bar{left:12px;bottom:16px;padding:5px 10px}.huajian-bgm-title{max-width:92px;font-size:.74rem}}
+            .huajian-bgm-title{max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#c76272;cursor:pointer}
+            .huajian-yt-hidden{position:fixed;width:2px;height:2px;left:0;top:0;opacity:0.001;pointer-events:none;overflow:hidden}
+            @media(max-width:520px){.huajian-bgm-bar{left:12px;bottom:16px;padding:5px 10px}.huajian-bgm-title{max-width:105px;font-size:.74rem}}
         `;
         document.head.appendChild(styleEl);
 
@@ -151,8 +152,8 @@
         bgmWrap.innerHTML = `
             <div class="huajian-yt-hidden"><div id="huajianYtPlayer"></div></div>
             <div class="huajian-bgm-bar${inGameMode ? ' hidden-in-game' : ''}" id="huajianBgmBar" title="花間背景音樂（點擊可播放/暫停）">
-                <button type="button" class="huajian-bgm-btn" id="huajianBgmToggle" aria-label="播放或暫停背景音樂">🎵</button>
-                <span class="huajian-bgm-title" id="huajianBgmTitle">${BGM_TRACKS[currentIdx].title}</span>
+                <button type="button" class="huajian-bgm-btn" id="huajianBgmToggle" aria-label="播放或暫停背景音樂">▶️</button>
+                <span class="huajian-bgm-title" id="huajianBgmTitle">點我播 ${BGM_TRACKS[currentIdx].title}</span>
                 <button type="button" class="huajian-bgm-next" id="huajianBgmNext" title="隨機切換下一首" aria-label="隨機切換下一首">⏭</button>
             </div>
         `;
@@ -166,44 +167,58 @@
 
             bar.classList.toggle('hidden-in-game', inGameMode);
             const track = BGM_TRACKS[currentIdx];
-            titleEl.textContent = isPlayingNow ? `♪ ${track.title}` : `${track.title}`;
-            toggleBtn.textContent = isPlayingNow ? '⏸' : '▶️';
+            if (isPlayingNow) {
+                titleEl.textContent = `♪ ${track.title}`;
+                toggleBtn.textContent = '⏸';
+            } else if (userPaused) {
+                titleEl.textContent = `已暫停・${track.title}`;
+                toggleBtn.textContent = '▶️';
+            } else {
+                titleEl.textContent = `點我播 ${track.title}`;
+                toggleBtn.textContent = '▶️';
+            }
         }
 
         function tryPlayCurrent() {
             if (inGameMode || userPaused || !ytReady || !ytPlayer) return;
             try {
-                ytPlayer.unMute();
-                ytPlayer.setVolume(65);
-                ytPlayer.playVideo();
+                if (typeof ytPlayer.unMute === 'function') ytPlayer.unMute();
+                if (typeof ytPlayer.setVolume === 'function') ytPlayer.setVolume(65);
+                if (typeof ytPlayer.playVideo === 'function') ytPlayer.playVideo();
             } catch (e) {}
         }
 
         function playNextRandomTrack() {
             currentIdx = pickNextRandomIndex(currentIdx);
             userPaused = false;
+            gestureUnlocked = true;
             localStorage.setItem(BGM_PREF_KEY, "0");
             updateBgmUI();
             if (ytReady && ytPlayer && !inGameMode) {
                 try {
-                    ytPlayer.unMute();
-                    ytPlayer.setVolume(65);
-                    ytPlayer.loadVideoById(BGM_TRACKS[currentIdx].id);
+                    if (typeof ytPlayer.unMute === 'function') ytPlayer.unMute();
+                    if (typeof ytPlayer.setVolume === 'function') ytPlayer.setVolume(65);
+                    if (typeof ytPlayer.loadVideoById === 'function') {
+                        ytPlayer.loadVideoById(BGM_TRACKS[currentIdx].id);
+                    }
                 } catch (e) {}
             }
         }
 
         document.getElementById('huajianBgmToggle').addEventListener('click', function(e) {
             e.stopPropagation();
-            if (!ytReady || !ytPlayer) return;
             if (isPlayingNow) {
                 userPaused = true;
                 localStorage.setItem(BGM_PREF_KEY, "1");
-                try { ytPlayer.pauseVideo(); } catch (err) {}
+                try { if (ytPlayer && ytPlayer.pauseVideo) ytPlayer.pauseVideo(); } catch (err) {}
                 isPlayingNow = false;
             } else {
                 userPaused = false;
+                gestureUnlocked = true;
                 localStorage.setItem(BGM_PREF_KEY, "0");
+                if (!ytPlayer && window.YT && window.YT.Player) {
+                    initYouTubePlayer();
+                }
                 tryPlayCurrent();
             }
             updateBgmUI();
@@ -219,8 +234,8 @@
             playNextRandomTrack();
         });
 
-        // 首次互動解鎖瀏覽器自動播放限制
         function onFirstGesture() {
+            gestureUnlocked = true;
             if (!inGameMode && !userPaused && !isPlayingNow) {
                 tryPlayCurrent();
             }
@@ -250,32 +265,32 @@
 
         function initYouTubePlayer() {
             if (ytPlayer || !window.YT || !window.YT.Player) return;
+            const originParam = (window.location.origin && window.location.origin.startsWith('http'))
+                ? { origin: window.location.origin }
+                : {};
             ytPlayer = new window.YT.Player('huajianYtPlayer', {
-                height: '1',
-                width: '1',
+                height: '2',
+                width: '2',
                 videoId: BGM_TRACKS[currentIdx].id,
-                playerVars: {
-                    autoplay: inGameMode || userPaused ? 0 : 1,
+                playerVars: Object.assign({
+                    autoplay: 0,
                     controls: 0,
                     disablekb: 1,
                     fs: 0,
                     modestbranding: 1,
                     playsinline: 1,
                     rel: 0
-                },
+                }, originParam),
                 events: {
                     onReady: function(event) {
                         ytReady = true;
                         updateBgmUI();
-                        if (!inGameMode && !userPaused) {
-                            try {
-                                event.target.unMute();
-                                event.target.setVolume(65);
-                                event.target.playVideo();
-                            } catch (e) {}
+                        if (!inGameMode && !userPaused && gestureUnlocked) {
+                            tryPlayCurrent();
                         }
                     },
                     onStateChange: function(event) {
+                        if (!window.YT || !window.YT.PlayerState) return;
                         if (event.data === window.YT.PlayerState.PLAYING) {
                             if (inGameMode) {
                                 try { event.target.pauseVideo(); } catch (e) {}
@@ -297,11 +312,10 @@
                         }
                     },
                     onError: function() {
-                        // 若某首暫時無法播放，自動跳下一首隨機曲目
-                        if (!inGameMode && !userPaused) {
+                        if (!inGameMode && !userPaused && gestureUnlocked) {
                             currentIdx = pickNextRandomIndex(currentIdx);
                             updateBgmUI();
-                            try { ytPlayer.loadVideoById(BGM_TRACKS[currentIdx].id); } catch (e) {}
+                            try { event.target.loadVideoById(BGM_TRACKS[currentIdx].id); } catch (e) {}
                         }
                     }
                 }

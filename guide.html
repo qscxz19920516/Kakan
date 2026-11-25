@@ -82,7 +82,7 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 <body>
 <div class="fx-bg" id="fxBg"></div>
 <div id="siteMenu"></div>
-<script src="site-menu.js?v=20261124_v3"></script>
+<script src="site-menu.js?v=20261125_v1"></script>
 
 <div class="wrap">
     <div class="guide-hero">
@@ -102,11 +102,8 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
     </div>
 </div>
 
-<script src="menu-sync.js?v=20261124_v3"></script>
+<script src="menu-sync.js?v=20261125_v1"></script>
 <script>
-// ============================================================================
-// ★ 攻略資料庫設定區（以後要新增分頁，直接在下方 GUIDE_SECTIONS 增加項目即可！）
-// ============================================================================
 const GUIDE_SECTIONS = [
     {
         id: "gear_stats",
@@ -202,9 +199,9 @@ function selectTier9Type(typeKey) {
 }
 
 function buildImgHtml(basePath, altText, titleText) {
-    return `<img class="guide-img" src="${basePath}.jpg?v=20261124_v4" alt="${altText}"
+    return `<img class="guide-img" src="${basePath}.jpg?v=20261125_v1" alt="${altText}"
         onclick="openZoom(this.src, '${titleText.replace(/'/g, "\\'")}')"
-        onerror="if(!this.dataset.step){this.dataset.step=1;this.src='${basePath}.JPG?v=20261124_v4';}else if(this.dataset.step==1){this.dataset.step=2;this.src='${basePath}.png?v=20261124_v4';}else if(this.dataset.step==2){this.dataset.step=3;this.src='${basePath}.PNG?v=20261124_v4';}else{this.onerror=null;this.src='${basePath}.webp?v=20261124_v4';}">`;
+        onerror="if(!this.dataset.step){this.dataset.step=1;this.src='${basePath}.JPG?v=20261125_v1';}else if(this.dataset.step==1){this.dataset.step=2;this.src='${basePath}.png?v=20261125_v1';}else if(this.dataset.step==2){this.dataset.step=3;this.src='${basePath}.PNG?v=20261125_v1';}else{this.onerror=null;this.src='${basePath}.webp?v=20261125_v1';}">`;
 }
 
 function renderGuideContent() {
