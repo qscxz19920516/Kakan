@@ -23,11 +23,14 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 .cards{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;max-width:640px;margin:0 auto}
 .portal{display:block;text-decoration:none;background:#fff8f9;border:2px dashed #f2bec7;border-radius:22px;padding:22px 14px;transition:.25s}
 .portal:hover{transform:translateY(-4px);background:#fff;border-style:solid;box-shadow:0 8px 20px rgba(235,168,178,.22)}
-.portal-wide{grid-column:1/-1;background:linear-gradient(135deg,#fff8f9 0%,#f5f3ff 100%);border-color:#d8b4fe}
-.portal-wide:hover{border-color:#9333ea;box-shadow:0 8px 20px rgba(147,51,234,.18)}
+.portal-guide{background:linear-gradient(135deg,#fff8f9 0%,#f5f3ff 100%);border-color:#d8b4fe}
+.portal-guide:hover{border-color:#9333ea;box-shadow:0 8px 20px rgba(147,51,234,.18)}
+.portal-novel{background:linear-gradient(135deg,#fff8f9 0%,#f0f9ff 100%);border-color:#bae6fd}
+.portal-novel:hover{border-color:#0284c7;box-shadow:0 8px 20px rgba(2,132,199,.18)}
 .portal-icon{font-size:2.6rem;display:block;margin-bottom:8px}
 .portal-title{font-size:1.15rem;font-weight:800;color:#c76272;margin-bottom:4px}
-.portal-wide .portal-title{color:#7e22ce}
+.portal-guide .portal-title{color:#7e22ce}
+.portal-novel .portal-title{color:#0369a1}
 .portal-desc{font-size:.84rem;color:#947479;line-height:1.45}
 
 .story-card{background:rgba(255,255,255,.95);backdrop-filter:blur(6px);border-radius:28px;padding:18px;box-shadow:0 8px 25px rgba(226,158,168,.16);border:2px solid #f9dfe3;text-align:center}
@@ -52,7 +55,6 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 .zoom-card{position:relative;background:#fff;padding:10px;border-radius:22px;border:3px solid #f9dfe3;max-width:95vw;max-height:92vh;box-shadow:0 15px 35px rgba(0,0,0,.35)}
 .zoom-card img{max-width:90vw;max-height:86vh;object-fit:contain;border-radius:14px;display:block}
 
-/* 頂部導覽列右側「每日一籤」迷你膠囊按鈕 */
 .topbar .spacer{width:auto !important;min-width:42px;display:flex;align-items:center;justify-content:flex-end}
 .topbar-omikuji-btn{position:relative;background:linear-gradient(135deg,#fff8f9,#ffe6eb);border:2px solid #f0a8b4;color:#c76272;height:38px;padding:0 11px;border-radius:19px;font-size:.8rem;font-weight:900;cursor:pointer;display:inline-flex;align-items:center;gap:4px;box-shadow:0 2px 8px rgba(226,158,168,.2);transition:.2s;white-space:nowrap}
 body.game-mode-active .topbar-omikuji-btn{display:none}
@@ -64,7 +66,6 @@ body.game-mode-active .topbar-omikuji-btn{display:none}
     50%{box-shadow:0 0 0 5px rgba(255,143,163,.25),0 4px 12px rgba(226,158,168,.3)}
 }
 
-/* 每日御神籤置中彈窗 (Modal) */
 .omikuji-modal{display:none;position:fixed;inset:0;background:rgba(55,38,42,.58);backdrop-filter:blur(3px);z-index:160;align-items:center;justify-content:center;padding:16px}
 .omikuji-modal.open{display:flex}
 .omikuji-dialog{position:relative;background:linear-gradient(180deg,#fff 0%,#fff9fa 100%);width:100%;max-width:400px;max-height:90vh;border-radius:28px;border:3px solid #f9dfe3;box-shadow:0 14px 36px rgba(45,25,30,.28);padding:22px 18px 20px;text-align:center;overflow-y:auto;animation:omikujiModalPop .26s cubic-bezier(.22,1,.36,1)}
@@ -106,7 +107,6 @@ body.game-mode-active .topbar-omikuji-btn{display:none}
 
 .omikuji-done-note{margin-top:12px;background:#fff8f9;border:1.5px dashed #f2bec7;color:#8c7075;padding:7px 12px;border-radius:14px;font-size:.78rem;font-weight:700}
 
-/* 首頁總排行榜入口橫幅卡片 */
 .lb-portal-banner{display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:640px;margin:14px auto 0;background:linear-gradient(135deg,#fffbeb 0%,#fff1f2 100%);border:2px dashed #f59e0b;border-radius:22px;padding:14px 18px;cursor:pointer;transition:.25s;text-align:left}
 .lb-portal-banner:hover{transform:translateY(-3px);background:#fff;border-style:solid;box-shadow:0 8px 20px rgba(245,158,11,.22)}
 .lb-portal-left{display:flex;align-items:center;gap:12px}
@@ -115,7 +115,6 @@ body.game-mode-active .topbar-omikuji-btn{display:none}
 .lb-portal-desc{font-size:.8rem;color:#78350f;font-weight:700}
 .lb-portal-arrow{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;font-size:.82rem;font-weight:900;padding:7px 14px;border-radius:16px;white-space:nowrap;box-shadow:0 3px 8px rgba(217,119,6,.25)}
 
-/* 首頁總排行榜置中彈窗 */
 .global-lb-modal{display:none;position:fixed;inset:0;background:rgba(55,38,42,.58);backdrop-filter:blur(3px);z-index:165;align-items:center;justify-content:center;padding:16px}
 .global-lb-modal.open{display:flex}
 .global-lb-dialog{position:relative;background:linear-gradient(180deg,#fff 0%,#fff9fa 100%);width:100%;max-width:440px;max-height:88vh;border-radius:28px;border:3px solid #f9dfe3;box-shadow:0 14px 36px rgba(45,25,30,.28);padding:22px 18px 20px;text-align:center;display:flex;flex-direction:column;animation:omikujiModalPop .26s cubic-bezier(.22,1,.36,1)}
@@ -135,7 +134,6 @@ body.game-mode-active .topbar-omikuji-btn{display:none}
 .global-lb-play-btn{flex:1;border:none;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;padding:10px 12px;border-radius:16px;font-size:.86rem;font-weight:900;cursor:pointer;box-shadow:0 4px 12px rgba(217,119,6,.28)}
 .global-lb-close-btn{border:1.5px solid #f0a8b4;background:#fff8f9;color:#c76272;padding:10px 16px;border-radius:16px;font-size:.86rem;font-weight:900;cursor:pointer}
 
-/* 遊戲全螢幕 / 網頁滿版模式樣式 */
 .game-fs-btn{border:1.5px solid #f0a8b4;background:#fff8f9;color:#c76272;border-radius:12px;padding:7px 12px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:4px}
 .game-fs-btn:hover{background:#ffe6eb}
 .game-hd-actions{display:flex;align-items:center;gap:8px}
@@ -241,7 +239,7 @@ body.game-mode-active .topbar-omikuji-btn{display:none}
 </style>
 <link rel="stylesheet" href="site-menu.css?v=20261121_v1">
 <script>
-const SITE_VERSION = "20261125_v2";
+const SITE_VERSION = "20261125_v3";
 (function(){
     const url = new URL(window.location.href);
     const verKey = "huajian_site_ver_checked";
@@ -266,14 +264,14 @@ const SITE_VERSION = "20261125_v2";
 <body>
 <div class="fx-bg" id="fxBg"></div>
 <div id="siteMenu"></div>
-<script src="site-menu.js?v=20261125_v2"></script>
-<script src="leaderboard-config.js?v=20261125_v2"></script>
+<script src="site-menu.js?v=20261125_v3"></script>
+<script src="leaderboard-config.js?v=20261125_v3"></script>
 
 <div class="wrap" id="mainWrap">
     <div class="home-view" id="homeView">
     <div class="hero">
         <h1>✨ 歡迎來到花間小憩 ✨</h1>
-        <p>點擊左上角選單或下方卡片，探索成員專屬小卡、驚喜盲盒與遊戲攻略！</p>
+        <p>點擊左上角選單或下方卡片，探索成員專屬小卡、驚喜盲盒、公會小說與遊戲攻略！</p>
         <div class="cards">
             <a href="card.html" class="portal">
                 <span class="portal-icon">🎴</span>
@@ -285,10 +283,15 @@ const SITE_VERSION = "20261125_v2";
                 <div class="portal-title">驚喜盲盒區</div>
                 <div class="portal-desc">花間小憩專屬盲盒活動專區</div>
             </a>
-            <a href="guide.html" class="portal portal-wide">
+            <a href="guide.html" class="portal portal-guide">
                 <span class="portal-icon">📖</span>
                 <div class="portal-title">遊戲攻略區</div>
                 <div class="portal-desc">《杖劍傳說》裝備詞條、S6 副本門檻與九轉技能查詢表</div>
+            </a>
+            <a href="novel.html" class="portal portal-novel">
+                <span class="portal-icon">📚</span>
+                <div class="portal-title">公會小說區</div>
+                <div class="portal-desc">收錄花間成員連載故事與短篇創作，支援分章與護眼閱讀</div>
             </a>
         </div>
         <div class="lb-portal-banner" onclick="openGlobalLeaderboardModal('MeowMilk')" role="button" tabindex="0">
@@ -306,7 +309,7 @@ const SITE_VERSION = "20261125_v2";
     <div class="story-card">
         <div class="story-hd">🌸 關於 KaKan・名字背後的故事 🌸</div>
         <div class="story-img-wrap">
-            <img class="story-img" src="Kakan的原.jpg?v=20261125_v2" alt="KaKan 名字背後的意義" onclick="openZoom()" onerror="if(!this.dataset.step){this.dataset.step=1;this.src='Kakan的原.JPG?v=20261125_v2';}else if(this.dataset.step==1){this.dataset.step=2;this.src='花間/Kakan的原.jpg?v=20261125_v2';}else{this.onerror=null;this.src='花間/Kakan的原.JPG?v=20261125_v2';}">
+            <img class="story-img" src="Kakan的原.jpg?v=20261125_v3" alt="KaKan 名字背後的意義" onclick="openZoom()" onerror="if(!this.dataset.step){this.dataset.step=1;this.src='Kakan的原.JPG?v=20261125_v3';}else if(this.dataset.step==1){this.dataset.step=2;this.src='花間/Kakan的原.jpg?v=20261125_v3';}else{this.onerror=null;this.src='花間/Kakan的原.JPG?v=20261125_v3';}">
         </div>
         <div class="story-hint">🔍 點擊圖片可全螢幕放大閱讀文字細節</div>
     </div>
@@ -357,11 +360,11 @@ const SITE_VERSION = "20261125_v2";
 <div class="zoom-modal" id="zoomModal" onclick="if(event.target===this) closeZoom()">
     <div class="zoom-card">
         <button class="close-btn" onclick="closeZoom()" style="position:absolute;top:-14px;right:-14px;box-shadow:0 3px 10px rgba(0,0,0,.2)">✕</button>
-        <img id="zoomModalImg" src="Kakan的原.jpg?v=20261125_v2" alt="放大預覽">
+        <img id="zoomModalImg" src="Kakan的原.jpg?v=20261125_v3" alt="放大預覽">
     </div>
 </div>
 
-<script src="menu-sync.js?v=20261125_v2"></script>
+<script src="menu-sync.js?v=20261125_v3"></script>
 <script>
 let currentGlobalLbGame = 'MeowMilk';
 
@@ -447,11 +450,11 @@ function openZoom(customSrc){
     } else {
         zImg.dataset.step = '';
         zImg.onerror = function(){
-            if(!this.dataset.step){this.dataset.step=1;this.src='Kakan的原.JPG?v=20261125_v2';}
-            else if(this.dataset.step==1){this.dataset.step=2;this.src='花間/Kakan的原.jpg?v=20261125_v2';}
-            else{this.onerror=null;this.src='花間/Kakan的原.JPG?v=20261125_v2';}
+            if(!this.dataset.step){this.dataset.step=1;this.src='Kakan的原.JPG?v=20261125_v3';}
+            else if(this.dataset.step==1){this.dataset.step=2;this.src='花間/Kakan的原.jpg?v=20261125_v3';}
+            else{this.onerror=null;this.src='花間/Kakan的原.JPG?v=20261125_v3';}
         };
-        zImg.src = 'Kakan的原.jpg?v=20261125_v2';
+        zImg.src = 'Kakan的原.jpg?v=20261125_v3';
     }
     document.getElementById('zoomModal').classList.add('open');
 }
@@ -629,9 +632,9 @@ function renderOmikujiSection() {
             <div class="omikuji-result-wrap">
                 <span class="omikuji-badge" style="background:${todaySlip.color}">🌸 今日運勢・${todaySlip.key} 🌸</span>
                 <div class="omikuji-slip-box">
-                    <img class="omikuji-slip-img" src="${imgPath}?v=20261125_v2" alt="御神籤_${todaySlip.key}"
+                    <img class="omikuji-slip-img" src="${imgPath}?v=20261125_v3" alt="御神籤_${todaySlip.key}"
                         onclick="openZoom(this.src)"
-                        onerror="if(!this.dataset.step){this.dataset.step=1;this.src='御神籤/${todaySlip.file}.JPG?v=20261125_v2';}else if(this.dataset.step==1){this.dataset.step=2;this.src='御神籤/${todaySlip.file}.png?v=20261125_v2';}else{this.onerror=null;this.src='御神籤/${todaySlip.file}.PNG?v=20261125_v2';}">
+                        onerror="if(!this.dataset.step){this.dataset.step=1;this.src='御神籤/${todaySlip.file}.JPG?v=20261125_v3';}else if(this.dataset.step==1){this.dataset.step=2;this.src='御神籤/${todaySlip.file}.png?v=20261125_v3';}else{this.onerror=null;this.src='御神籤/${todaySlip.file}.PNG?v=20261125_v3';}">
                 </div>
                 ${rewardHtml}
                 <div class="omikuji-done-note">🌙 今日抽籤已使用（1/1次），明天 00:00 自動重置</div>
@@ -645,8 +648,8 @@ function renderOmikujiSection() {
         <div class="omikuji-stage">
             <div class="omikuji-tube-wrap" id="omikujiTubeWrap" onclick="drawDailyOmikuji()" title="點擊籤筒抽取今日御神籤">
                 <div id="omikujiComicSlot"></div>
-                <img class="omikuji-tube-img" src="御神籤/御神籤籤筒.jpg?v=20261125_v2" alt="花間小憩御神籤籤筒"
-                    onerror="if(!this.dataset.step){this.dataset.step=1;this.src='御神籤/御神籤籤筒.JPG?v=20261125_v2';}else if(this.dataset.step==1){this.dataset.step=2;this.src='御神籤/御神籤籤筒.png?v=20261125_v2';}else{this.onerror=null;this.src='御神籤/御神籤籤筒.PNG?v=20261125_v2';}">
+                <img class="omikuji-tube-img" src="御神籤/御神籤籤筒.jpg?v=20261125_v3" alt="花間小憩御神籤籤筒"
+                    onerror="if(!this.dataset.step){this.dataset.step=1;this.src='御神籤/御神籤籤筒.JPG?v=20261125_v3';}else if(this.dataset.step==1){this.dataset.step=2;this.src='御神籤/御神籤籤筒.png?v=20261125_v3';}else{this.onerror=null;this.src='御神籤/御神籤籤筒.PNG?v=20261125_v3';}">
             </div>
             <button type="button" class="omikuji-btn" id="omikujiDrawBtn" onclick="drawDailyOmikuji()">
                 🎋 搖動籤筒・抽取今日神籤
@@ -712,10 +715,10 @@ function closeZoom(){
     document.getElementById('zoomModal').classList.remove('open');
 }
 function openGame(event){
-    openEmbeddedGame(event, 'MeowMilk.html?v=20261125_v2', '#meow-milk', '🥛 喵喵乳糖挑戰');
+    openEmbeddedGame(event, 'MeowMilk.html?v=20261125_v3', '#meow-milk', '🥛 喵喵乳糖挑戰');
 }
 function openGame1(event){
-    openEmbeddedGame(event, 'HitMeow.html?v=20261125_v2', '#hit-meow', '🩴 暴打小菜雞');
+    openEmbeddedGame(event, 'HitMeow.html?v=20261125_v3', '#hit-meow', '🩴 暴打小菜雞');
 }
 let cachedSeriesConfig = null;
 

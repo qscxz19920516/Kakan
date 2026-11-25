@@ -7,10 +7,11 @@
         "huajian_kakan_series_v4_" + GITHUB_OWNER + "_" + GITHUB_REPO,
         "huajian_kakan_series_v5_" + GITHUB_OWNER + "_" + GITHUB_REPO,
         "huajian_kakan_series_v6_" + GITHUB_OWNER + "_" + GITHUB_REPO,
-        "huajian_kakan_series_v7_" + GITHUB_OWNER + "_" + GITHUB_REPO
+        "huajian_kakan_series_v7_" + GITHUB_OWNER + "_" + GITHUB_REPO,
+        "huajian_kakan_series_v8_" + GITHUB_OWNER + "_" + GITHUB_REPO
     ];
-    const CACHE_KEY = "huajian_kakan_series_v8_" + GITHUB_OWNER + "_" + GITHUB_REPO;
-    const EXCLUDED_FOLDERS = new Set([".github", "assets", "css", "js", "images", "img", "fonts", "職業", "職業介紹", "小卡", "小卡圖鑑", "card", "cards", "御神籤", "遊戲攻略"]);
+    const CACHE_KEY = "huajian_kakan_series_v9_" + GITHUB_OWNER + "_" + GITHUB_REPO;
+    const EXCLUDED_FOLDERS = new Set([".github", "assets", "css", "js", "images", "img", "fonts", "職業", "職業介紹", "小卡", "小卡圖鑑", "card", "cards", "御神籤", "遊戲攻略", "小說"]);
 
     const SITE_NAV_ITEMS = [
         { icon: "🏠", label: "首頁", href: "index.html" },
@@ -25,6 +26,7 @@
                 { icon: "🔥", label: "九轉技能", tab: "tier9_skills" }
             ]
         },
+        { icon: "📚", label: "公會小說", href: "novel.html" },
         { type: "blindbox", icon: "🎁", label: "驚喜盲盒" },
         {
             type: "guildGames",

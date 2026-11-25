@@ -6,6 +6,7 @@
     const isHome = page === '' || page === 'index.html';
     const isCard = page === 'card.html';
     const isGuide = page === 'guide.html';
+    const isNovel = page === 'novel.html';
     const isBox = page === 'box.html';
     const isGamePage = page === 'meowmilk.html' || page === 'hitmeow.html' || page === 'game1.html';
     const isMilkGame = isHome && window.location.hash === '#meow-milk';
@@ -34,9 +35,11 @@
             ? '🎴 小卡圖鑑 🎴'
             : isGuide
                 ? '📖 遊戲攻略區 📖'
-                : isBox
-                    ? '<span style="user-select:none">🎁 <span id="secretBrand" onclick="triggerSecretReset()" style="cursor:pointer">驚喜盲盒</span> 🎁</span>'
-                    : '🌸 花間小憩 🌸';
+                : isNovel
+                    ? '📚 公會小說 📚'
+                    : isBox
+                        ? '<span style="user-select:none">🎁 <span id="secretBrand" onclick="triggerSecretReset()" style="cursor:pointer">驚喜盲盒</span> 🎁</span>'
+                        : '🌸 花間小憩 🌸';
 
     mount.innerHTML = `
         <div class="topbar">
@@ -63,6 +66,7 @@
                         ${guideItemLink('tier9_skills', '🔥', '九轉技能')}
                     </ul>
                 </li>
+                <li><a href="novel.html"${isNovel ? ' class="current"' : ''}><span>📚 公會小說</span><span class="arrow">&gt;</span></a></li>
                 <li>
                     <div class="sub-toggle" id="blindboxSubToggle" onclick="toggleSubMenu()"><span>🎁 驚喜盲盒</span><span class="arrow" id="subArrow">&gt;</span></div>
                     <ul class="submenu" id="subMenu"></ul>
