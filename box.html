@@ -102,9 +102,12 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 /* 御神籤吉籤獎勵：盲盒單次重置券橫幅 */
 .omikuji-ticket-bar{display:none;background:linear-gradient(135deg,#fffbeb,#fef3c7);border:2px solid #f59e0b;border-radius:20px;padding:10px 14px;margin-bottom:14px;box-shadow:0 4px 12px rgba(245,158,11,.16);align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .omikuji-ticket-bar.show{display:flex}
+.omikuji-ticket-bar.completed-series{background:linear-gradient(135deg,#ecfdf5,#d1fae5);border-color:#10b981}
+.omikuji-ticket-bar.completed-series .otb-text{color:#065f46}
 .otb-text{font-size:.86rem;font-weight:800;color:#92400e;text-align:left;line-height:1.4}
 .otb-btn{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border:none;padding:8px 14px;border-radius:16px;font-size:.82rem;font-weight:900;cursor:pointer;box-shadow:0 3px 8px rgba(217,119,6,.28);transition:.2s;white-space:nowrap}
-.otb-btn:hover{transform:translateY(-1px);filter:brightness(1.06)}
+.otb-btn:hover:not(:disabled){transform:translateY(-1px);filter:brightness(1.06)}
+.otb-btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
 
 .quota-bar{background:#fff8f9;border:2px dashed #f2bec7;color:#c76272;padding:8px 18px;border-radius:20px;font-weight:800;font-size:.92rem;margin-bottom:16px;text-align:center;box-shadow:0 3px 8px rgba(226,158,168,.1)}
 
@@ -243,7 +246,7 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 <body>
 <div class="fx-bg" id="fxBg"></div>
 <div id="siteMenu"></div>
-<script src="site-menu.js?v=20261125_v1"></script>
+<script src="site-menu.js?v=20261125_v2"></script>
 
 <div class="wrap">
     <div class="active-series-banner" id="activeSeriesBanner">
@@ -264,7 +267,7 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
     <div class="quota-bar" id="quotaBar">🎟️ 剩餘抽選次數：3 / 3 次</div>
     <div class="omikuji-ticket-bar" id="omikujiTicketBar">
         <div class="otb-text" id="omikujiTicketText">⛩️ 御神籤吉籤獎勵：持有 <b>1 張</b> 盲盒次數重置券</div>
-        <button type="button" class="otb-btn" onclick="useOmikujiResetTicket()">✨ 重置本系列次數 +1</button>
+        <button type="button" class="otb-btn" id="omikujiUseTicketBtn" onclick="useOmikujiResetTicket()">✨ 重置本系列次數 +1</button>
     </div>
     <div class="stage-card" id="stageCard"></div>
 </div>
@@ -289,12 +292,11 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
     </div>
 </div>
 
-<script src="menu-sync.js?v=20261125_v1"></script>
+<script src="menu-sync.js?v=20261125_v2"></script>
 <script>
 const MAX_DRAWS = 3;
 let seriesConfig = {};
 
-// ★ 七款專屬抽獎箱隨機池（每次進入、切換系列或再抽一次時隨機搭配，不提供手動選擇）
 const BOX_SKINS = [
     "盲盒箱子",
     "盲盒箱子1",
@@ -320,7 +322,6 @@ const cluesPool = [
     { sound: "咚咚～", text: "✨ 神秘線索：感受到一股強大的公會夥伴氣息，伸手一抓準沒錯！" }
 ];
 
-
 function getSeriesCollectionStats(job = curJob) {
     const cfg = seriesConfig && seriesConfig[job];
     const members = (cfg && Array.isArray(cfg.members)) ? cfg.members : [];
@@ -330,6 +331,11 @@ function getSeriesCollectionStats(job = curJob) {
     return { ownedCount, totalCount };
 }
 
+function isSeriesCompleted(job = curJob) {
+    const stats = getSeriesCollectionStats(job);
+    return stats.totalCount > 0 && stats.ownedCount >= stats.totalCount;
+}
+
 let curJob = "袋裝零食";
 let curSkinIdx = Math.floor(Math.random() * BOX_SKINS.length);
 let shakeCount = 0;
@@ -337,7 +343,7 @@ let isDrawing = false;
 
 function highlightActiveMenu() {
     const cfg = seriesConfig[curJob];
-        document.querySelectorAll('#subMenu a').forEach(a => {
+    document.querySelectorAll('#subMenu a').forEach(a => {
         const isCurrent = a.dataset.series === curJob;
         a.classList.toggle('active-series', isCurrent);
         const oldPill = a.querySelector('.active-pill');
@@ -374,6 +380,7 @@ async function forceRefreshSeries() {
         if (btn) btn.innerText = '🔄';
     }
 }
+
 function getUsedDraws(job = curJob) {
     return parseInt(localStorage.getItem('huajian_draws_' + job) || '0', 10);
 }
@@ -382,7 +389,6 @@ function addUsedDraw(job = curJob) {
     localStorage.setItem('huajian_draws_' + job, next);
 }
 
-// ★ 隱藏密技：連續點擊頂部「驚喜盲盒」四個字 5 次並輸入通關密語，可重置抽選次數（完整保留已獲得圖鑑）
 const SECRET_CODE = "百百好可愛";
 let secretTapCount = 0;
 let secretTapTimer = null;
@@ -436,7 +442,7 @@ function addDrawnMember(name, job = curJob) {
 }
 
 function openSeriesDrawer(){
-        document.getElementById('drawer').classList.add('open');
+    document.getElementById('drawer').classList.add('open');
     document.getElementById('mask').classList.add('open');
     document.getElementById('subMenu').classList.add('open');
     document.getElementById('subArrow').classList.add('rot');
@@ -455,7 +461,28 @@ function updateOmikujiTicketUI() {
     const tickets = getBoxResetTickets();
     const bar = document.getElementById('omikujiTicketBar');
     const txt = document.getElementById('omikujiTicketText');
+    const btn = document.getElementById('omikujiUseTicketBtn');
     if (!bar || !txt) return;
+
+    const completed = isSeriesCompleted(curJob);
+    if (completed) {
+        bar.classList.add('show', 'completed-series');
+        txt.innerHTML = tickets > 0
+            ? `✅ 【${curJob}盲盒】<b>已經收集完畢</b>！本系列無法使用重置券（目前持有 <b>${tickets} 張</b>，請切換其他未集滿系列）`
+            : `✅ 【${curJob}盲盒】<b>已經收集完畢</b>！本系列已全數收錄～`;
+        if (btn) {
+            btn.style.display = 'none';
+            btn.disabled = true;
+        }
+        return;
+    }
+
+    bar.classList.remove('completed-series');
+    if (btn) {
+        btn.style.display = '';
+        btn.disabled = false;
+    }
+
     if (tickets > 0) {
         bar.classList.add('show');
         txt.innerHTML = `⛩️ 御神籤吉籤獎勵：持有 <b>${tickets} 張</b> 次數重置券（可選任一系列 +1 次）`;
@@ -468,6 +495,11 @@ function useOmikujiResetTicket() {
     const tickets = getBoxResetTickets();
     if (tickets <= 0) {
         alert("目前沒有可用的御神籤重置券喔！每天都可以回首頁搖御神籤試手氣～");
+        return;
+    }
+    if (isSeriesCompleted(curJob)) {
+        alert(`🎉 【${curJob}盲盒】已經收集完畢啦！\n\n本系列已全數收錄，無法再使用御神籤重置券喔，請切換到其他尚未集滿的系列使用～`);
+        updateOmikujiTicketUI();
         return;
     }
     const used = getUsedDraws(curJob);
@@ -487,16 +519,23 @@ function useOmikujiResetTicket() {
 function updateQuotaUI(){
     const used = getUsedDraws(curJob);
     const left = Math.max(0, MAX_DRAWS - used);
+    const completed = isSeriesCompleted(curJob);
     const bar = document.getElementById('quotaBar');
     if(bar) {
-        bar.innerText = left > 0 
-            ? `🎟️ 【${curJob}盲盒】剩餘抽選次數：${left} / ${MAX_DRAWS} 次` 
-            : `🔒 【${curJob}盲盒】抽選次數已用完（${MAX_DRAWS} / ${MAX_DRAWS} 次）`;
+        if (completed) {
+            bar.innerText = `✅ 【${curJob}盲盒】已經收集完畢！`;
+        } else {
+            bar.innerText = left > 0
+                ? `🎟️ 【${curJob}盲盒】剩餘抽選次數：${left} / ${MAX_DRAWS} 次`
+                : `🔒 【${curJob}盲盒】抽選次數已用完（${MAX_DRAWS} / ${MAX_DRAWS} 次）`;
+        }
     }
     const stats = getSeriesCollectionStats(curJob);
     const pillEl = document.getElementById('asbCollectPill');
     if (pillEl) {
-        pillEl.innerText = `📦 已獲得 ${stats.ownedCount} / ${stats.totalCount} 款`;
+        pillEl.innerText = completed
+            ? `✅ 已收集完畢（${stats.ownedCount} / ${stats.totalCount} 款）`
+            : `📦 已獲得 ${stats.ownedCount} / ${stats.totalCount} 款`;
     }
     updateOmikujiTicketUI();
 }
@@ -516,19 +555,12 @@ function selectSeries(job){
         sub.style.color = cfg.color;
         sub.innerText = cfg.seriesNo;
         title.innerText = `${curJob}盲盒`;
-
-        const stats = getSeriesCollectionStats(curJob);
-        const pillEl = document.getElementById('asbCollectPill');
-        if (pillEl) {
-            pillEl.innerText = `📦 已獲得 ${stats.ownedCount} / ${stats.totalCount} 款`;
-        }
     }
     highlightActiveMenu();
     updateQuotaUI();
     renderLotteryBox();
 }
 
-// 渲染抽獎箱主畫面（狀聲詞氣泡放在抽獎箱左上角洞口留白處，完全不遮擋角色與箱身）
 function renderLotteryBox(snd = "", clue = "💡 提示：點擊「搖一搖抽獎箱」聽聽裡面的聲音，再伸手抽出盲盒！", randomizeSkin = false) {
     if (randomizeSkin) {
         curSkinIdx = pickRandomBoxSkin(curSkinIdx);
@@ -545,25 +577,31 @@ function renderLotteryBox(snd = "", clue = "💡 提示：點擊「搖一搖抽�
     };
     const skinFile = BOX_SKINS[curSkinIdx] || BOX_SKINS[0];
     const left = Math.max(0, MAX_DRAWS - getUsedDraws(curJob));
+    const stats = getSeriesCollectionStats(curJob);
+    const completed = isSeriesCompleted(curJob);
     const available = cfg.members.filter(name => !getDrawnList(curJob).includes(name));
-    const canDraw = left > 0 && available.length > 0;
+    const canDraw = !completed && left > 0 && available.length > 0;
 
-    const drawBtnText = !canDraw
-        ? (left <= 0 ? '🔒 本系列次數已用完' : '🎉 已抽完本系列全角色')
-        : '✋ 伸手抽出盲盒';
+    const drawBtnText = completed
+        ? '✅ 已經收集完畢'
+        : (left <= 0 ? '🔒 本系列次數已用完' : '✋ 伸手抽出盲盒');
+
+    const stageTitleText = completed
+        ? '🎉 本系列盲盒已經收集完畢！'
+        : (canDraw ? '搖一搖抽獎箱，抽出你的專屬盲盒！' : '本系列抽選已完成');
 
     document.getElementById('stageCard').innerHTML = `
         <div class="series-tag" style="color:${cfg.color}">${cfg.seriesNo}</div>
-        <div class="stage-title">${canDraw ? '搖一搖抽獎箱，抽出你的專屬盲盒！' : '本系列抽選已完成'}</div>
-        <div class="stage-collect-status">📦 本系列收集進度：已獲得 <b>${getSeriesCollectionStats(curJob).ownedCount}</b> / <b>${getSeriesCollectionStats(curJob).totalCount}</b> 款</div>
+        <div class="stage-title">${stageTitleText}</div>
+        <div class="stage-collect-status">📦 本系列收集進度：已獲得 <b>${stats.ownedCount}</b> / <b>${stats.totalCount}</b> 款${completed ? '・<b>已經收集完畢</b>' : ''}</div>
         <div class="lottery-stage">
             <div class="lottery-box-wrap" id="lotteryBoxWrap" onclick="${canDraw ? 'drawFromLotteryBox()' : ''}" title="${canDraw ? '點擊抽獎箱直接抽出盲盒' : ''}">
                 <div id="comicBubbleSlot">${snd ? `<div class="sound-comic">🎵 ${snd}</div>` : ''}</div>
-                <img class="lottery-box-img" id="lotteryBoxImg" src="${skinFile}.jpg?v=20261120_8" alt="隨機盲盒抽獎箱"
-                    onerror="if(!this.dataset.step){this.dataset.step=1;this.src='${skinFile}.JPG?v=20261120_8';}else if(this.dataset.step==1){this.dataset.step=2;this.src='花間/${skinFile}.jpg?v=20261120_8';}else{this.onerror=null;this.src='花間/${skinFile}.JPG?v=20261120_8';}">
+                <img class="lottery-box-img" id="lotteryBoxImg" src="${skinFile}.jpg?v=20261125_v2" alt="隨機盲盒抽獎箱"
+                    onerror="if(!this.dataset.step){this.dataset.step=1;this.src='${skinFile}.JPG?v=20261125_v2';}else if(this.dataset.step==1){this.dataset.step=2;this.src='花間/${skinFile}.jpg?v=20261125_v2';}else{this.onerror=null;this.src='花間/${skinFile}.JPG?v=20261125_v2';}">
             </div>
         </div>
-        <div class="clue-box" id="clueBoxText">${clue}</div>
+        <div class="clue-box" id="clueBoxText">${completed ? '✨ 太棒了！你已經集齊本系列所有角色，無法再使用重置券喔！' : clue}</div>
         <div class="action-row">
             <button class="btn-shake" onclick="shakeLotteryBox()" ${(!canDraw || shakeCount >= 3) ? 'disabled' : ''}>👋 搖一搖 (${shakeCount}/3)</button>
             <button class="btn-open" style="background:${canDraw ? cfg.color : '#b8a6a9'}" onclick="drawFromLotteryBox()" ${!canDraw ? 'disabled' : ''}>${drawBtnText}</button>
@@ -571,9 +609,8 @@ function renderLotteryBox(snd = "", clue = "💡 提示：點擊「搖一搖抽�
     `;
 }
 
-// 搖晃抽獎箱互動
 function shakeLotteryBox() {
-    if (isDrawing || shakeCount >= 3) return;
+    if (isDrawing || shakeCount >= 3 || isSeriesCompleted(curJob)) return;
     const c = cluesPool[shakeCount++];
     const nextClue = shakeCount === 3
         ? "🔥 抽獎箱晃動得超有感覺！快點擊「伸手抽出盲盒」看看抽到誰！"
@@ -587,9 +624,12 @@ function shakeLotteryBox() {
     }
 }
 
-// 從抽獎箱洞口抽出盲盒並揭曉
 function drawFromLotteryBox() {
     if (isDrawing) return;
+    if (isSeriesCompleted(curJob)) {
+        alert(`🎉 【${curJob}盲盒】已經收集完畢囉！`);
+        return;
+    }
     if (getUsedDraws(curJob) >= MAX_DRAWS) {
         alert(`【${curJob}盲盒】每人最多只能抽選 ${MAX_DRAWS} 次喔！可以點擊上方「切換其他系列」繼續抽～`);
         return;
@@ -630,17 +670,19 @@ function drawFromLotteryBox() {
 function revealDrawnResult(drawnMember) {
     const cfg = seriesConfig[curJob];
     const left = Math.max(0, MAX_DRAWS - getUsedDraws(curJob));
+    const stats = getSeriesCollectionStats(curJob);
+    const completed = isSeriesCompleted(curJob);
     const availableCount = cfg.members.filter(name => !getDrawnList(curJob).includes(name)).length;
-    const canDrawAgain = left > 0 && availableCount > 0;
+    const canDrawAgain = !completed && left > 0 && availableCount > 0;
 
     const rightBtn = canDrawAgain
         ? `<button class="btn-open" style="background:${cfg.color}" onclick="renderLotteryBox('', undefined, true)">🎁 再抽一次 (剩${left}次)</button>`
-        : `<button class="btn-open" style="background:#b8a6a9;cursor:not-allowed" disabled>🔒 ${curJob}次數已用完</button>`;
+        : `<button class="btn-open" style="background:#b8a6a9;cursor:not-allowed" disabled>${completed ? '✅ 已經收集完畢' : `🔒 ${curJob}次數已用完`}</button>`;
 
     document.getElementById('stageCard').innerHTML = `
         <div id="confettiBox"></div>
         <div class="rarity-pill" style="background:${cfg.color}">🌸 花間小憩・${curJob}系列 🌸</div>
-        <div class="stage-collect-status">📦 本系列收集進度：已獲得 <b>${getSeriesCollectionStats(curJob).ownedCount}</b> / <b>${getSeriesCollectionStats(curJob).totalCount}</b> 款</div>
+        <div class="stage-collect-status">📦 本系列收集進度：已獲得 <b>${stats.ownedCount}</b> / <b>${stats.totalCount}</b> 款${completed ? '・<b>已經收集完畢</b>' : ''}</div>
         <div class="result-img-box">
             <img src="${cfg.folder}/${drawnMember}.jpg" alt="${drawnMember}" title="點擊放大檢視"
                 onclick="openZoom('${cfg.folder}','${drawnMember}','${curJob}')"
@@ -680,7 +722,7 @@ function updateDexCount() {
     if (el) el.innerText = total;
 }
 
-let dexViewMode = "series"; // "series" (單一系列全圖鑑含剪影) | "owned" (全部已獲得小卡)
+let dexViewMode = "series";
 let dexSelectedJob = "";
 
 function setDexViewMode(mode) {
@@ -737,6 +779,7 @@ function openDex(targetJob) {
         const ownedCount = members.filter(m => drawnSet.has(m)).length;
         const totalCount = members.length;
         const pct = totalCount > 0 ? Math.round((ownedCount / totalCount) * 100) : 0;
+        const completed = totalCount > 0 && ownedCount >= totalCount;
 
         html += `
             <div class="dex-top-bar">
@@ -748,8 +791,8 @@ function openDex(targetJob) {
                     </div>
                 </div>
                 <div class="dex-meta-row">
-                    <span>📦 ${cfg.displayFolder || dexSelectedJob} 收集進度：<b>${ownedCount} / ${totalCount} 款 (${pct}%)</b></span>
-                    <span class="dex-quota-tag">🎟️ 剩餘 ${Math.max(0, MAX_DRAWS - getUsedDraws(dexSelectedJob))} / ${MAX_DRAWS} 次</span>
+                    <span>📦 ${cfg.displayFolder || dexSelectedJob} 收集進度：<b>${ownedCount} / ${totalCount} 款 (${pct}%)</b>${completed ? '・<b style="color:#059669">已經收集完畢</b>' : ''}</span>
+                    <span class="dex-quota-tag">${completed ? '✅ 已收集完畢' : `🎟️ 剩餘 ${Math.max(0, MAX_DRAWS - getUsedDraws(dexSelectedJob))} / ${MAX_DRAWS} 次`}</span>
                 </div>
                 <div class="dex-prog-track">
                     <div class="dex-prog-fill" style="width:${pct}%;background:${cfg.color}"></div>
