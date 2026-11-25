@@ -108,7 +108,7 @@
     };
 
     // =========================================================================
-    // ★ 花間小憩全站 YouTube 背景音樂隨機輪播器（小遊戲期間自動暫停）
+    // ★ 花間小憩全站 YouTube 背景音樂隨機輪播器（50%透明可拖曳圓鈕＋點開展開）
     // =========================================================================
     if (!isGamePage) {
         const BGM_TRACKS = [
@@ -125,6 +125,7 @@
         let currentIdx = Math.floor(Math.random() * BGM_TRACKS.length);
         let isPlayingNow = false;
         let gestureUnlocked = false;
+        let isExpanded = false;
 
         function pickNextRandomIndex(excludeIdx) {
             if (BGM_TRACKS.length <= 1) return 0;
@@ -137,24 +138,24 @@
 
         const styleEl = document.createElement('style');
         styleEl.textContent = `
-            .huajian-bgm-bar{position:fixed;left:16px;bottom:22px;z-index:85;display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.94);backdrop-filter:blur(8px);border:2px solid #f0a8b4;border-radius:999px;padding:6px 12px;box-shadow:0 5px 16px rgba(226,158,168,.28);font-size:.8rem;font-weight:900;color:#5a4649;transition:.25s}
-            .huajian-bgm-bar.hidden-in-game{display:none !important}
-            .huajian-bgm-btn{border:none;background:linear-gradient(135deg,#ff9a9e,#f68084);color:#fff;width:28px;height:28px;border-radius:50%;font-size:.82rem;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 6px rgba(246,128,132,.35)}
-            .huajian-bgm-next{border:1.5px solid #f2bec7;background:#fff8f9;color:#c76272;width:26px;height:26px;border-radius:50%;font-size:.76rem;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+            .huajian-bgm-widget{position:fixed;left:16px;top:76px;z-index:85;touch-action:none;user-select:none}
+            .huajian-bgm-widget.hidden-in-game{display:none !important}
+            .huajian-bgm-orb{width:44px;height:44px;border-radius:50%;border:2px solid rgba(240,168,180,.75);background:rgba(255,255,255,.5);backdrop-filter:blur(6px);color:#c76272;font-size:1.1rem;font-weight:900;cursor:grab;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(226,158,168,.22);transition:background .2s,transform .15s}
+            .huajian-bgm-orb.playing{background:rgba(255,143,163,.5);color:#fff;border-color:rgba(255,143,163,.8)}
+            .huajian-bgm-orb.dragging{cursor:grabbing;background:rgba(255,255,255,.82);transform:scale(1.06)}
+            .huajian-bgm-panel{display:none;align-items:center;gap:6px;background:rgba(255,255,255,.94);backdrop-filter:blur(8px);border:2px solid #f0a8b4;border-radius:999px;padding:5px 10px 5px 6px;box-shadow:0 6px 18px rgba(226,158,168,.28);font-size:.78rem;font-weight:900;color:#5a4649}
+            .huajian-bgm-widget.expanded .huajian-bgm-orb{display:none}
+            .huajian-bgm-widget.expanded .huajian-bgm-panel{display:inline-flex}
+            .huajian-bgm-btn{border:none;background:linear-gradient(135deg,#ff9a9e,#f68084);color:#fff;width:28px;height:28px;border-radius:50%;font-size:.8rem;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+            .huajian-bgm-next{border:1.5px solid #f2bec7;background:#fff8f9;color:#c76272;width:25px;height:25px;border-radius:50%;font-size:.74rem;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
             .huajian-bgm-next:hover{background:#c76272;color:#fff}
-            .huajian-bgm-title{max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#c76272;cursor:pointer}
+            .huajian-bgm-title{max-width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#c76272;cursor:pointer}
+            .huajian-bgm-collapse{border:none;background:transparent;color:#947479;font-size:.85rem;font-weight:900;cursor:pointer;padding:0 2px;line-height:1}
             .huajian-yt-hidden{position:fixed;width:2px;height:2px;left:0;top:0;opacity:0.001;pointer-events:none;overflow:hidden}
             @media(max-width:640px){
-                body.has-dex-fab{padding-bottom:84px !important}
-                body.has-dex-fab .huajian-bgm-bar{left:12px;bottom:16px;padding:5px 8px;gap:4px;font-size:.72rem;max-width:calc(100vw - 172px)}
-                body.has-dex-fab .huajian-bgm-btn{width:24px;height:24px;font-size:.74rem}
-                body.has-dex-fab .huajian-bgm-next{width:22px;height:22px;font-size:.7rem}
-                body.has-dex-fab .huajian-bgm-title{max-width:74px;font-size:.72rem}
-                body.has-dex-fab .dex-fab{right:12px;bottom:16px;padding:10px 13px;font-size:.82rem;gap:4px}
-            }
-            @media(max-width:520px){
-                .huajian-bgm-bar{left:12px;bottom:16px;padding:5px 10px}
-                .huajian-bgm-title{max-width:105px;font-size:.74rem}
+                .huajian-bgm-widget{left:12px;top:72px}
+                .huajian-bgm-orb{width:40px;height:40px;font-size:1rem}
+                .huajian-bgm-title{max-width:92px;font-size:.72rem}
             }
         `;
         document.head.appendChild(styleEl);
@@ -162,194 +163,55 @@
         const bgmWrap = document.createElement('div');
         bgmWrap.innerHTML = `
             <div class="huajian-yt-hidden"><div id="huajianYtPlayer"></div></div>
-            <div class="huajian-bgm-bar${inGameMode ? ' hidden-in-game' : ''}" id="huajianBgmBar" title="花間背景音樂（點擊可播放/暫停）">
-                <button type="button" class="huajian-bgm-btn" id="huajianBgmToggle" aria-label="播放或暫停背景音樂">▶️</button>
-                <span class="huajian-bgm-title" id="huajianBgmTitle">點我播 ${BGM_TRACKS[currentIdx].title}</span>
-                <button type="button" class="huajian-bgm-next" id="huajianBgmNext" title="隨機切換下一首" aria-label="隨機切換下一首">⏭</button>
+            <div class="huajian-bgm-widget${inGameMode ? ' hidden-in-game' : ''}" id="huajianBgmWidget">
+                <button type="button" class="huajian-bgm-orb" id="huajianBgmOrb" title="點擊展開音樂控制／拖曳移動位置" aria-label="展開背景音樂控制">🎵</button>
+                <div class="huajian-bgm-panel" id="huajianBgmPanel">
+                    <button type="button" class="huajian-bgm-btn" id="huajianBgmToggle" aria-label="播放或暫停背景音樂">▶️</button>
+                    <span class="huajian-bgm-title" id="huajianBgmTitle">${BGM_TRACKS[currentIdx].title}</span>
+                    <button type="button" class="huajian-bgm-next" id="huajianBgmNext" title="隨機切換下一首" aria-label="隨機切換下一首">⏭</button>
+                    <button type="button" class="huajian-bgm-collapse" id="huajianBgmCollapse" title="收合圓鈕" aria-label="收合圓鈕">✕</button>
+                </div>
             </div>
         `;
         document.body.appendChild(bgmWrap);
-        if (document.querySelector('.dex-fab')) {
-            document.body.classList.add('has-dex-fab');
-        }
 
-        function updateBgmUI() {
-            const bar = document.getElementById('huajianBgmBar');
-            const toggleBtn = document.getElementById('huajianBgmToggle');
-            const titleEl = document.getElementById('huajianBgmTitle');
-            if (!bar || !toggleBtn || !titleEl) return;
+        const widgetEl = document.getElementById('huajianBgmWidget');
+        const orbEl = document.getElementById('huajianBgmOrb');
 
-            bar.classList.toggle('hidden-in-game', inGameMode);
-            const track = BGM_TRACKS[currentIdx];
-            if (isPlayingNow) {
-                titleEl.textContent = `♪ ${track.title}`;
-                toggleBtn.textContent = '⏸';
-            } else if (userPaused) {
-                titleEl.textContent = `已暫停・${track.title}`;
-                toggleBtn.textContent = '▶️';
-            } else {
-                titleEl.textContent = `點我播 ${track.title}`;
-                toggleBtn.textContent = '▶️';
+        function clampWidgetPosition() {
+            if (!widgetEl) return;
+            const rect = widgetEl.getBoundingClientRect();
+            const w = rect.width || 44;
+            const h = rect.height || 44;
+            const pad = 8;
+            let left = rect.left;
+            let top = rect.top;
+            if (rect.left < pad || rect.top < 58 || rect.right > window.innerWidth - pad || rect.bottom > window.innerHeight - pad) {
+                left = Math.min(Math.max(pad, left), Math.max(pad, window.innerWidth - w - pad));
+                top = Math.min(Math.max(58, top), Math.max(58, window.innerHeight - h - pad));
+                widgetEl.style.left = left + 'px';
+                widgetEl.style.top = top + 'px';
+                widgetEl.style.right = 'auto';
+                widgetEl.style.bottom = 'auto';
             }
         }
 
-        function tryPlayCurrent() {
-            if (inGameMode || userPaused || !ytReady || !ytPlayer) return;
-            try {
-                if (typeof ytPlayer.unMute === 'function') ytPlayer.unMute();
-                if (typeof ytPlayer.setVolume === 'function') ytPlayer.setVolume(65);
-                if (typeof ytPlayer.playVideo === 'function') ytPlayer.playVideo();
-            } catch (e) {}
+        function setExpanded(exp) {
+            isExpanded = Boolean(exp);
+            widgetEl.classList.toggle('expanded', isExpanded);
+            clampWidgetPosition();
         }
 
-        function playNextRandomTrack() {
-            currentIdx = pickNextRandomIndex(currentIdx);
-            userPaused = false;
-            gestureUnlocked = true;
-            localStorage.setItem(BGM_PREF_KEY, "0");
-            updateBgmUI();
-            if (ytReady && ytPlayer && !inGameMode) {
-                try {
-                    if (typeof ytPlayer.unMute === 'function') ytPlayer.unMute();
-                    if (typeof ytPlayer.setVolume === 'function') ytPlayer.setVolume(65);
-                    if (typeof ytPlayer.loadVideoById === 'function') {
-                        ytPlayer.loadVideoById(BGM_TRACKS[currentIdx].id);
-                    }
-                } catch (e) {}
+        let dragState = null;
+        let suppressNextOrbClick = false;
+
+        widgetEl.addEventListener('pointerdown', function(e) {
+            if (e.target.closest('button.huajian-bgm-btn, button.huajian-bgm-next, button.huajian-bgm-collapse, .huajian-bgm-title')) {
+                return;
             }
-        }
-
-        document.getElementById('huajianBgmToggle').addEventListener('click', function(e) {
-            e.stopPropagation();
-            if (isPlayingNow) {
-                userPaused = true;
-                localStorage.setItem(BGM_PREF_KEY, "1");
-                try { if (ytPlayer && ytPlayer.pauseVideo) ytPlayer.pauseVideo(); } catch (err) {}
-                isPlayingNow = false;
-            } else {
-                userPaused = false;
-                gestureUnlocked = true;
-                localStorage.setItem(BGM_PREF_KEY, "0");
-                if (!ytPlayer && window.YT && window.YT.Player) {
-                    initYouTubePlayer();
-                }
-                tryPlayCurrent();
-            }
-            updateBgmUI();
-        });
-
-        document.getElementById('huajianBgmTitle').addEventListener('click', function(e) {
-            e.stopPropagation();
-            document.getElementById('huajianBgmToggle').click();
-        });
-
-        document.getElementById('huajianBgmNext').addEventListener('click', function(e) {
-            e.stopPropagation();
-            playNextRandomTrack();
-        });
-
-        function onFirstGesture() {
-            gestureUnlocked = true;
-            if (!inGameMode && !userPaused && !isPlayingNow) {
-                tryPlayCurrent();
-            }
-        }
-        ['pointerdown', 'touchstart', 'keydown'].forEach(evt => {
-            window.addEventListener(evt, onFirstGesture, { passive: true });
-        });
-
-        window.HuajianBGM = {
-            enterGameMode: function() {
-                inGameMode = true;
-                if (ytReady && ytPlayer) {
-                    try { ytPlayer.pauseVideo(); } catch (e) {}
-                }
-                isPlayingNow = false;
-                updateBgmUI();
-            },
-            exitGameMode: function() {
-                inGameMode = false;
-                updateBgmUI();
-                if (!userPaused) {
-                    tryPlayCurrent();
-                }
-            },
-            nextTrack: playNextRandomTrack
-        };
-
-        function initYouTubePlayer() {
-            if (ytPlayer || !window.YT || !window.YT.Player) return;
-            const originParam = (window.location.origin && window.location.origin.startsWith('http'))
-                ? { origin: window.location.origin }
-                : {};
-            ytPlayer = new window.YT.Player('huajianYtPlayer', {
-                height: '2',
-                width: '2',
-                videoId: BGM_TRACKS[currentIdx].id,
-                playerVars: Object.assign({
-                    autoplay: 0,
-                    controls: 0,
-                    disablekb: 1,
-                    fs: 0,
-                    modestbranding: 1,
-                    playsinline: 1,
-                    rel: 0
-                }, originParam),
-                events: {
-                    onReady: function(event) {
-                        ytReady = true;
-                        updateBgmUI();
-                        if (!inGameMode && !userPaused && gestureUnlocked) {
-                            tryPlayCurrent();
-                        }
-                    },
-                    onStateChange: function(event) {
-                        if (!window.YT || !window.YT.PlayerState) return;
-                        if (event.data === window.YT.PlayerState.PLAYING) {
-                            if (inGameMode) {
-                                try { event.target.pauseVideo(); } catch (e) {}
-                                isPlayingNow = false;
-                            } else {
-                                isPlayingNow = true;
-                            }
-                            updateBgmUI();
-                        } else if (event.data === window.YT.PlayerState.PAUSED) {
-                            isPlayingNow = false;
-                            updateBgmUI();
-                        } else if (event.data === window.YT.PlayerState.ENDED) {
-                            isPlayingNow = false;
-                            if (!inGameMode && !userPaused) {
-                                playNextRandomTrack();
-                            } else {
-                                updateBgmUI();
-                            }
-                        }
-                    },
-                    onError: function() {
-                        if (!inGameMode && !userPaused && gestureUnlocked) {
-                            currentIdx = pickNextRandomIndex(currentIdx);
-                            updateBgmUI();
-                            try { event.target.loadVideoById(BGM_TRACKS[currentIdx].id); } catch (e) {}
-                        }
-                    }
-                }
-            });
-        }
-
-        const prevYtReady = window.onYouTubeIframeAPIReady;
-        window.onYouTubeIframeAPIReady = function() {
-            if (typeof prevYtReady === 'function') prevYtReady();
-            initYouTubePlayer();
-        };
-
-        if (window.YT && window.YT.Player) {
-            initYouTubePlayer();
-        } else if (!document.querySelector('script[src*="youtube.com/iframe_api"]')) {
-            const tag = document.createElement('script');
-            tag.src = 'https://www.youtube.com/iframe_api';
-            document.head.appendChild(tag);
-        }
-
-        updateBgmUI();
-    }
-})();
+            const rect = widgetEl.getBoundingClientRect();
+            dragState = {
+                pointerId: e.pointerId,
+                startX: e.clientX,
+                startY: e.clientY,
+                origLeft: rect.
