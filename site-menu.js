@@ -214,4 +214,250 @@
                 pointerId: e.pointerId,
                 startX: e.clientX,
                 startY: e.clientY,
-                origLeft: rect.
+                origLeft: rect.left,
+                origTop: rect.top,
+                moved: false
+            };
+            try { widgetEl.setPointerCapture(e.pointerId); } catch (err) {}
+        });
+
+        widgetEl.addEventListener('pointermove', function(e) {
+            if (!dragState || e.pointerId !== dragState.pointerId) return;
+            const dx = e.clientX - dragState.startX;
+            const dy = e.clientY - dragState.startY;
+            if (!dragState.moved && Math.hypot(dx, dy) > 6) {
+                dragState.moved = true;
+                orbEl.classList.add('dragging');
+            }
+            if (dragState.moved) {
+                const rect = widgetEl.getBoundingClientRect();
+                const w = rect.width || 44;
+                const h = rect.height || 44;
+                const pad = 8;
+                const nextLeft = Math.min(Math.max(pad, dragState.origLeft + dx), Math.max(pad, window.innerWidth - w - pad));
+                const nextTop = Math.min(Math.max(58, dragState.origTop + dy), Math.max(58, window.innerHeight - h - pad));
+                widgetEl.style.left = nextLeft + 'px';
+                widgetEl.style.top = nextTop + 'px';
+                widgetEl.style.right = 'auto';
+                widgetEl.style.bottom = 'auto';
+            }
+        });
+
+        function finishDrag(e) {
+            if (!dragState || e.pointerId !== dragState.pointerId) return;
+            const wasMoved = dragState.moved;
+            dragState = null;
+            orbEl.classList.remove('dragging');
+            try { widgetEl.releasePointerCapture(e.pointerId); } catch (err) {}
+            if (wasMoved) {
+                suppressNextOrbClick = true;
+                setTimeout(() => { suppressNextOrbClick = false; }, 120);
+            }
+        }
+
+        widgetEl.addEventListener('pointerup', finishDrag);
+        widgetEl.addEventListener('pointercancel', finishDrag);
+        window.addEventListener('resize', clampWidgetPosition);
+
+        orbEl.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (suppressNextOrbClick) return;
+            gestureUnlocked = true;
+            if (!userPaused && !isPlayingNow) {
+                if (!ytPlayer && window.YT && window.YT.Player) {
+                    initYouTubePlayer();
+                }
+                tryPlayCurrent();
+            }
+            setExpanded(true);
+        });
+
+        document.getElementById('huajianBgmCollapse').addEventListener('click', function(e) {
+            e.stopPropagation();
+            setExpanded(false);
+        });
+
+        function updateBgmUI() {
+            const toggleBtn = document.getElementById('huajianBgmToggle');
+            const titleEl = document.getElementById('huajianBgmTitle');
+            if (!widgetEl || !toggleBtn || !titleEl || !orbEl) return;
+
+            widgetEl.classList.toggle('hidden-in-game', inGameMode);
+            orbEl.classList.toggle('playing', isPlayingNow);
+            const track = BGM_TRACKS[currentIdx];
+            if (isPlayingNow) {
+                titleEl.textContent = `♪ ${track.title}`;
+                toggleBtn.textContent = '⏸';
+                orbEl.textContent = '♪';
+            } else if (userPaused) {
+                titleEl.textContent = `已暫停・${track.title}`;
+                toggleBtn.textContent = '▶️';
+                orbEl.textContent = '🎵';
+            } else {
+                titleEl.textContent = track.title;
+                toggleBtn.textContent = '▶️';
+                orbEl.textContent = '🎵';
+            }
+        }
+
+        function tryPlayCurrent() {
+            if (inGameMode || userPaused || !ytReady || !ytPlayer) return;
+            try {
+                if (typeof ytPlayer.unMute === 'function') ytPlayer.unMute();
+                if (typeof ytPlayer.setVolume === 'function') ytPlayer.setVolume(65);
+                if (typeof ytPlayer.playVideo === 'function') ytPlayer.playVideo();
+            } catch (e) {}
+        }
+
+        function playNextRandomTrack() {
+            currentIdx = pickNextRandomIndex(currentIdx);
+            userPaused = false;
+            gestureUnlocked = true;
+            localStorage.setItem(BGM_PREF_KEY, "0");
+            updateBgmUI();
+            if (ytReady && ytPlayer && !inGameMode) {
+                try {
+                    if (typeof ytPlayer.unMute === 'function') ytPlayer.unMute();
+                    if (typeof ytPlayer.setVolume === 'function') ytPlayer.setVolume(65);
+                    if (typeof ytPlayer.loadVideoById === 'function') {
+                        ytPlayer.loadVideoById(BGM_TRACKS[currentIdx].id);
+                    }
+                } catch (e) {}
+            }
+        }
+
+        document.getElementById('huajianBgmToggle').addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (isPlayingNow) {
+                userPaused = true;
+                localStorage.setItem(BGM_PREF_KEY, "1");
+                try { if (ytPlayer && ytPlayer.pauseVideo) ytPlayer.pauseVideo(); } catch (err) {}
+                isPlayingNow = false;
+            } else {
+                userPaused = false;
+                gestureUnlocked = true;
+                localStorage.setItem(BGM_PREF_KEY, "0");
+                if (!ytPlayer && window.YT && window.YT.Player) {
+                    initYouTubePlayer();
+                }
+                tryPlayCurrent();
+            }
+            updateBgmUI();
+        });
+
+        document.getElementById('huajianBgmTitle').addEventListener('click', function(e) {
+            e.stopPropagation();
+            document.getElementById('huajianBgmToggle').click();
+        });
+
+        document.getElementById('huajianBgmNext').addEventListener('click', function(e) {
+            e.stopPropagation();
+            playNextRandomTrack();
+        });
+
+        function onFirstGesture() {
+            gestureUnlocked = true;
+            if (!inGameMode && !userPaused && !isPlayingNow) {
+                tryPlayCurrent();
+            }
+        }
+        ['pointerdown', 'touchstart', 'keydown'].forEach(evt => {
+            window.addEventListener(evt, onFirstGesture, { passive: true });
+        });
+
+        window.HuajianBGM = {
+            enterGameMode: function() {
+                inGameMode = true;
+                setExpanded(false);
+                if (ytReady && ytPlayer) {
+                    try { ytPlayer.pauseVideo(); } catch (e) {}
+                }
+                isPlayingNow = false;
+                updateBgmUI();
+            },
+            exitGameMode: function() {
+                inGameMode = false;
+                updateBgmUI();
+                if (!userPaused) {
+                    tryPlayCurrent();
+                }
+            },
+            nextTrack: playNextRandomTrack
+        };
+
+        function initYouTubePlayer() {
+            if (ytPlayer || !window.YT || !window.YT.Player) return;
+            const originParam = (window.location.origin && window.location.origin.startsWith('http'))
+                ? { origin: window.location.origin }
+                : {};
+            ytPlayer = new window.YT.Player('huajianYtPlayer', {
+                height: '2',
+                width: '2',
+                videoId: BGM_TRACKS[currentIdx].id,
+                playerVars: Object.assign({
+                    autoplay: 0,
+                    controls: 0,
+                    disablekb: 1,
+                    fs: 0,
+                    modestbranding: 1,
+                    playsinline: 1,
+                    rel: 0
+                }, originParam),
+                events: {
+                    onReady: function(event) {
+                        ytReady = true;
+                        updateBgmUI();
+                        if (!inGameMode && !userPaused && gestureUnlocked) {
+                            tryPlayCurrent();
+                        }
+                    },
+                    onStateChange: function(event) {
+                        if (!window.YT || !window.YT.PlayerState) return;
+                        if (event.data === window.YT.PlayerState.PLAYING) {
+                            if (inGameMode) {
+                                try { event.target.pauseVideo(); } catch (e) {}
+                                isPlayingNow = false;
+                            } else {
+                                isPlayingNow = true;
+                            }
+                            updateBgmUI();
+                        } else if (event.data === window.YT.PlayerState.PAUSED) {
+                            isPlayingNow = false;
+                            updateBgmUI();
+                        } else if (event.data === window.YT.PlayerState.ENDED) {
+                            isPlayingNow = false;
+                            if (!inGameMode && !userPaused) {
+                                playNextRandomTrack();
+                            } else {
+                                updateBgmUI();
+                            }
+                        }
+                    },
+                    onError: function() {
+                        if (!inGameMode && !userPaused && gestureUnlocked) {
+                            currentIdx = pickNextRandomIndex(currentIdx);
+                            updateBgmUI();
+                            try { event.target.loadVideoById(BGM_TRACKS[currentIdx].id); } catch (e) {}
+                        }
+                    }
+                }
+            });
+        }
+
+        const prevYtReady = window.onYouTubeIframeAPIReady;
+        window.onYouTubeIframeAPIReady = function() {
+            if (typeof prevYtReady === 'function') prevYtReady();
+            initYouTubePlayer();
+        };
+
+        if (window.YT && window.YT.Player) {
+            initYouTubePlayer();
+        } else if (!document.querySelector('script[src*="youtube.com/iframe_api"]')) {
+            const tag = document.createElement('script');
+            tag.src = 'https://www.youtube.com/iframe_api';
+            document.head.appendChild(tag);
+        }
+
+        updateBgmUI();
+    }
+})();
