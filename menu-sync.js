@@ -1,17 +1,10 @@
 // ★ 花間小憩全站共用選單與盲盒自動同步模組
-// 【以後新增遊戲或頁面，只需修改下方 SITE_NAV_ITEMS，全站所有網頁都會自動同步顯示！】
 (function(){
     const GITHUB_OWNER = "qscxz19920516";
     const GITHUB_REPO = "Kakan";
-    const OLD_CACHE_KEYS = [
-        "huajian_kakan_series_v4_" + GITHUB_OWNER + "_" + GITHUB_REPO,
-        "huajian_kakan_series_v5_" + GITHUB_OWNER + "_" + GITHUB_REPO,
-        "huajian_kakan_series_v6_" + GITHUB_OWNER + "_" + GITHUB_REPO,
-        "huajian_kakan_series_v7_" + GITHUB_OWNER + "_" + GITHUB_REPO,
-        "huajian_kakan_series_v8_" + GITHUB_OWNER + "_" + GITHUB_REPO,
-        "huajian_kakan_series_v9_" + GITHUB_OWNER + "_" + GITHUB_REPO
-    ];
-    const CACHE_KEY = "huajian_kakan_series_v10_" + GITHUB_OWNER + "_" + GITHUB_REPO;
+    const SITE_VER = "20261126_v3";
+    const TREE_CACHE_KEY = "huajian_kakan_raw_tree_" + SITE_VER + "_" + GITHUB_OWNER + "_" + GITHUB_REPO;
+    const CACHE_KEY = "huajian_kakan_series_" + SITE_VER + "_" + GITHUB_OWNER + "_" + GITHUB_REPO;
     const EXCLUDED_FOLDERS = new Set([".github", "assets", "css", "js", "images", "img", "fonts", "職業", "職業介紹", "小卡", "小卡圖鑑", "角色圖鑑", "腳色圖鑑", "card", "cards", "御神籤", "遊戲攻略", "小說"]);
 
     const SITE_NAV_ITEMS = [
@@ -46,6 +39,8 @@
         { name: "童話反派", folder: "花間 × 童話反派", members: ["虎克船長", "後母", "烏蘇拉", "黑魔女", "賈方", "壞皇后"] },
         { name: "多巴胺女團", folder: "花間 × 多巴胺女團", members: ["C位", "Leader", "Rapper", "主唱", "主舞", "門面"] }
     ];
+
+    let inflightTreePromise = null;
 
     function getSeriesTheme(index) {
         const hue = Math.round((index * 137.508 + 28) % 360);
@@ -96,6 +91,54 @@
             map[item.folder] = { displayName: item.folder, members: item.members };
         });
         return buildConfigFromMap(map);
+    }
+
+    async function fetchRepoTree(bypassCache = false) {
+        if (!bypassCache) {
+            try {
+                const cached = sessionStorage.getItem(TREE_CACHE_KEY);
+                if (cached) {
+                    const parsed = JSON.parse(cached);
+                    if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+                }
+            } catch (e) {}
+        }
+
+        if (inflightTreePromise && !bypassCache) {
+            return inflightTreePromise;
+        }
+
+        inflightTreePromise = (async () => {
+            const branches = ["main", "master"];
+            try {
+                const repoRes = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}`);
+                if (repoRes.ok) {
+                    const repoInfo = await repoRes.json();
+                    if (repoInfo && repoInfo.default_branch && !branches.includes(repoInfo.default_branch)) {
+                        branches.unshift(repoInfo.default_branch);
+                    }
+                }
+            } catch (e) {}
+
+            for (const br of branches) {
+                try {
+                    const res = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/git/trees/${encodeURIComponent(br)}?recursive=1`);
+                    if (!res.ok) continue;
+                    const data = await res.json();
+                    if (Array.isArray(data.tree) && data.tree.length > 0) {
+                        try { sessionStorage.setItem(TREE_CACHE_KEY, JSON.stringify(data.tree)); } catch (e) {}
+                        return data.tree;
+                    }
+                } catch (e) {}
+            }
+            return null;
+        })();
+
+        try {
+            return await inflightTreePromise;
+        } finally {
+            inflightTreePromise = null;
+        }
     }
 
     function getCurrentPageFile() {
@@ -176,10 +219,6 @@
     }
 
     async function fetchAllSeries(bypassCache = false) {
-        try {
-            OLD_CACHE_KEYS.forEach(k => sessionStorage.removeItem(k));
-        } catch (e) {}
-
         if (!bypassCache) {
             try {
                 const cached = sessionStorage.getItem(CACHE_KEY);
@@ -190,63 +229,37 @@
             } catch (e) {}
         }
 
-        const branches = ["main", "master"];
-        try {
-            const repoRes = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}?_=${Date.now()}`);
-            if (repoRes.ok) {
-                const repoInfo = await repoRes.json();
-                if (repoInfo && repoInfo.default_branch && !branches.includes(repoInfo.default_branch)) {
-                    branches.unshift(repoInfo.default_branch);
+        const tree = await fetchRepoTree(bypassCache);
+        if (tree && tree.length > 0) {
+            const folderMap = {};
+            tree.forEach(item => {
+                if (item.type !== 'blob') return;
+                if (!/\.(jpg|jpeg|png|webp|gif)$/i.test(item.path)) return;
+
+                const parts = item.path.split('/');
+                if (parts.length < 2) return;
+
+                const fileName = parts[parts.length - 1];
+                const parentFolderName = parts[parts.length - 2];
+                const folderRelPath = parts.slice(0, -1).join('/');
+                const memberName = fileName.replace(/\.(jpg|jpeg|png|webp|gif)$/i, '');
+
+                if (EXCLUDED_FOLDERS.has(parentFolderName.toLowerCase())) return;
+                if (parts.some(p => EXCLUDED_FOLDERS.has(p.toLowerCase()))) return;
+
+                if (!folderMap[folderRelPath]) {
+                    folderMap[folderRelPath] = { displayName: parentFolderName, members: [] };
                 }
+                if (!folderMap[folderRelPath].members.includes(memberName)) {
+                    folderMap[folderRelPath].members.push(memberName);
+                }
+            });
+
+            if (Object.keys(folderMap).length > 0) {
+                const cfg = buildConfigFromMap(folderMap);
+                try { sessionStorage.setItem(CACHE_KEY, JSON.stringify(cfg)); } catch (e) {}
+                return cfg;
             }
-        } catch (e) {}
-
-        for (const br of branches) {
-            try {
-                const branchRes = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/branches/${br}?_=${Date.now()}`);
-                let treeSha = br;
-                if (branchRes.ok) {
-                    const branchData = await branchRes.json();
-                    if (branchData && branchData.commit && branchData.commit.commit && branchData.commit.commit.tree) {
-                        treeSha = branchData.commit.commit.tree.sha;
-                    }
-                }
-
-                const res = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/git/trees/${treeSha}?recursive=1&_=${Date.now()}`);
-                if (!res.ok) continue;
-                const data = await res.json();
-                if (!data.tree) continue;
-
-                const folderMap = {};
-                data.tree.forEach(item => {
-                    if (item.type !== 'blob') return;
-                    if (!/\.(jpg|jpeg|png|webp|gif)$/i.test(item.path)) return;
-
-                    const parts = item.path.split('/');
-                    if (parts.length < 2) return;
-
-                    const fileName = parts[parts.length - 1];
-                    const parentFolderName = parts[parts.length - 2];
-                    const folderRelPath = parts.slice(0, -1).join('/');
-                    const memberName = fileName.replace(/\.(jpg|jpeg|png|webp|gif)$/i, '');
-
-                    if (EXCLUDED_FOLDERS.has(parentFolderName.toLowerCase())) return;
-                    if (parts.some(p => EXCLUDED_FOLDERS.has(p.toLowerCase()))) return;
-
-                    if (!folderMap[folderRelPath]) {
-                        folderMap[folderRelPath] = { displayName: parentFolderName, members: [] };
-                    }
-                    if (!folderMap[folderRelPath].members.includes(memberName)) {
-                        folderMap[folderRelPath].members.push(memberName);
-                    }
-                });
-
-                if (Object.keys(folderMap).length > 0) {
-                    const cfg = buildConfigFromMap(folderMap);
-                    try { sessionStorage.setItem(CACHE_KEY, JSON.stringify(cfg)); } catch (e) {}
-                    return cfg;
-                }
-            } catch (e) {}
         }
         return getFallbackConfig();
     }
@@ -278,7 +291,7 @@
             const cfg = seriesConfig[key];
             const label = cfg.displayFolder || cfg.folder;
             const clickAttr = isBoxPage
-                ? `onclick="goBox(event, '${key.replace(/'/g, "\'")}')"`
+                ? `onclick="goBox(event, '${key.replace(/'/g, "\\'")}')"`
                 : '';
             itemsHtml += `<li class="series-menu-item" data-label="${label.toLowerCase()}">
                 <a href="box.html?job=${encodeURIComponent(label)}" data-series="${key}" ${clickAttr}>
@@ -300,6 +313,7 @@
 
     window.HuajianMenu = {
         mountGlobalDrawer,
+        fetchRepoTree,
         fetchAllSeries,
         renderSharedSubMenu,
         extractShortSeriesName,
