@@ -31,13 +31,6 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 .viewer-box.highlight-flash{border-color:#f08da0;box-shadow:0 0 0 4px rgba(240,141,160,.22),0 8px 24px rgba(226,158,168,.2)}
 .viewer-title{font-size:1.02rem;color:#c76272;margin-bottom:10px;font-weight:800}
 
-/* 多版本小卡切換列 */
-.variant-bar{display:none;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:12px}
-.variant-bar.show{display:flex}
-.var-pill{padding:6px 14px;border-radius:16px;border:1.5px solid #f0a8b4;background:#fff8f9;color:#7a5c61;font-size:.84rem;font-weight:800;cursor:pointer;transition:.18s}
-.var-pill:hover{border-color:#c76272;color:#c76272;transform:translateY(-1px)}
-.var-pill.active{background:linear-gradient(135deg,#ff8fa3,#e26d82);border-color:#e26d82;color:#fff;box-shadow:0 3px 10px rgba(226,109,130,.28)}
-
 .viewer-container{position:relative;width:100%;height:620px;max-height:76vh;border:2.5px dashed #efc4cb;border-radius:22px;background:#fff9fa;display:flex;align-items:center;justify-content:center;padding:14px;overflow:hidden}
 .viewer-img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;border-radius:16px;box-shadow:0 6px 18px rgba(0,0,0,.08);transition:opacity .2s ease;cursor:zoom-in}
 .viewer-nav-btn{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:50%;border:2px solid #f0a8b4;background:rgba(255,255,255,.9);color:#c76272;font-size:1.1rem;font-weight:900;cursor:pointer;display:none;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(226,158,168,.25);transition:.18s;z-index:2}
@@ -108,13 +101,12 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 
     <div class="viewer-box" id="viewerBox">
         <div class="viewer-title" id="viewerTitle">🖼️ 角色圖片預覽區（點擊下方成員名字即可在此切換顯示）</div>
-        <div class="variant-bar" id="variantBar"></div>
         <div class="viewer-container">
-            <button type="button" class="viewer-nav-btn prev" id="prevCardBtn" onclick="stepVariant(-1)" aria-label="上一張版本">◀</button>
+            <button type="button" class="viewer-nav-btn prev" id="prevCardBtn" onclick="stepVariant(-1)" aria-label="上一張小卡">◀</button>
             <img id="viewerImg" class="viewer-img" src="" alt="角色圖片預覽" onclick="openCardZoom()">
-            <button type="button" class="viewer-nav-btn next" id="nextCardBtn" onclick="stepVariant(1)" aria-label="下一張版本">▶</button>
+            <button type="button" class="viewer-nav-btn next" id="nextCardBtn" onclick="stepVariant(1)" aria-label="下一張小卡">▶</button>
         </div>
-        <div class="viewer-hint">🔍 點擊小卡圖片可全螢幕放大檢視（可使用上方標籤或左右鍵切換）</div>
+        <div class="viewer-hint">🔍 點擊小卡圖片可全螢幕放大檢視（多張圖片可使用左右箭頭或鍵盤左右鍵切換）</div>
     </div>
 
     <div class="job-tabs">
@@ -146,7 +138,7 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 const CARD_OWNER = "qscxz19920516";
 const CARD_REPO = "Kakan";
 const CARD_ROOT = "角色圖鑑";
-const CARD_CACHE_KEY = "huajian_kakan_cards_v3_" + CARD_OWNER + "_" + CARD_REPO;
+const CARD_CACHE_KEY = "huajian_kakan_cards_v4_" + CARD_OWNER + "_" + CARD_REPO;
 
 const membersData = [
     { name: "壞壞呦", job: "術士" },
@@ -247,10 +239,46 @@ function getFallbackVariants(name) {
     }];
 }
 
+function parseCardsFromTree(tree) {
+    if (!Array.isArray(tree) || tree.length === 0) return {};
+    const rawMap = {};
+    tree.forEach(item => {
+        if (item.type !== 'blob') return;
+        if (!/\.(jpg|jpeg|png|webp|gif)$/i.test(item.path)) return;
+        const parts = item.path.split('/');
+        if (parts[0] !== CARD_ROOT && parts[0] !== '腳色圖鑑') return;
+
+        if (parts.length === 2) {
+            const base = parts[1].replace(/\.(jpg|jpeg|png|webp|gif)$/i, '');
+            if (!rawMap[base]) rawMap[base] = [];
+            rawMap[base].push({ fileName: parts[1], path: item.path });
+        } else if (parts.length >= 3) {
+            const memberName = parts[1];
+            const fileName = parts[parts.length - 1];
+            if (!rawMap[memberName]) rawMap[memberName] = [];
+            rawMap[memberName].push({ fileName, path: item.path });
+        }
+    });
+
+    const formattedMap = {};
+    Object.keys(rawMap).forEach(mName => {
+        const sorted = rawMap[mName].sort((a, b) =>
+            a.fileName.localeCompare(b.fileName, 'zh-Hant', { numeric: true })
+        );
+        formattedMap[mName] = sorted.map((entry, idx) => ({
+            label: formatVariantLabel(mName, entry.fileName, idx),
+            path: entry.path,
+            fallbacks: []
+        }));
+    });
+    return formattedMap;
+}
+
 async function fetchMemberCardsMap(bypassCache = false) {
     try {
         sessionStorage.removeItem("huajian_kakan_cards_v1_" + CARD_OWNER + "_" + CARD_REPO);
         sessionStorage.removeItem("huajian_kakan_cards_v2_" + CARD_OWNER + "_" + CARD_REPO);
+        sessionStorage.removeItem("huajian_kakan_cards_v3_" + CARD_OWNER + "_" + CARD_REPO);
     } catch (e) {}
 
     if (!bypassCache) {
@@ -261,6 +289,15 @@ async function fetchMemberCardsMap(bypassCache = false) {
                 if (parsed && Object.keys(parsed).length > 0) return parsed;
             }
         } catch (e) {}
+    }
+
+    if (window.HuajianMenu && typeof window.HuajianMenu.fetchRepoTree === 'function') {
+        const sharedTree = await window.HuajianMenu.fetchRepoTree(bypassCache);
+        const fromShared = parseCardsFromTree(sharedTree);
+        if (Object.keys(fromShared).length > 0) {
+            try { sessionStorage.setItem(CARD_CACHE_KEY, JSON.stringify(fromShared)); } catch (e) {}
+            return fromShared;
+        }
     }
 
     const branches = ['main', 'master'];
@@ -288,38 +325,7 @@ async function fetchMemberCardsMap(bypassCache = false) {
             const res = await fetch(`https://api.github.com/repos/${CARD_OWNER}/${CARD_REPO}/git/trees/${treeSha}?recursive=1&_=${Date.now()}`);
             if (!res.ok) continue;
             const data = await res.json();
-            if (!data.tree) continue;
-
-            const rawMap = {};
-            data.tree.forEach(item => {
-                if (item.type !== 'blob') return;
-                if (!/\.(jpg|jpeg|png|webp|gif)$/i.test(item.path)) return;
-                const parts = item.path.split('/');
-                if (parts[0] !== CARD_ROOT && parts[0] !== '腳色圖鑑') return;
-
-                if (parts.length === 2) {
-                    const base = parts[1].replace(/\.(jpg|jpeg|png|webp|gif)$/i, '');
-                    if (!rawMap[base]) rawMap[base] = [];
-                    rawMap[base].push({ fileName: parts[1], path: item.path });
-                } else if (parts.length >= 3) {
-                    const memberName = parts[1];
-                    const fileName = parts[parts.length - 1];
-                    if (!rawMap[memberName]) rawMap[memberName] = [];
-                    rawMap[memberName].push({ fileName, path: item.path });
-                }
-            });
-
-            const formattedMap = {};
-            Object.keys(rawMap).forEach(mName => {
-                const sorted = rawMap[mName].sort((a, b) =>
-                    a.fileName.localeCompare(b.fileName, 'zh-Hant', { numeric: true })
-                );
-                formattedMap[mName] = sorted.map((entry, idx) => ({
-                    label: formatVariantLabel(mName, entry.fileName, idx),
-                    path: entry.path,
-                    fallbacks: []
-                }));
-            });
+            const formattedMap = parseCardsFromTree(data && data.tree);
 
             if (Object.keys(formattedMap).length > 0) {
                 try { sessionStorage.setItem(CARD_CACHE_KEY, JSON.stringify(formattedMap)); } catch (e) {}
@@ -331,26 +337,12 @@ async function fetchMemberCardsMap(bypassCache = false) {
 }
 
 function renderVariantControls() {
-    const bar = document.getElementById('variantBar');
     const prevBtn = document.getElementById('prevCardBtn');
     const nextBtn = document.getElementById('nextCardBtn');
     const hasMultiple = currentVariants.length > 1;
 
     if (prevBtn) prevBtn.classList.toggle('show', hasMultiple);
     if (nextBtn) nextBtn.classList.toggle('show', hasMultiple);
-
-    if (!bar) return;
-    if (!hasMultiple) {
-        bar.classList.remove('show');
-        bar.innerHTML = '';
-        return;
-    }
-
-    bar.classList.add('show');
-    bar.innerHTML = currentVariants.map((v, idx) => {
-        const act = idx === currentVariantIdx ? ' active' : '';
-        return `<button type="button" class="var-pill${act}" onclick="selectVariant(${idx})">🃏 ${v.label}</button>`;
-    }).join('');
 }
 
 function selectVariant(idx) {
@@ -359,7 +351,7 @@ function selectVariant(idx) {
     const item = currentVariants[currentVariantIdx];
 
     const titleSuffix = currentVariants.length > 1
-        ? `【${item.label}】（${currentVariantIdx + 1}/${currentVariants.length}）`
+        ? `（${currentVariantIdx + 1} / ${currentVariants.length}）`
         : '';
     document.getElementById('viewerTitle').innerText =
         selectedMember === '小卡預設卡'
@@ -484,7 +476,7 @@ async function syncMemberCards(bypassCache = false) {
         if (scanned && Object.keys(scanned).length > 0) {
             memberCardsMap = scanned;
             const totalImgs = Object.values(scanned).reduce((sum, arr) => sum + arr.length, 0);
-            if (banner) banner.textContent = `✨ 已同步收錄 ${totalImgs} 張專屬小卡（支援多版本切換）`;
+            if (banner) banner.textContent = `✨ 已同步收錄 ${totalImgs} 張專屬小卡（支援左右切換）`;
         }
         renderList();
         if (selectedMember) {
@@ -517,7 +509,6 @@ async function init() {
     createEffects();
     resetPreview();
     renderList();
-    await syncMemberCards(false);
 }
 
 init();
@@ -529,6 +520,7 @@ window.addEventListener('DOMContentLoaded', async function() {
         const cfg = await window.HuajianMenu.fetchAllSeries();
         window.HuajianMenu.renderSharedSubMenu(cfg);
     }
+    await syncMemberCards(false);
 });
 </script>
 </body>
