@@ -239,7 +239,7 @@ body.game-mode-active .topbar-omikuji-btn{display:none}
 </style>
 <link rel="stylesheet" href="site-menu.css?v=20261121_v1">
 <script>
-const SITE_VERSION = "20261126_v3";
+const SITE_VERSION = "20261126_v4";
 (function(){
     const url = new URL(window.location.href);
     const verKey = "huajian_site_ver_checked";
@@ -264,8 +264,8 @@ const SITE_VERSION = "20261126_v3";
 <body>
 <div class="fx-bg" id="fxBg"></div>
 <div id="siteMenu"></div>
-<script src="site-menu.js?v=20261126_v3"></script>
-<script src="leaderboard-config.js?v=20261126_v3"></script>
+<script src="site-menu.js?v=20261126_v4"></script>
+<script src="leaderboard-config.js?v=20261126_v4"></script>
 
 <div class="wrap" id="mainWrap">
     <div class="home-view" id="homeView">
@@ -309,7 +309,7 @@ const SITE_VERSION = "20261126_v3";
     <div class="story-card">
         <div class="story-hd">🌸 關於 KaKan・名字背後的故事 🌸</div>
         <div class="story-img-wrap">
-            <img class="story-img" src="Kakan的原.jpg?v=20261126_v3" alt="KaKan 名字背後的意義" onclick="openZoom()" onerror="if(!this.dataset.step){this.dataset.step=1;this.src='Kakan的原.JPG?v=20261126_v3';}else if(this.dataset.step==1){this.dataset.step=2;this.src='花間/Kakan的原.jpg?v=20261126_v3';}else{this.onerror=null;this.src='花間/Kakan的原.JPG?v=20261126_v3';}">
+            <img class="story-img" src="Kakan的原.jpg?v=20261126_v4" alt="KaKan 名字背後的意義" onclick="openZoom()" onerror="if(!this.dataset.step){this.dataset.step=1;this.src='Kakan的原.JPG?v=20261126_v4';}else if(this.dataset.step==1){this.dataset.step=2;this.src='花間/Kakan的原.jpg?v=20261126_v4';}else{this.onerror=null;this.src='花間/Kakan的原.JPG?v=20261126_v4';}">
         </div>
         <div class="story-hint">🔍 點擊圖片可全螢幕放大閱讀文字細節</div>
     </div>
@@ -360,11 +360,11 @@ const SITE_VERSION = "20261126_v3";
 <div class="zoom-modal" id="zoomModal" onclick="if(event.target===this) closeZoom()">
     <div class="zoom-card">
         <button class="close-btn" onclick="closeZoom()" style="position:absolute;top:-14px;right:-14px;box-shadow:0 3px 10px rgba(0,0,0,.2)">✕</button>
-        <img id="zoomModalImg" src="Kakan的原.jpg?v=20261126_v3" alt="放大預覽">
+        <img id="zoomModalImg" src="Kakan的原.jpg?v=20261126_v4" alt="放大預覽">
     </div>
 </div>
 
-<script src="menu-sync.js?v=20261126_v3"></script>
+<script src="menu-sync.js?v=20261126_v4"></script>
 <script>
 let currentGlobalLbGame = 'MeowMilk';
 
@@ -450,11 +450,11 @@ function openZoom(customSrc){
     } else {
         zImg.dataset.step = '';
         zImg.onerror = function(){
-            if(!this.dataset.step){this.dataset.step=1;this.src='Kakan的原.JPG?v=20261126_v3';}
-            else if(this.dataset.step==1){this.dataset.step=2;this.src='花間/Kakan的原.jpg?v=20261126_v3';}
-            else{this.onerror=null;this.src='花間/Kakan的原.JPG?v=20261126_v3';}
+            if(!this.dataset.step){this.dataset.step=1;this.src='Kakan的原.JPG?v=20261126_v4';}
+            else if(this.dataset.step==1){this.dataset.step=2;this.src='花間/Kakan的原.jpg?v=20261126_v4';}
+            else{this.onerror=null;this.src='花間/Kakan的原.JPG?v=20261126_v4';}
         };
-        zImg.src = 'Kakan的原.jpg?v=20261126_v3';
+        zImg.src = 'Kakan的原.jpg?v=20261126_v4';
     }
     document.getElementById('zoomModal').classList.add('open');
 }
@@ -632,9 +632,9 @@ function renderOmikujiSection() {
             <div class="omikuji-result-wrap">
                 <span class="omikuji-badge" style="background:${todaySlip.color}">🌸 今日運勢・${todaySlip.key} 🌸</span>
                 <div class="omikuji-slip-box">
-                    <img class="omikuji-slip-img" src="${imgPath}?v=20261126_v3" alt="御神籤_${todaySlip.key}"
+                    <img class="omikuji-slip-img" src="${imgPath}?v=20261126_v4" alt="御神籤_${todaySlip.key}"
                         onclick="openZoom(this.src)"
-                        onerror="if(!this.dataset.step){this.dataset.step=1;this.src='御神籤/${todaySlip.file}.JPG?v=20261126_v3';}else if(this.dataset.step==1){this.dataset.step=2;this.src='御神籤/${todaySlip.file}.png?v=20261126_v3';}else{this.onerror=null;this.src='御神籤/${todaySlip.file}.PNG?v=20261126_v3';}">
+                        onerror="if(!this.dataset.step){this.dataset.step=1;this.src='御神籤/${todaySlip.file}.JPG?v=20261126_v4';}else if(this.dataset.step==1){this.dataset.step=2;this.src='御神籤/${todaySlip.file}.png?v=20261126_v4';}else{this.onerror=null;this.src='御神籤/${todaySlip.file}.PNG?v=20261126_v4';}">
                 </div>
                 ${rewardHtml}
                 <div class="omikuji-done-note">🌙 今日抽籤已使用（1/1次），明天 00:00 自動重置</div>
@@ -648,8 +648,8 @@ function renderOmikujiSection() {
         <div class="omikuji-stage">
             <div class="omikuji-tube-wrap" id="omikujiTubeWrap" onclick="drawDailyOmikuji()" title="點擊籤筒抽取今日御神籤">
                 <div id="omikujiComicSlot"></div>
-                <img class="omikuji-tube-img" src="御神籤/御神籤籤筒.jpg?v=20261126_v3" alt="花間小憩御神籤籤筒"
-                    onerror="if(!this.dataset.step){this.dataset.step=1;this.src='御神籤/御神籤籤筒.JPG?v=20261126_v3';}else if(this.dataset.step==1){this.dataset.step=2;this.src='御神籤/御神籤籤筒.png?v=20261126_v3';}else{this.onerror=null;this.src='御神籤/御神籤籤筒.PNG?v=20261126_v3';}">
+                <img class="omikuji-tube-img" src="御神籤/御神籤籤筒.jpg?v=20261126_v4" alt="花間小憩御神籤籤筒"
+                    onerror="if(!this.dataset.step){this.dataset.step=1;this.src='御神籤/御神籤籤筒.JPG?v=20261126_v4';}else if(this.dataset.step==1){this.dataset.step=2;this.src='御神籤/御神籤籤筒.png?v=20261126_v4';}else{this.onerror=null;this.src='御神籤/御神籤籤筒.PNG?v=20261126_v4';}">
             </div>
             <button type="button" class="omikuji-btn" id="omikujiDrawBtn" onclick="drawDailyOmikuji()">
                 🎋 搖動籤筒・抽取今日神籤
@@ -715,10 +715,10 @@ function closeZoom(){
     document.getElementById('zoomModal').classList.remove('open');
 }
 function openGame(event){
-    openEmbeddedGame(event, 'MeowMilk.html?v=20261126_v3', '#meow-milk', '🥛 喵喵乳糖挑戰');
+    openEmbeddedGame(event, 'MeowMilk.html?v=20261126_v4', '#meow-milk', '🥛 喵喵乳糖挑戰');
 }
 function openGame1(event){
-    openEmbeddedGame(event, 'HitMeow.html?v=20261126_v3', '#hit-meow', '🩴 暴打小菜雞');
+    openEmbeddedGame(event, 'HitMeow.html?v=20261126_v4', '#hit-meow', '🩴 暴打小菜雞');
 }
 let cachedSeriesConfig = null;
 
