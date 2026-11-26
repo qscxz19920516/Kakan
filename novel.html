@@ -110,7 +110,7 @@ body.theme-dark .reader-meta,body.theme-dark .chapter-nav-bar{border-color:#3d37
 <body>
 <div class="fx-bg" id="fxBg"></div>
 <div id="siteMenu"></div>
-<script src="site-menu.js?v=20261126_v3"></script>
+<script src="site-menu.js?v=20261126_v2"></script>
 
 <div class="wrap">
     <div class="novel-hero">
@@ -154,7 +154,7 @@ body.theme-dark .reader-meta,body.theme-dark .chapter-nav-bar{border-color:#3d37
     </div>
 </div>
 
-<script src="menu-sync.js?v=20261126_v3"></script>
+<script src="menu-sync.js?v=20261126_v2"></script>
 <script>
 const NOVEL_OWNER = "qscxz19920516";
 const NOVEL_REPO = "Kakan";
@@ -208,6 +208,31 @@ function compareChapters(a, b) {
     return a.title.localeCompare(b.title, "zh-Hant", { numeric: true });
 }
 
+function parseNovelsFromTree(tree) {
+    if (!Array.isArray(tree) || tree.length === 0) return [];
+    const bookMap = {};
+    tree.forEach(item => {
+        if (item.type !== "blob") return;
+        if (!/\.(txt|md)$/i.test(item.path)) return;
+        const parts = item.path.split("/");
+        if (parts[0] !== NOVEL_ROOT || parts.length < 2) return;
+
+        const fileName = parts[parts.length - 1];
+        const chapTitle = fileName.replace(/\.(txt|md)$/i, "").trim();
+        const bookTitle = parts.length >= 3 ? parts[1] : "精選短篇集";
+
+        if (!bookMap[bookTitle]) bookMap[bookTitle] = [];
+        bookMap[bookTitle].push({ title: chapTitle, path: item.path });
+    });
+
+    return Object.keys(bookMap)
+        .sort((a, b) => a.localeCompare(b, "zh-Hant", { numeric: true }))
+        .map(bookTitle => ({
+            bookTitle,
+            chapters: bookMap[bookTitle].sort(compareChapters)
+        }));
+}
+
 async function fetchNovelCatalog(bypassCache = false) {
     if (!bypassCache) {
         try {
@@ -217,6 +242,15 @@ async function fetchNovelCatalog(bypassCache = false) {
                 if (Array.isArray(parsed) && parsed.length > 0) return parsed;
             }
         } catch (e) {}
+    }
+
+    if (window.HuajianMenu && typeof window.HuajianMenu.fetchRepoTree === 'function') {
+        const sharedTree = await window.HuajianMenu.fetchRepoTree(bypassCache);
+        const booksFromShared = parseNovelsFromTree(sharedTree);
+        if (booksFromShared.length > 0) {
+            try { sessionStorage.setItem(NOVEL_CACHE_KEY, JSON.stringify(booksFromShared)); } catch (e) {}
+            return booksFromShared;
+        }
     }
 
     const branches = ["main", "master"];
@@ -244,29 +278,7 @@ async function fetchNovelCatalog(bypassCache = false) {
             const res = await fetch(`https://api.github.com/repos/${NOVEL_OWNER}/${NOVEL_REPO}/git/trees/${treeSha}?recursive=1&_=${Date.now()}`);
             if (!res.ok) continue;
             const data = await res.json();
-            if (!data.tree) continue;
-
-            const bookMap = {};
-            data.tree.forEach(item => {
-                if (item.type !== "blob") return;
-                if (!/\.(txt|md)$/i.test(item.path)) return;
-                const parts = item.path.split("/");
-                if (parts[0] !== NOVEL_ROOT || parts.length < 2) return;
-
-                const fileName = parts[parts.length - 1];
-                const chapTitle = fileName.replace(/\.(txt|md)$/i, "").trim();
-                const bookTitle = parts.length >= 3 ? parts[1] : "精選短篇集";
-
-                if (!bookMap[bookTitle]) bookMap[bookTitle] = [];
-                bookMap[bookTitle].push({ title: chapTitle, path: item.path });
-            });
-
-            const books = Object.keys(bookMap)
-                .sort((a, b) => a.localeCompare(b, "zh-Hant", { numeric: true }))
-                .map(bookTitle => ({
-                    bookTitle,
-                    chapters: bookMap[bookTitle].sort(compareChapters)
-                }));
+            const books = parseNovelsFromTree(data && data.tree);
 
             if (books.length > 0) {
                 try { sessionStorage.setItem(NOVEL_CACHE_KEY, JSON.stringify(books)); } catch (e) {}
@@ -364,8 +376,11 @@ function selectBook(bIdx) {
 }
 
 function formatNovelParagraphs(rawText) {
-    const cleaned = rawText.replace(/^\uFEFF/, "").replace(/\r\n/g, "\n");
-    const lines = cleaned.split("\n");
+    const cleaned = rawText.replace(/^﻿/, "").replace(/
+/g, "
+");
+    const lines = cleaned.split("
+");
     let html = "";
     for (const line of lines) {
         const trimmed = line.trim();
@@ -546,12 +561,12 @@ window.addEventListener("DOMContentLoaded", async function() {
     }
 
     applySavedReaderPrefs();
-    await initNovels(false);
 
     if (window.HuajianMenu) {
         const cfg = await window.HuajianMenu.fetchAllSeries();
         window.HuajianMenu.renderSharedSubMenu(cfg);
     }
+    await initNovels(false);
 });
 </script>
 </body>
