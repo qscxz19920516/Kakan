@@ -2,10 +2,26 @@
 (function(){
     const GITHUB_OWNER = "qscxz19920516";
     const GITHUB_REPO = "Kakan";
-    const SITE_VER = "20261126_v3";
+    const SITE_VER = "20261126_v4";
     const TREE_CACHE_KEY = "huajian_kakan_raw_tree_" + SITE_VER + "_" + GITHUB_OWNER + "_" + GITHUB_REPO;
     const CACHE_KEY = "huajian_kakan_series_" + SITE_VER + "_" + GITHUB_OWNER + "_" + GITHUB_REPO;
     const EXCLUDED_FOLDERS = new Set([".github", "assets", "css", "js", "images", "img", "fonts", "職業", "職業介紹", "小卡", "小卡圖鑑", "角色圖鑑", "腳色圖鑑", "card", "cards", "御神籤", "遊戲攻略", "小說"]);
+
+    // ★ 1.【手動置頂＋顯示 NEW 標籤】
+    // 寫在這裡的系列會「排在最上面」且旁邊自動顯示粉紅色 NEW 徽章（寫資料夾全名或簡稱皆可）
+    const PINNED_NEW_SERIES = [
+        "花間 × 傳說Cosplay",
+        "花間 × 動漫明星",
+        "花間 × 魔劣生",
+        "花間 × 約會大作戰"
+    ];
+
+    // ★ 2.【一般系列自訂排序】（接在置頂 NEW 系列之後，未列入的會照名稱排在後面）
+    const SERIES_SORT_ORDER = [
+        "花間 × 上弦",
+        "花間 × 玩偶套裝",
+        "花間 × 鬼滅之刃"
+    ];
 
     const SITE_NAV_ITEMS = [
         { icon: "🏠", label: "首頁", href: "index.html" },
@@ -42,6 +58,31 @@
 
     let inflightTreePromise = null;
 
+    function injectNewBadgeStyle() {
+        if (document.getElementById('huajianNewBadgeStyle')) return;
+        const style = document.createElement('style');
+        style.id = 'huajianNewBadgeStyle';
+        style.textContent = `
+            .menu-new-badge{
+                display:inline-flex;
+                align-items:center;
+                justify-content:center;
+                background:linear-gradient(135deg,#ff4757,#ff6b81);
+                color:#fff;
+                font-size:.64rem;
+                font-weight:900;
+                padding:1px 6px;
+                border-radius:999px;
+                letter-spacing:.5px;
+                margin-left:5px;
+                box-shadow:0 2px 5px rgba(255,71,87,.32);
+                vertical-align:middle;
+                flex-shrink:0;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
     function getSeriesTheme(index) {
         const hue = Math.round((index * 137.508 + 28) % 360);
         const sat = index % 2 === 0 ? 74 : 66;
@@ -55,14 +96,52 @@
         };
     }
 
+    function normalizeSeriesKey(name) {
+        return String(name || '')
+            .replace(/^花間\s*[×xX＊*]\s*/, '')
+            .replace(/盒$/, '')
+            .trim();
+    }
+
     function extractShortSeriesName(folderName) {
-        return folderName.replace(/^花間\s*[×xX＊*]\s*/, '').replace(/盒$/, '').trim() || folderName;
+        return String(folderName || '')
+            .replace(/^花間\s*[×xX＊*]\s*/, '')
+            .replace(/盒$/, '')
+            .trim() || folderName;
+    }
+
+    function matchRuleIndex(list, displayName) {
+        const normTarget = normalizeSeriesKey(displayName);
+        return list.findIndex(rule => {
+            const cleanRule = String(rule || '').trim();
+            if (!cleanRule) return false;
+            return cleanRule === displayName || normalizeSeriesKey(cleanRule) === normTarget;
+        });
+    }
+
+    function isPinnedNewSeries(displayName) {
+        return matchRuleIndex(PINNED_NEW_SERIES, displayName) !== -1;
+    }
+
+    function getCombinedOrderRank(displayName) {
+        const newIdx = matchRuleIndex(PINNED_NEW_SERIES, displayName);
+        if (newIdx !== -1) return newIdx;
+
+        const sortIdx = matchRuleIndex(SERIES_SORT_ORDER, displayName);
+        if (sortIdx !== -1) return 1000 + sortIdx;
+
+        return 99999;
     }
 
     function buildConfigFromMap(targetMap) {
-        const folderPaths = Object.keys(targetMap).sort((a, b) =>
-            targetMap[a].displayName.localeCompare(targetMap[b].displayName, 'zh-Hant', { numeric: true })
-        );
+        const folderPaths = Object.keys(targetMap).sort((a, b) => {
+            const nameA = targetMap[a].displayName;
+            const nameB = targetMap[b].displayName;
+            const rankA = getCombinedOrderRank(nameA);
+            const rankB = getCombinedOrderRank(nameB);
+            if (rankA !== rankB) return rankA - rankB;
+            return nameA.localeCompare(nameB, 'zh-Hant', { numeric: true });
+        });
         const autoConfig = {};
         folderPaths.forEach((relPath, idx) => {
             const info = targetMap[relPath];
@@ -75,6 +154,7 @@
             autoConfig[shortName] = {
                 folder: relPath,
                 displayFolder: info.displayName,
+                isNew: isPinnedNewSeries(info.displayName),
                 color: theme.color,
                 softBg: theme.softBg,
                 bg: theme.bg,
@@ -147,6 +227,7 @@
     }
 
     function mountGlobalDrawer() {
+        injectNewBadgeStyle();
         const drawerList = document.querySelector('#drawer .drawer-list');
         if (!drawerList) return;
 
@@ -290,12 +371,13 @@
         keys.forEach(key => {
             const cfg = seriesConfig[key];
             const label = cfg.displayFolder || cfg.folder;
+            const newTagHtml = cfg.isNew ? `<span class="menu-new-badge">NEW</span>` : '';
             const clickAttr = isBoxPage
-                ? `onclick="goBox(event, '${key.replace(/'/g, "\\'")}')"`
+                ? `onclick="goBox(event, '${key.replace(/'/g, "\'")}')"`
                 : '';
             itemsHtml += `<li class="series-menu-item" data-label="${label.toLowerCase()}">
                 <a href="box.html?job=${encodeURIComponent(label)}" data-series="${key}" ${clickAttr}>
-                    <span>${label}</span>
+                    <span style="display:inline-flex;align-items:center;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${label}${newTagHtml}</span>
                     <span class="arrow">&gt;</span>
                 </a>
             </li>`;
