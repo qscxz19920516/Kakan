@@ -246,7 +246,7 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 <body>
 <div class="fx-bg" id="fxBg"></div>
 <div id="siteMenu"></div>
-<script src="site-menu.js?v=20261125_v3"></script>
+<script src="site-menu.js?v=20261126_v3"></script>
 
 <div class="wrap">
     <div class="active-series-banner" id="activeSeriesBanner">
@@ -292,7 +292,7 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
     </div>
 </div>
 
-<script src="menu-sync.js?v=20261125_v3"></script>
+<script src="menu-sync.js?v=20261126_v3"></script>
 <script>
 const MAX_DRAWS = 3;
 let seriesConfig = {};
@@ -597,8 +597,8 @@ function renderLotteryBox(snd = "", clue = "💡 提示：點擊「搖一搖抽�
         <div class="lottery-stage">
             <div class="lottery-box-wrap" id="lotteryBoxWrap" onclick="${canDraw ? 'drawFromLotteryBox()' : ''}" title="${canDraw ? '點擊抽獎箱直接抽出盲盒' : ''}">
                 <div id="comicBubbleSlot">${snd ? `<div class="sound-comic">🎵 ${snd}</div>` : ''}</div>
-                <img class="lottery-box-img" id="lotteryBoxImg" src="${skinFile}.jpg?v=20261125_v3" alt="隨機盲盒抽獎箱"
-                    onerror="if(!this.dataset.step){this.dataset.step=1;this.src='${skinFile}.JPG?v=20261125_v3';}else if(this.dataset.step==1){this.dataset.step=2;this.src='花間/${skinFile}.jpg?v=20261125_v3';}else{this.onerror=null;this.src='花間/${skinFile}.JPG?v=20261125_v3';}">
+                <img class="lottery-box-img" id="lotteryBoxImg" src="${skinFile}.jpg?v=20261126_v3" alt="隨機盲盒抽獎箱"
+                    onerror="if(!this.dataset.step){this.dataset.step=1;this.src='${skinFile}.JPG?v=20261126_v3';}else if(this.dataset.step==1){this.dataset.step=2;this.src='花間/${skinFile}.jpg?v=20261126_v3';}else{this.onerror=null;this.src='花間/${skinFile}.JPG?v=20261126_v3';}">
             </div>
         </div>
         <div class="clue-box" id="clueBoxText">${completed ? '✨ 太棒了！你已經集齊本系列所有角色，無法再使用重置券喔！' : clue}</div>
