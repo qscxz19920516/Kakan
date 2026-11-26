@@ -8,10 +8,11 @@
         "huajian_kakan_series_v5_" + GITHUB_OWNER + "_" + GITHUB_REPO,
         "huajian_kakan_series_v6_" + GITHUB_OWNER + "_" + GITHUB_REPO,
         "huajian_kakan_series_v7_" + GITHUB_OWNER + "_" + GITHUB_REPO,
-        "huajian_kakan_series_v8_" + GITHUB_OWNER + "_" + GITHUB_REPO
+        "huajian_kakan_series_v8_" + GITHUB_OWNER + "_" + GITHUB_REPO,
+        "huajian_kakan_series_v9_" + GITHUB_OWNER + "_" + GITHUB_REPO
     ];
-    const CACHE_KEY = "huajian_kakan_series_v9_" + GITHUB_OWNER + "_" + GITHUB_REPO;
-    const EXCLUDED_FOLDERS = new Set([".github", "assets", "css", "js", "images", "img", "fonts", "職業", "職業介紹", "小卡", "小卡圖鑑", "card", "cards", "御神籤", "遊戲攻略", "小說"]);
+    const CACHE_KEY = "huajian_kakan_series_v10_" + GITHUB_OWNER + "_" + GITHUB_REPO;
+    const EXCLUDED_FOLDERS = new Set([".github", "assets", "css", "js", "images", "img", "fonts", "職業", "職業介紹", "小卡", "小卡圖鑑", "角色圖鑑", "腳色圖鑑", "card", "cards", "御神籤", "遊戲攻略", "小說"]);
 
     const SITE_NAV_ITEMS = [
         { icon: "🏠", label: "首頁", href: "index.html" },
@@ -277,7 +278,7 @@
             const cfg = seriesConfig[key];
             const label = cfg.displayFolder || cfg.folder;
             const clickAttr = isBoxPage
-                ? `onclick="goBox(event, '${key.replace(/'/g, "\\'")}')"`
+                ? `onclick="goBox(event, '${key.replace(/'/g, "\'")}')"`
                 : '';
             itemsHtml += `<li class="series-menu-item" data-label="${label.toLowerCase()}">
                 <a href="box.html?job=${encodeURIComponent(label)}" data-series="${key}" ${clickAttr}>

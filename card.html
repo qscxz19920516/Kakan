@@ -2,7 +2,10 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>花間小憩 - 小卡圖鑑</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:"PingFang TC","Microsoft JhengHei","Rounded Mplus 1c",sans-serif}
@@ -15,17 +18,34 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 
 .wrap{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:0 16px}
 .stat{background:rgba(255,255,255,.92);backdrop-filter:blur(6px);border-radius:26px;padding:16px 24px;box-shadow:0 6px 20px rgba(226,158,168,.12);border:2px solid #f9dfe3;margin-bottom:22px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:14px}
-.stat-badge{display:flex;align-items:center;gap:12px}
+.stat-badge{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .item{text-align:center;background:#fff7f8;padding:8px 20px;border-radius:20px;border:1.5px solid #f7d7dc;display:flex;align-items:baseline;gap:8px}
 .val{font-size:1.45rem;font-weight:800;color:#c76272}
 .lbl{font-size:.92rem;color:#947479;font-weight:800}
-.complete-banner{font-size:.95rem;font-weight:800;color:#1e8e3e;background:#edf9f0;border:1.5px solid #bfe6c9;padding:8px 18px;border-radius:20px}
+.stat-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.complete-banner{font-size:.92rem;font-weight:800;color:#1e8e3e;background:#edf9f0;border:1.5px solid #bfe6c9;padding:8px 16px;border-radius:20px}
+.sync-cards-btn{background:#fff;border:1.5px solid #f0a8b4;color:#c76272;padding:8px 14px;border-radius:20px;font-size:.84rem;font-weight:800;cursor:pointer;transition:.2s;display:inline-flex;align-items:center;gap:4px}
+.sync-cards-btn:hover{background:#fff0f3;transform:translateY(-1px)}
 
-.viewer-box{background:rgba(255,255,255,.94);backdrop-filter:blur(6px);border-radius:26px;padding:18px;box-shadow:0 6px 20px rgba(226,158,168,.12);border:2px solid #f9dfe3;margin-bottom:22px;text-align:center;scroll-margin-top:86px;transition:box-shadow .35s ease,border-color .35s ease}
+.viewer-box{background:rgba(255,255,255,.94);backdrop-filter:blur(6px);border-radius:26px;padding:18px;box-shadow:0 6px 20px rgba(226,158,168,.12);border:2px solid #f9dfe3;margin-bottom:22px;text-align:center;scroll-margin-top:76px;transition:box-shadow .35s ease,border-color .35s ease}
 .viewer-box.highlight-flash{border-color:#f08da0;box-shadow:0 0 0 4px rgba(240,141,160,.22),0 8px 24px rgba(226,158,168,.2)}
-.viewer-title{font-size:1rem;color:#c76272;margin-bottom:12px;font-weight:800}
+.viewer-title{font-size:1.02rem;color:#c76272;margin-bottom:10px;font-weight:800}
+
+/* 多版本小卡切換列 */
+.variant-bar{display:none;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.variant-bar.show{display:flex}
+.var-pill{padding:6px 14px;border-radius:16px;border:1.5px solid #f0a8b4;background:#fff8f9;color:#7a5c61;font-size:.84rem;font-weight:800;cursor:pointer;transition:.18s}
+.var-pill:hover{border-color:#c76272;color:#c76272;transform:translateY(-1px)}
+.var-pill.active{background:linear-gradient(135deg,#ff8fa3,#e26d82);border-color:#e26d82;color:#fff;box-shadow:0 3px 10px rgba(226,109,130,.28)}
+
 .viewer-container{position:relative;width:100%;height:620px;max-height:76vh;border:2.5px dashed #efc4cb;border-radius:22px;background:#fff9fa;display:flex;align-items:center;justify-content:center;padding:14px;overflow:hidden}
-.viewer-img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;border-radius:16px;box-shadow:0 6px 18px rgba(0,0,0,.08);transition:opacity .2s ease}
+.viewer-img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;border-radius:16px;box-shadow:0 6px 18px rgba(0,0,0,.08);transition:opacity .2s ease;cursor:zoom-in}
+.viewer-nav-btn{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:50%;border:2px solid #f0a8b4;background:rgba(255,255,255,.9);color:#c76272;font-size:1.1rem;font-weight:900;cursor:pointer;display:none;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(226,158,168,.25);transition:.18s;z-index:2}
+.viewer-nav-btn:hover{background:#c76272;border-color:#c76272;color:#fff;transform:translateY(-50%) scale(1.06)}
+.viewer-nav-btn.prev{left:12px}
+.viewer-nav-btn.next{right:12px}
+.viewer-nav-btn.show{display:inline-flex}
+.viewer-hint{font-size:.8rem;color:#947479;margin-top:8px;font-weight:700}
 
 .job-tabs{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}
 .job-btn{padding:8px 18px;border-radius:24px;cursor:pointer;font-size:.9rem;font-weight:800;transition:.2s;background:#fff;box-shadow:0 3px 8px rgba(0,0,0,.04)}
@@ -54,8 +74,20 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 .bg-術士{background:#38bdf8}
 .bg-鬥士{background:#b91c1c}
 .bg-賢者{background:#10b981}
+.v-count-badge{font-size:.72rem;padding:1px 6px;border-radius:10px;background:#fff0f3;color:#c76272;border:1px solid #f2bec7;font-weight:900}
+.ok.selected .v-count-badge,.ok:hover .v-count-badge{background:rgba(255,255,255,.25);color:#fff;border-color:rgba(255,255,255,.5)}
 
-@media(max-width:600px){.viewer-container{height:380px}}
+/* 全螢幕放大預覽彈窗 */
+.zoom-modal{display:none;position:fixed;inset:0;background:rgba(40,28,30,.84);z-index:200;align-items:center;justify-content:center;padding:16px}
+.zoom-modal.open{display:flex}
+.zoom-card{position:relative;background:#fff;padding:12px;border-radius:22px;border:3px solid #f9dfe3;max-width:96vw;max-height:92vh;box-shadow:0 15px 35px rgba(0,0,0,.35);display:flex;flex-direction:column;align-items:center}
+.zoom-card img{max-width:92vw;max-height:82vh;object-fit:contain;border-radius:14px;display:block}
+.zoom-title{margin-top:8px;font-size:1rem;font-weight:900;color:#c76272}
+
+@media(max-width:600px){
+    .viewer-container{height:380px}
+    .viewer-nav-btn{width:34px;height:34px;font-size:.95rem}
+}
 </style>
 <link rel="stylesheet" href="site-menu.css?v=20261121_v1">
 <style>.topbar{margin-bottom:22px}</style>
@@ -63,21 +95,28 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 <body>
 <div class="fx-bg" id="fxBg"></div>
 <div id="siteMenu"></div>
-<script src="site-menu.js?v=20261125_v3"></script>
+<script src="site-menu.js?v=20261126_v1"></script>
 
 <div class="wrap">
     <div class="stat">
         <div class="stat-badge">
             <div class="item"><span class="lbl">🌸 公會收錄成員</span><span class="val" id="total-count">0</span><span class="lbl">位</span></div>
         </div>
-        <div class="complete-banner">✨ 全體成員專屬小卡已全數收錄完成！</div>
+        <div class="stat-actions">
+            <div class="complete-banner" id="cardStatusBanner">✨ 支援多版本小卡切換・點擊成員檢視</div>
+            <button type="button" class="sync-cards-btn" id="syncCardsBtn" onclick="syncMemberCards(true)" title="重新掃描 GitHub 角色圖鑑資料夾">🔄 同步新小卡</button>
+        </div>
     </div>
 
     <div class="viewer-box" id="viewerBox">
         <div class="viewer-title" id="viewerTitle">🖼️ 角色圖片預覽區（點擊下方成員名字即可在此切換顯示）</div>
+        <div class="variant-bar" id="variantBar"></div>
         <div class="viewer-container">
-            <img id="viewerImg" class="viewer-img" src="" alt="角色圖片預覽">
+            <button type="button" class="viewer-nav-btn prev" id="prevCardBtn" onclick="stepVariant(-1)" aria-label="上一張版本">◀</button>
+            <img id="viewerImg" class="viewer-img" src="" alt="角色圖片預覽" onclick="openCardZoom()">
+            <button type="button" class="viewer-nav-btn next" id="nextCardBtn" onclick="stepVariant(1)" aria-label="下一張版本">▶</button>
         </div>
+        <div class="viewer-hint">🔍 點擊小卡圖片可全螢幕放大檢視（多版本可使用上方標籤或左右鍵切換）</div>
     </div>
 
     <div class="job-tabs">
@@ -96,7 +135,21 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
         <div class="tags" id="member-list"></div>
     </div>
 </div>
+
+<div class="zoom-modal" id="zoomModal" onclick="if(event.target===this) closeCardZoom()">
+    <div class="zoom-card">
+        <button class="close-btn" onclick="closeCardZoom()" style="position:absolute;top:-14px;right:-14px;box-shadow:0 3px 10px rgba(0,0,0,.2)">✕</button>
+        <img id="zoomModalImg" src="" alt="放大預覽">
+        <div class="zoom-title" id="zoomModalTitle"></div>
+    </div>
+</div>
+
 <script>
+const CARD_OWNER = "qscxz19920516";
+const CARD_REPO = "Kakan";
+const CARD_ROOT = "角色圖鑑";
+const CARD_CACHE_KEY = "huajian_kakan_cards_v2_" + CARD_OWNER + "_" + CARD_REPO;
+
 const membersData = [
     { name: "壞壞呦", job: "術士" },
     { name: "薇糖", job: "騎士" },
@@ -157,25 +210,205 @@ const membersData = [
     { name: "STORM", job: "賢者" },
     { name: "喵來", job: "術士" }
 ];
+
 let curJob = 'all';
 let selectedMember = '';
+let memberCardsMap = {};
+let currentVariants = [];
+let currentVariantIdx = 0;
+
+function formatVariantLabel(memberName, fileName, idx) {
+    let base = fileName.replace(/\.(jpg|jpeg|png|webp|gif)$/i, '').trim();
+    if (base.startsWith(memberName + '_')) {
+        base = base.slice(memberName.length + 1);
+    } else if (base.startsWith(memberName + '-')) {
+        base = base.slice(memberName.length + 1);
+    } else if (base === memberName) {
+        return '預設版本';
+    }
+    if (/^\d+$/.test(base)) {
+        return `版本 ${base.padStart(2, '0')}`;
+    }
+    const m = base.match(/^(\d+)[_-](.+)$/);
+    if (m) {
+        return `${m[1].padStart(2, '0')}・${m[2]}`;
+    }
+    return base || `版本 ${String(idx + 1).padStart(2, '0')}`;
+}
+
+function getFallbackVariants(name) {
+    if (name === '小卡預設卡') {
+        return [{
+            label: '預設封面',
+            path: `${CARD_ROOT}/小卡預設卡.jpg`,
+            fallbacks: [
+                `${CARD_ROOT}/小卡預設卡.JPG`,
+                `${CARD_ROOT}/小卡預設卡.png`,
+                `小卡預設卡.jpg`,
+                `花間/小卡預設卡.jpg`
+            ]
+        }];
+    }
+    return [{
+        label: '版本 01',
+        path: `${CARD_ROOT}/${name}/${name}_01.jpg`,
+        fallbacks: [
+            `${CARD_ROOT}/${name}/${name}_01.JPG`,
+            `${CARD_ROOT}/${name}/${name}_01.png`,
+            `${CARD_ROOT}/${name}/${name}_01.PNG`,
+            `${CARD_ROOT}/${name}/${name}_01.webp`,
+            `${CARD_ROOT}/${name}/${name}.jpg`,
+            `${name}.jpg`
+        ]
+    }];
+}
+
+async function fetchMemberCardsMap(bypassCache = false) {
+    if (!bypassCache) {
+        try {
+            const cached = sessionStorage.getItem(CARD_CACHE_KEY);
+            if (cached) {
+                const parsed = JSON.parse(cached);
+                if (parsed && Object.keys(parsed).length > 0) return parsed;
+            }
+        } catch (e) {}
+    }
+
+    const branches = ['main', 'master'];
+    try {
+        const repoRes = await fetch(`https://api.github.com/repos/${CARD_OWNER}/${CARD_REPO}?_=${Date.now()}`);
+        if (repoRes.ok) {
+            const info = await repoRes.json();
+            if (info && info.default_branch && !branches.includes(info.default_branch)) {
+                branches.unshift(info.default_branch);
+            }
+        }
+    } catch (e) {}
+
+    for (const br of branches) {
+        try {
+            const branchRes = await fetch(`https://api.github.com/repos/${CARD_OWNER}/${CARD_REPO}/branches/${br}?_=${Date.now()}`);
+            let treeSha = br;
+            if (branchRes.ok) {
+                const bData = await branchRes.json();
+                if (bData && bData.commit && bData.commit.commit && bData.commit.commit.tree) {
+                    treeSha = bData.commit.commit.tree.sha;
+                }
+            }
+
+            const res = await fetch(`https://api.github.com/repos/${CARD_OWNER}/${CARD_REPO}/git/trees/${treeSha}?recursive=1&_=${Date.now()}`);
+            if (!res.ok) continue;
+            const data = await res.json();
+            if (!data.tree) continue;
+
+            const rawMap = {};
+            data.tree.forEach(item => {
+                if (item.type !== 'blob') return;
+                if (!/\.(jpg|jpeg|png|webp|gif)$/i.test(item.path)) return;
+                const parts = item.path.split('/');
+                if (parts[0] !== CARD_ROOT && parts[0] !== '腳色圖鑑') return;
+
+                if (parts.length === 2) {
+                    const base = parts[1].replace(/\.(jpg|jpeg|png|webp|gif)$/i, '');
+                    if (!rawMap[base]) rawMap[base] = [];
+                    rawMap[base].push({ fileName: parts[1], path: item.path });
+                } else if (parts.length >= 3) {
+                    const memberName = parts[1];
+                    const fileName = parts[parts.length - 1];
+                    if (!rawMap[memberName]) rawMap[memberName] = [];
+                    rawMap[memberName].push({ fileName, path: item.path });
+                }
+            });
+
+            const formattedMap = {};
+            Object.keys(rawMap).forEach(mName => {
+                const sorted = rawMap[mName].sort((a, b) =>
+                    a.fileName.localeCompare(b.fileName, 'zh-Hant', { numeric: true })
+                );
+                formattedMap[mName] = sorted.map((entry, idx) => ({
+                    label: mName === '小卡預設卡' ? '預設封面' : formatVariantLabel(mName, entry.fileName, idx),
+                    path: entry.path,
+                    fallbacks: []
+                }));
+            });
+
+            if (Object.keys(formattedMap).length > 0) {
+                try { sessionStorage.setItem(CARD_CACHE_KEY, JSON.stringify(formattedMap)); } catch (e) {}
+                return formattedMap;
+            }
+        } catch (e) {}
+    }
+    return {};
+}
+
+function renderVariantControls() {
+    const bar = document.getElementById('variantBar');
+    const prevBtn = document.getElementById('prevCardBtn');
+    const nextBtn = document.getElementById('nextCardBtn');
+    const hasMultiple = currentVariants.length > 1;
+
+    if (prevBtn) prevBtn.classList.toggle('show', hasMultiple);
+    if (nextBtn) nextBtn.classList.toggle('show', hasMultiple);
+
+    if (!bar) return;
+    if (!hasMultiple) {
+        bar.classList.remove('show');
+        bar.innerHTML = '';
+        return;
+    }
+
+    bar.classList.add('show');
+    bar.innerHTML = currentVariants.map((v, idx) => {
+        const act = idx === currentVariantIdx ? ' active' : '';
+        return `<button type="button" class="var-pill${act}" onclick="selectVariant(${idx})">🃏 ${v.label}</button>`;
+    }).join('');
+}
+
+function selectVariant(idx) {
+    if (!currentVariants.length) return;
+    currentVariantIdx = (idx + currentVariants.length) % currentVariants.length;
+    const item = currentVariants[currentVariantIdx];
+
+    const titleSuffix = currentVariants.length > 1
+        ? `【${item.label}】（${currentVariantIdx + 1}/${currentVariants.length}）`
+        : '';
+    document.getElementById('viewerTitle').innerText =
+        selectedMember === '小卡預設卡'
+            ? '🖼️ 角色圖片預覽區（點擊下方成員名字即可在此切換顯示）'
+            : `🖼️ 目前預覽：${selectedMember} ${titleSuffix}`;
+
+    const img = document.getElementById('viewerImg');
+    const queue = [item.path, ...(item.fallbacks || [])];
+    let attempt = 0;
+
+    img.onerror = function() {
+        attempt++;
+        if (attempt < queue.length) {
+            this.src = queue[attempt];
+        } else {
+            this.onerror = null;
+        }
+    };
+    img.src = queue[0];
+    renderVariantControls();
+}
+
+function stepVariant(delta) {
+    if (currentVariants.length <= 1) return;
+    selectVariant(currentVariantIdx + delta);
+}
 
 function showImg(name, shouldScroll = true) {
     selectedMember = name;
-    document.getElementById('viewerTitle').innerText = '🖼️ 目前預覽：' + name + '（點擊下方名字切換圖片）';
-    const img = document.getElementById('viewerImg');
-    img.onerror = function() {
-        this.onerror = null;
-        this.src = '花間/' + name + '.jpg';
-    };
-    img.src = name + '.jpg';
+    const scanned = memberCardsMap[name];
+    currentVariants = (scanned && scanned.length > 0) ? scanned : getFallbackVariants(name);
+    currentVariantIdx = 0;
+    selectVariant(0);
 
-    // 標記目前選中的成員按鈕
     document.querySelectorAll('#member-list .ok').forEach(btn => {
         btn.classList.toggle('selected', btn.dataset.name === name);
     });
 
-    // 點擊人名時自動平滑捲動到上方圖片預覽區，並預留頂部導覽列高度
     if (shouldScroll) {
         const viewerBox = document.getElementById('viewerBox');
         if (viewerBox) {
@@ -190,6 +423,18 @@ function showImg(name, shouldScroll = true) {
 
 function resetPreview() {
     showImg('小卡預設卡', false);
+}
+
+function openCardZoom() {
+    const img = document.getElementById('viewerImg');
+    if (!img || !img.src) return;
+    document.getElementById('zoomModalImg').src = img.src;
+    document.getElementById('zoomModalTitle').textContent = document.getElementById('viewerTitle').innerText.replace(/^🖼️\s*目前預覽：/, '');
+    document.getElementById('zoomModal').classList.add('open');
+}
+
+function closeCardZoom() {
+    document.getElementById('zoomModal').classList.remove('open');
 }
 
 function setJob(jb) {
@@ -208,8 +453,10 @@ function renderList() {
     let html = '';
     filtered.forEach(m => {
         const badge = `<span class="j-badge bg-${m.job}">${m.job}</span>`;
+        const variants = memberCardsMap[m.name] || [];
+        const countBadge = variants.length > 1 ? `<span class="v-count-badge">×${variants.length}</span>` : '';
         const activeCls = m.name === selectedMember ? ' selected' : '';
-        html += `<button class="ok${activeCls}" data-name="${m.name}" onclick="showImg('${m.name}', true)">🖼️ ${m.name} ${badge}</button>`;
+        html += `<button class="ok${activeCls}" data-name="${m.name}" onclick="showImg('${m.name}', true)">🖼️ ${m.name} ${badge}${countBadge}</button>`;
     });
     document.getElementById('member-list').innerHTML = html || '<span style="color:#947479">目前此分類沒有成員喔～</span>';
 }
@@ -240,7 +487,39 @@ function createEffects() {
     }
 }
 
-function init() {
+async function syncMemberCards(bypassCache = false) {
+    const btn = document.getElementById('syncCardsBtn');
+    const banner = document.getElementById('cardStatusBanner');
+    if (btn) btn.textContent = '⏳ 掃描中...';
+
+    try {
+        const scanned = await fetchMemberCardsMap(bypassCache);
+        if (scanned && Object.keys(scanned).length > 0) {
+            memberCardsMap = scanned;
+            const totalImgs = Object.values(scanned).reduce((sum, arr) => sum + arr.length, 0);
+            if (banner) banner.textContent = `✨ 已同步收錄 ${totalImgs} 張專屬小卡（支援多版本切換）`;
+        }
+        renderList();
+        if (selectedMember) {
+            const keepIdx = currentVariantIdx;
+            const updated = memberCardsMap[selectedMember];
+            currentVariants = (updated && updated.length > 0) ? updated : getFallbackVariants(selectedMember);
+            selectVariant(Math.min(keepIdx, currentVariants.length - 1));
+        }
+    } finally {
+        if (btn) btn.textContent = '🔄 同步新小卡';
+    }
+}
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeCardZoom();
+    if (currentVariants.length > 1 && !document.getElementById('zoomModal').classList.contains('open')) {
+        if (e.key === 'ArrowLeft') stepVariant(-1);
+        if (e.key === 'ArrowRight') stepVariant(1);
+    }
+});
+
+async function init() {
     const total = membersData.length;
     document.getElementById('total-count').innerText = total;
     document.getElementById('jcnt-all').innerText = total;
@@ -251,11 +530,12 @@ function init() {
     createEffects();
     resetPreview();
     renderList();
+    await syncMemberCards(false);
 }
 
 init();
 </script>
-<script src="menu-sync.js?v=20261125_v3"></script>
+<script src="menu-sync.js?v=20261126_v1"></script>
 <script>
 window.addEventListener('DOMContentLoaded', async function() {
     if (window.HuajianMenu) {

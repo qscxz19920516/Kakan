@@ -110,7 +110,7 @@ body.theme-dark .reader-meta,body.theme-dark .chapter-nav-bar{border-color:#3d37
 <body>
 <div class="fx-bg" id="fxBg"></div>
 <div id="siteMenu"></div>
-<script src="site-menu.js?v=20261125_v3"></script>
+<script src="site-menu.js?v=20261126_v1"></script>
 
 <div class="wrap">
     <div class="novel-hero">
@@ -154,7 +154,7 @@ body.theme-dark .reader-meta,body.theme-dark .chapter-nav-bar{border-color:#3d37
     </div>
 </div>
 
-<script src="menu-sync.js?v=20261125_v3"></script>
+<script src="menu-sync.js?v=20261126_v1"></script>
 <script>
 const NOVEL_OWNER = "qscxz19920516";
 const NOVEL_REPO = "Kakan";
@@ -364,8 +364,11 @@ function selectBook(bIdx) {
 }
 
 function formatNovelParagraphs(rawText) {
-    const cleaned = rawText.replace(/^\uFEFF/, "").replace(/\r\n/g, "\n");
-    const lines = cleaned.split("\n");
+    const cleaned = rawText.replace(/^﻿/, "").replace(/
+/g, "
+");
+    const lines = cleaned.split("
+");
     let html = "";
     for (const line of lines) {
         const trimmed = line.trim();
