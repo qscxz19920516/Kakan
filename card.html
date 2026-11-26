@@ -74,8 +74,6 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 .bg-術士{background:#38bdf8}
 .bg-鬥士{background:#b91c1c}
 .bg-賢者{background:#10b981}
-.v-count-badge{font-size:.72rem;padding:1px 6px;border-radius:10px;background:#fff0f3;color:#c76272;border:1px solid #f2bec7;font-weight:900}
-.ok.selected .v-count-badge,.ok:hover .v-count-badge{background:rgba(255,255,255,.25);color:#fff;border-color:rgba(255,255,255,.5)}
 
 /* 全螢幕放大預覽彈窗 */
 .zoom-modal{display:none;position:fixed;inset:0;background:rgba(40,28,30,.84);z-index:200;align-items:center;justify-content:center;padding:16px}
@@ -95,7 +93,7 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 <body>
 <div class="fx-bg" id="fxBg"></div>
 <div id="siteMenu"></div>
-<script src="site-menu.js?v=20261126_v1"></script>
+<script src="site-menu.js?v=20261126_v2"></script>
 
 <div class="wrap">
     <div class="stat">
@@ -103,8 +101,8 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
             <div class="item"><span class="lbl">🌸 公會收錄成員</span><span class="val" id="total-count">0</span><span class="lbl">位</span></div>
         </div>
         <div class="stat-actions">
-            <div class="complete-banner" id="cardStatusBanner">✨ 支援多版本小卡切換・點擊成員檢視</div>
-            <button type="button" class="sync-cards-btn" id="syncCardsBtn" onclick="syncMemberCards(true)" title="重新掃描 GitHub 角色圖鑑資料夾">🔄 同步新小卡</button>
+            <div class="complete-banner" id="cardStatusBanner">✨點擊成員檢視✨</div>
+            <button type="button" class="sync-cards-btn" id="syncCardsBtn" onclick="syncMemberCards(true)" title="整理角色圖鑑">🔄 同步新小卡</button>
         </div>
     </div>
 
@@ -116,7 +114,7 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
             <img id="viewerImg" class="viewer-img" src="" alt="角色圖片預覽" onclick="openCardZoom()">
             <button type="button" class="viewer-nav-btn next" id="nextCardBtn" onclick="stepVariant(1)" aria-label="下一張版本">▶</button>
         </div>
-        <div class="viewer-hint">🔍 點擊小卡圖片可全螢幕放大檢視（多版本可使用上方標籤或左右鍵切換）</div>
+        <div class="viewer-hint">🔍 點擊小卡圖片可全螢幕放大檢視（可使用上方標籤或左右鍵切換）</div>
     </div>
 
     <div class="job-tabs">
@@ -148,7 +146,7 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 const CARD_OWNER = "qscxz19920516";
 const CARD_REPO = "Kakan";
 const CARD_ROOT = "角色圖鑑";
-const CARD_CACHE_KEY = "huajian_kakan_cards_v2_" + CARD_OWNER + "_" + CARD_REPO;
+const CARD_CACHE_KEY = "huajian_kakan_cards_v3_" + CARD_OWNER + "_" + CARD_REPO;
 
 const membersData = [
     { name: "壞壞呦", job: "術士" },
@@ -218,28 +216,14 @@ let currentVariants = [];
 let currentVariantIdx = 0;
 
 function formatVariantLabel(memberName, fileName, idx) {
-    let base = fileName.replace(/\.(jpg|jpeg|png|webp|gif)$/i, '').trim();
-    if (base.startsWith(memberName + '_')) {
-        base = base.slice(memberName.length + 1);
-    } else if (base.startsWith(memberName + '-')) {
-        base = base.slice(memberName.length + 1);
-    } else if (base === memberName) {
-        return '預設版本';
-    }
-    if (/^\d+$/.test(base)) {
-        return `版本 ${base.padStart(2, '0')}`;
-    }
-    const m = base.match(/^(\d+)[_-](.+)$/);
-    if (m) {
-        return `${m[1].padStart(2, '0')}・${m[2]}`;
-    }
-    return base || `版本 ${String(idx + 1).padStart(2, '0')}`;
+    const base = fileName.replace(/\.(jpg|jpeg|png|webp|gif)$/i, '').trim();
+    return base || `${memberName}_${String(idx + 1).padStart(2, '0')}`;
 }
 
 function getFallbackVariants(name) {
     if (name === '小卡預設卡') {
         return [{
-            label: '預設封面',
+            label: '小卡預設卡',
             path: `${CARD_ROOT}/小卡預設卡.jpg`,
             fallbacks: [
                 `${CARD_ROOT}/小卡預設卡.JPG`,
@@ -250,7 +234,7 @@ function getFallbackVariants(name) {
         }];
     }
     return [{
-        label: '版本 01',
+        label: `${name}_01`,
         path: `${CARD_ROOT}/${name}/${name}_01.jpg`,
         fallbacks: [
             `${CARD_ROOT}/${name}/${name}_01.JPG`,
@@ -264,6 +248,11 @@ function getFallbackVariants(name) {
 }
 
 async function fetchMemberCardsMap(bypassCache = false) {
+    try {
+        sessionStorage.removeItem("huajian_kakan_cards_v1_" + CARD_OWNER + "_" + CARD_REPO);
+        sessionStorage.removeItem("huajian_kakan_cards_v2_" + CARD_OWNER + "_" + CARD_REPO);
+    } catch (e) {}
+
     if (!bypassCache) {
         try {
             const cached = sessionStorage.getItem(CARD_CACHE_KEY);
@@ -326,7 +315,7 @@ async function fetchMemberCardsMap(bypassCache = false) {
                     a.fileName.localeCompare(b.fileName, 'zh-Hant', { numeric: true })
                 );
                 formattedMap[mName] = sorted.map((entry, idx) => ({
-                    label: mName === '小卡預設卡' ? '預設封面' : formatVariantLabel(mName, entry.fileName, idx),
+                    label: formatVariantLabel(mName, entry.fileName, idx),
                     path: entry.path,
                     fallbacks: []
                 }));
@@ -453,10 +442,8 @@ function renderList() {
     let html = '';
     filtered.forEach(m => {
         const badge = `<span class="j-badge bg-${m.job}">${m.job}</span>`;
-        const variants = memberCardsMap[m.name] || [];
-        const countBadge = variants.length > 1 ? `<span class="v-count-badge">×${variants.length}</span>` : '';
         const activeCls = m.name === selectedMember ? ' selected' : '';
-        html += `<button class="ok${activeCls}" data-name="${m.name}" onclick="showImg('${m.name}', true)">🖼️ ${m.name} ${badge}${countBadge}</button>`;
+        html += `<button class="ok${activeCls}" data-name="${m.name}" onclick="showImg('${m.name}', true)">🖼️ ${m.name} ${badge}</button>`;
     });
     document.getElementById('member-list').innerHTML = html || '<span style="color:#947479">目前此分類沒有成員喔～</span>';
 }
@@ -535,7 +522,7 @@ async function init() {
 
 init();
 </script>
-<script src="menu-sync.js?v=20261126_v1"></script>
+<script src="menu-sync.js?v=20261126_v2"></script>
 <script>
 window.addEventListener('DOMContentLoaded', async function() {
     if (window.HuajianMenu) {
