@@ -101,8 +101,8 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
             <div class="item"><span class="lbl">🌸 公會收錄成員</span><span class="val" id="total-count">0</span><span class="lbl">位</span></div>
         </div>
         <div class="stat-actions">
-            <div class="complete-banner" id="cardStatusBanner">✨ 花間圖鑑 ✨-點擊成員檢視</div>
-            <button type="button" class="sync-cards-btn" id="syncCardsBtn" onclick="syncMemberCards(true)" title="重新整理同步全新圖鑑">🔄 同步新小卡</button>
+            <div class="complete-banner" id="cardStatusBanner">✨ 支援多版本小卡切換・點擊成員檢視</div>
+            <button type="button" class="sync-cards-btn" id="syncCardsBtn" onclick="syncMemberCards(true)" title="重新掃描 GitHub 角色圖鑑資料夾">🔄 同步新小卡</button>
         </div>
     </div>
 
@@ -114,7 +114,7 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
             <img id="viewerImg" class="viewer-img" src="" alt="角色圖片預覽" onclick="openCardZoom()">
             <button type="button" class="viewer-nav-btn next" id="nextCardBtn" onclick="stepVariant(1)" aria-label="下一張版本">▶</button>
         </div>
-        <div class="viewer-hint">🔍 點擊小卡圖片可全螢幕放大檢視，按下箭頭可以左右切換</div>
+        <div class="viewer-hint">🔍 點擊小卡圖片可全螢幕放大檢視（多版本可使用上方標籤或左右鍵切換）</div>
     </div>
 
     <div class="job-tabs">
@@ -127,7 +127,7 @@ body{background:linear-gradient(180deg,#fff6f5 0%,#fff9f8 50%,#fdf2f4 100%);colo
 
     <div class="box">
         <div class="hd">
-            <span id="list-title">🌸 全部成員總名單🌸</span>
+            <span id="list-title">🌸 全部成員總名單</span>
             <span class="hint">點擊成員名字即可自動捲動檢視專屬小卡</span>
         </div>
         <div class="tags" id="member-list"></div>
